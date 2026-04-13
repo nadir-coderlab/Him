@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD Dashboard — Madinah Cluster</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0f2f5;--text:#1a2332;--muted:#7f8c8d;--blue:#2980b9;
+  --card:#fff;--header:#1a2332;--border:#dce1e8;
+  --tbl-hdr:#2c3e50;--tbl-alt:#f7f9fc;
+  --low:#27ae60;--med:#f39c12;--high:#e74c3c;
+  --low-lt:#d5f5e3;--med-lt:#fdebd0;--high-lt:#fadbd8;
+  --arr-up:#27ae60;--arr-dn:#e74c3c;--arr-flat:#95a5a6;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.upload-zone{max-width:720px;margin:60px auto;padding:48px 32px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center;}
+.upload-zone h1{font-size:1.6rem;margin-bottom:6px;color:var(--header);}
+.upload-zone p{color:var(--muted);font-size:.9rem;margin-bottom:24px;}
+.file-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+.file-box{border:2px dashed var(--border);border-radius:12px;padding:20px 24px;min-width:260px;flex:1;max-width:320px;transition:.2s;}
+.file-box:hover{border-color:var(--blue);}
+.file-box label{display:block;font-weight:600;margin-bottom:8px;font-size:.85rem;color:var(--text);}
+.file-box input[type=file]{width:100%;font-size:.8rem;}
+.file-box .fname{margin-top:6px;font-size:.78rem;color:var(--low);font-weight:600;}
+.btn{padding:12px 36px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;}
+.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:#2471a3;}
+.btn-primary:disabled{background:var(--muted);cursor:not-allowed;}
+.btn-dl{background:var(--low);color:#fff;margin:8px;}.btn-dl:hover{background:#229954;}
+.info-text{font-size:.78rem;color:var(--muted);margin-top:12px;}
+#dashboard{display:none;padding:20px;}
+.page{background:#fff;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.06);margin:0 auto 32px;max-width:1200px;overflow:hidden;}
+.page-header{background:var(--header);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;}
+.page-header h2{color:#fff;font-size:1.3rem;font-weight:700;}
+.page-header span{color:#bdc3c7;font-size:.82rem;}
+.gauges-row{display:flex;gap:16px;padding:24px;flex-wrap:wrap;justify-content:center;}
+.gauge-box{flex:1;min-width:280px;max-width:380px;text-align:center;}
+.gauge-box h3{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+.gauge-box .target{font-size:.8rem;color:var(--low);font-weight:600;}
+.gauge-box canvas{display:block;margin:0 auto;}
+.kpi-row{display:flex;gap:12px;padding:0 24px 24px;flex-wrap:wrap;justify-content:center;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 12px;min-width:120px;flex:1;max-width:160px;text-align:center;position:relative;overflow:hidden;}
+.kpi-card .accent{position:absolute;top:0;left:4px;right:4px;height:4px;border-radius:0 0 4px 4px;}
+.kpi-card .val{font-size:1.5rem;font-weight:800;margin-top:6px;}
+.kpi-card .lbl{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.kpi-card .sub{font-size:.72rem;font-weight:700;margin-top:2px;}
+.bar-section{padding:16px 24px;}
+.bar-section h3{font-size:1rem;font-weight:700;margin-bottom:12px;}
+.bar-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0f0;}
+.bar-item:last-child{border-bottom:none;}
+.bar-name{min-width:220px;font-size:.82rem;font-weight:600;}
+.bar-name small{display:block;font-size:.7rem;color:var(--muted);font-weight:400;}
+.bar-track{flex:1;height:18px;background:#e8ecf0;border-radius:9px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:9px;transition:width .6s;}
+.bar-val{min-width:56px;font-size:.82rem;font-weight:700;text-align:right;}
+.bar-delta{min-width:80px;font-size:.75rem;font-weight:700;}
+.tbl-wrap{padding:16px 24px 24px;overflow-x:auto;}
+.tbl-wrap h3{font-size:1rem;font-weight:700;margin-bottom:10px;}
+table.dash{width:100%;border-collapse:collapse;font-size:.8rem;}
+table.dash th{background:var(--tbl-hdr);color:#fff;padding:8px 10px;font-weight:600;text-align:center;white-space:nowrap;}
+table.dash td{padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);}
+table.dash tr:nth-child(even) td{background:var(--tbl-alt);}
+table.dash td:first-child{text-align:left;font-weight:600;}
+.legend-row{display:flex;gap:16px;justify-content:center;padding:12px;font-size:.78rem;font-weight:600;}
+.legend-dot{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle;}
+.controls-bar{text-align:center;padding:16px;background:#fff;border-radius:12px;max-width:1200px;margin:0 auto 16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.delta-badge{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:6px;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<!-- UPLOAD SECTION -->
+<div class="upload-zone" id="uploadZone">
+  <h1>OPD Dashboard — Madinah Cluster</h1>
+  <p>Upload your CSV files to generate the dashboard</p>
+  <div class="file-row">
+    <div class="file-box">
+      <label>Today — Cluster_wise CSV</label>
+      <input type="file" accept=".csv" id="clusterToday" onchange="showName(this,'cn1')">
+      <div class="fname" id="cn1"></div>
+    </div>
+    <div class="file-box">
+      <label>Today — Facility_wise CSV</label>
+      <input type="file" accept=".csv" id="facilityToday" onchange="showName(this,'cn2')">
+      <div class="fname" id="cn2"></div>
+    </div>
+  </div>
+  <div class="file-row">
+    <div class="file-box">
+      <label>Previous — Cluster_wise CSV <small>(optional)</small></label>
+      <input type="file" accept=".csv" id="clusterPrev" onchange="showName(this,'cn3')">
+      <div class="fname" id="cn3"></div>
+    </div>
+    <div class="file-box">
+      <label>Previous — Facility_wise CSV <small>(optional)</small></label>
+      <input type="file" accept=".csv" id="facilityPrev" onchange="showName(this,'cn4')">
+      <div class="fname" id="cn4"></div>
+    </div>
+  </div>
+  <button class="btn btn-primary" id="genBtn" onclick="generate()">Generate Dashboard</button>
+  <div class="info-text">Files are processed entirely in your browser. Nothing is uploaded to any server.</div>
+</div>
+
+<!-- DASHBOARD OUTPUT -->
+<div id="dashboard">
+  <div class="controls-bar">
+    <button class="btn btn-dl" onclick="downloadAll()">⬇ Download All Pages as Images</button>
+    <button class="btn" style="background:var(--header);color:#fff;margin:8px;" onclick="resetAll()">↺ New Upload</button>
+  </div>
+  <div id="pages"></div>
+</div>
+
+<script>
+/* ========== CONSTANTS ========== */
+const LOW_RISK=10, HIGH_RISK=20, DISC_LOW=40, DISC_MED=70;
+const C={low:'#27ae60',med:'#f39c12',high:'#e74c3c',blue:'#2980b9',
+  bg:'#f0f2f5',text:'#1a2332',muted:'#7f8c8d',card:'#fff',
+  header:'#1a2332',border:'#dce1e8',tblHdr:'#2c3e50',tblAlt:'#f7f9fc',
+  lowLt:'#d5f5e3',medLt:'#fdebd0',highLt:'#fadbd8',
+  arrUp:'#27ae60',arrDn:'#e74c3c',arrFlat:'#95a5a6'};
+
+function safePct(n,d){return d?n/d*100:0;}
+function riskColor(r){return r>HIGH_RISK?C.high:r>LOW_RISK?C.med:C.low;}
+function riskLight(r){return r>HIGH_RISK?C.highLt:r>LOW_RISK?C.medLt:C.lowLt;}
+function discColor(r){return r>=DISC_MED?C.low:r>=DISC_LOW?C.med:C.high;}
+function discLight(r){return r>=DISC_MED?C.lowLt:r>=DISC_LOW?C.medLt:C.highLt;}
+function statusLabel(c){return c===C.low?'Good':c===C.med?'Warning':'Critical';}
+function deltaArrow(cur,old,higherGood){
+  let d=cur-old;
+  if(Math.abs(d)<.05)return{a:'▸',c:C.arrFlat,t:'0.0%'};
+  if(higherGood){return d>0?{a:'▲',c:C.arrUp,t:'+'+d.toFixed(1)+'%'}:{a:'▼',c:C.arrDn,t:d.toFixed(1)+'%'};}
+  else{return d<0?{a:'▼',c:C.arrUp,t:d.toFixed(1)+'%'}:{a:'▲',c:C.arrDn,t:'+'+d.toFixed(1)+'%'};}
+}
+function fmt(n){return Number(n).toLocaleString();}
+
+/* ========== CSV PARSER ========== */
+function parseCSV(text){
+  let lines=text.trim().split(/\r?\n/);
+  if(!lines.length)return[];
+  // detect separator
+  let sep=lines[0].includes('\t')?'\t':',';
+  let headers=splitCSVLine(lines[0],sep);
+  // check if first row is junk like "data (N)"
+  if(!headers.includes('Facility_Name')&&lines.length>1){
+    headers=splitCSVLine(lines[1],sep);
+    lines=lines.slice(1);
+  }
+  headers=headers.map(h=>h.trim().replace(/^"|"$/g,''));
+  let rows=[];
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i].trim())continue;
+    let vals=splitCSVLine(lines[i],sep);
+    let obj={};
+    headers.forEach((h,j)=>obj[h]=(vals[j]||'').trim().replace(/^"|"$/g,''));
+    rows.push(obj);
+  }
+  return rows;
+}
+function splitCSVLine(line,sep){
+  let result=[],cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    let ch=line[i];
+    if(ch==='"'){inQ=!inQ;}
+    else if(ch===sep&&!inQ){result.push(cur);cur='';}
+    else{cur+=ch;}
+  }
+  result.push(cur);
+  return result;
+}
+
+/* ========== FILE HELPERS ========== */
+function showName(inp,id){
+  document.getElementById(id).textContent=inp.files[0]?'✓ '+inp.files[0].name:'';
+}
+function readFile(inp){
+  return new Promise((res,rej)=>{
+    if(!inp.files||!inp.files[0])return res(null);
+    let r=new FileReader();
+    r.onload=()=>res(r.result);
+    r.onerror=()=>rej(r.error);
+    r.readAsText(inp.files[0]);
+  });
+}
+
+/* ========== GAUGE DRAWING ========== */
+function drawGauge(canvas,value,maxVal,mode,oldVal,prevLabel){
+  const W=canvas.width,H=canvas.height;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H*0.52, rad=Math.min(W,H)*0.36;
+
+  function p2a(p){return Math.PI-(p/maxVal)*Math.PI;}
+
+  // zones
+  let zones;
+  if(mode==='risk'){
+    zones=[[0,LOW_RISK,C.low],[LOW_RISK,HIGH_RISK,C.med],[HIGH_RISK,maxVal,C.high]];
+  } else {
+    zones=[[0,DISC_LOW,C.high],[DISC_LOW,DISC_MED,C.med],[DISC_MED,maxVal,C.low]];
+  }
+  // outer arc zones (faint)
+  zones.forEach(([s,e,col])=>{
+    ctx.beginPath();
+    ctx.arc(cx,cy,rad*1.08,p2a(e),p2a(s));
+    ctx.lineWidth=rad*0.12;
+    ctx.strokeStyle=col;
+    ctx.globalAlpha=0.18;
+    ctx.stroke();
+    ctx.globalAlpha=1;
+  });
+
+  // bg track
+  ctx.beginPath();
+  ctx.arc(cx,cy,rad,0,Math.PI,true);
+  ctx.lineWidth=rad*0.22;
+  ctx.strokeStyle='#e8ecf0';
+  ctx.stroke();
+
+  // value arc
+  let valColor=mode==='risk'?riskColor(value):discColor(value);
+  let vClamped=Math.min(value,maxVal);
+  if(vClamped>0.5){
+    ctx.beginPath();
+    ctx.arc(cx,cy,rad,Math.PI,p2a(vClamped),false);
+    ctx.lineWidth=rad*0.22;
+    ctx.strokeStyle=valColor;
+    ctx.globalAlpha=0.88;
+    ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  // needle
+  let needleAngle=p2a(vClamped);
+  let nx=cx+rad*0.68*Math.cos(needleAngle);
+  let ny=cy+rad*0.68*Math.sin(needleAngle);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(nx,ny);
+  ctx.lineWidth=3;ctx.strokeStyle=valColor;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fillStyle=valColor;ctx.fill();
+
+  // ticks
+  let ticks=mode==='risk'?[0,10,20,30,50,75,100]:[0,20,40,60,80,100];
+  ctx.font='11px sans-serif';ctx.fillStyle=C.muted;ctx.textAlign='center';ctx.textBaseline='middle';
+  ticks.forEach(t=>{
+    let a=p2a(t);
+    let tx=cx+(rad*1.22)*Math.cos(a), ty=cy+(rad*1.22)*Math.sin(a);
+    ctx.fillText(t+'%',tx,ty);
+  });
+
+  // center value
+  ctx.font='bold 28px sans-serif';ctx.fillStyle=valColor;ctx.textAlign='center';
+  ctx.fillText(value.toFixed(1)+'%',cx,cy+12);
+
+  // status
+  let sl=statusLabel(valColor);
+  ctx.font='bold 12px sans-serif';ctx.fillStyle=valColor;
+  ctx.fillText('● '+sl,cx,cy+36);
+
+  // delta badge
+  if(oldVal!=null){
+    let higherGood=mode==='discharge';
+    let da=deltaArrow(value,oldVal,higherGood);
+    ctx.font='bold 11px sans-serif';ctx.fillStyle=da.c;
+    ctx.fillText(da.a+' '+da.t+'  vs '+prevLabel,cx,cy+56);
+  }
+}
+
+/* ========== MAIN GENERATE ========== */
+async function generate(){
+  let ct=await readFile(document.getElementById('clusterToday'));
+  let ft=await readFile(document.getElementById('facilityToday'));
+  if(!ct||!ft){alert('Please upload both Cluster_wise and Facility_wise CSVs for today.');return;}
+
+  let cp=await readFile(document.getElementById('clusterPrev'));
+  let fp=await readFile(document.getElementById('facilityPrev'));
+
+  let clusterToday=parseCSV(ct);
+  let facilityToday=parseCSV(ft);
+  let clusterPrev=cp?parseCSV(cp):null;
+  let facilityPrev=fp?parseCSV(fp):null;
+
+  if(!clusterToday.length||!facilityToday.length){alert('CSV files appear empty or malformed.');return;}
+
+  // numeric conversion
+  const numCols=['OPD BOOKED TODAY','Total_Arrived_Patients','Discharged_Patients','Patients_With_Diagnosis','Patients_Without_Diagnosis'];
+  [clusterToday,facilityToday,clusterPrev,facilityPrev].forEach(ds=>{
+    if(!ds)return;
+    ds.forEach(r=>numCols.forEach(c=>{if(c in r)r[c]=parseFloat(r[c])||0;}));
+  });
+
+  // compute old rates
+  let oldCluster=null, oldFacility=null, prevLabel='';
+  if(clusterPrev){
+    let tArr=0,tDis=0,tNdx=0;
+    clusterPrev.forEach(r=>{tArr+=r.Total_Arrived_Patients;tDis+=r.Discharged_Patients;tNdx+=r.Patients_Without_Diagnosis;});
+    oldCluster={discharge_rate:safePct(tDis,tArr),ndx_rate:safePct(tNdx,tArr)};
+    oldFacility={};
+    clusterPrev.forEach(r=>{
+      let a=r.Total_Arrived_Patients;
+      oldFacility[r.Facility_Name]={ndx:safePct(r.Patients_Without_Diagnosis,a),dis:safePct(r.Discharged_Patients,a)};
+    });
+    // extract date from filename if possible
+    let fn=document.getElementById('clusterPrev').files[0].name;
+    let m=fn.match(/(\d{4}-\d{2}-\d{2})/);
+    if(m){let d=new Date(m[1]+'T00:00:00');prevLabel=d.toLocaleDateString('en',{month:'short',day:'numeric'});}
+    else prevLabel='Previous';
+  }
+
+  // BUILD PAGES
+  let pages=document.getElementById('pages');
+  pages.innerHTML='';
+
+  // Page 1: Cluster Dashboard
+  buildClusterPage(pages,clusterToday,facilityToday,oldCluster,oldFacility,prevLabel);
+
+  // Page 2+: Facility pages
+  let facOrder=[...clusterToday].sort((a,b)=>b.Total_Arrived_Patients-a.Total_Arrived_Patients);
+  let allFacNames=[...new Set(facilityToday.map(r=>r.Facility_Name))];
+  facOrder.forEach(fac=>{
+    let fn=fac.Facility_Name;
+    if(!allFacNames.includes(fn))return;
+    let fdf=facilityToday.filter(r=>r.Facility_Name===fn);
+    if(fdf.reduce((s,r)=>s+r.Total_Arrived_Patients,0)===0)return;
+    buildFacilityPage(pages,fdf,fn,oldFacility,prevLabel);
+  });
+
+  document.getElementById('uploadZone').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+}
+
+/* ========== CLUSTER PAGE ========== */
+function buildClusterPage(container,facData,clinicData,oldCluster,oldFacility,prevLabel){
+  let tBooked=0,tArr=0,tDis=0,tWdx=0,tNdx=0;
+  facData.forEach(r=>{tBooked+=r['OPD BOOKED TODAY'];tArr+=r.Total_Arrived_Patients;tDis+=r.Discharged_Patients;tWdx+=r.Patients_With_Diagnosis;tNdx+=r.Patients_Without_Diagnosis;});
+  let remaining=tArr-tDis;
+  let arrRate=safePct(tArr,tBooked),disRate=safePct(tDis,tArr),ndxRate=safePct(tNdx,tArr);
+
+  let page=document.createElement('div');page.className='page';
+
+  // header
+  let hdr=document.createElement('div');hdr.className='page-header';
+  hdr.innerHTML=`<h2>Madinah Cluster</h2><span>Health Information Management · ${new Date().toLocaleDateString('en',{year:'numeric',month:'long',day:'numeric'})}</span>`;
+  page.appendChild(hdr);
+
+  // gauges
+  let gr=document.createElement('div');gr.className='gauges-row';
+  gr.appendChild(makeGaugeBox('Overall Discharge Rate','Target ≥ 90%',disRate,100,'discharge',oldCluster?oldCluster.discharge_rate:null,prevLabel));
+  gr.appendChild(makeGaugeBox('Without Diagnosis Rate','Target ≤ 10%',ndxRate,100,'risk',oldCluster?oldCluster.ndx_rate:null,prevLabel));
+  page.appendChild(gr);
+
+  // KPI cards
+  let kr=document.createElement('div');kr.className='kpi-row';
+  [[' Booked',tBooked,C.blue,null],['Arrived',tArr,C.blue,arrRate.toFixed(1)+'%'],
+   ['Without Dx',tNdx,riskColor(ndxRate),ndxRate.toFixed(1)+'%'],['With Dx',tWdx,C.low,null],
+   ['Discharged',tDis,discColor(disRate),disRate.toFixed(1)+'%'],['Remaining',remaining,C.med,null]
+  ].forEach(([l,v,c,s])=>kr.appendChild(makeKPI(l,v,c,s)));
+  page.appendChild(kr);
+
+  // bar chart - Without Dx rate by facility
+  let validFac=facData.filter(r=>r.Total_Arrived_Patients>0).map(r=>({
+    name:r.Facility_Name,
+    arr:r.Total_Arrived_Patients,
+    rate:safePct(r.Patients_Without_Diagnosis,r.Total_Arrived_Patients)
+  })).sort((a,b)=>a.rate-b.rate);
+
+  let barSec=document.createElement('div');barSec.className='bar-section';
+  barSec.innerHTML=`<h3>Without Diagnosis Rate by Facility${prevLabel?' — vs '+prevLabel:''}</h3>`;
+  validFac.forEach(f=>{
+    let oldR=oldFacility&&oldFacility[f.name]?oldFacility[f.name].ndx:null;
+    barSec.appendChild(makeBarItem(f.name,f.arr+' arrived',f.rate,riskColor(f.rate),riskLight(f.rate),oldR,false,prevLabel));
+  });
+  page.appendChild(barSec);
+
+  // summary table
+  let tw=document.createElement('div');tw.className='tbl-wrap';
+  tw.innerHTML='<h3>Facility Summary</h3>';
+  let tbl=document.createElement('table');tbl.className='dash';
+  let thead='<tr><th>Facility</th><th>Booked</th><th>Arrived</th><th>Arrival %</th><th>No Dx</th><th>With Dx</th><th>Discharged</th><th>No Dx %</th><th>Discharge %</th></tr>';
+  let tbody='';
+  [...facData].sort((a,b)=>b.Total_Arrived_Patients-a.Total_Arrived_Patients).forEach(r=>{
+    let b=r['OPD BOOKED TODAY'],a=r.Total_Arrived_Patients,n=r.Patients_Without_Diagnosis,w=r.Patients_With_Diagnosis,d=r.Discharged_Patients;
+    let ar=safePct(a,b),nr=safePct(n,a),dr=safePct(d,a);
+    let nBg=a>0?riskColor(nr)+'22':'';
+    let dBg=a>0?discColor(dr)+'22':'';
+    tbody+=`<tr><td>${r.Facility_Name}</td><td>${fmt(b)}</td><td>${fmt(a)}</td><td>${ar.toFixed(1)}%</td><td>${fmt(n)}</td><td>${fmt(w)}</td><td>${fmt(d)}</td><td style="background:${nBg}">${a?nr.toFixed(1)+'%':'—'}</td><td style="background:${dBg}">${a?dr.toFixed(1)+'%':'—'}</td></tr>`;
+  });
+  tbl.innerHTML=thead+tbody;
+  tw.appendChild(tbl);
+  page.appendChild(tw);
+
+  // legend
+  page.appendChild(makeLegend());
+  container.appendChild(page);
+}
+
+/* ========== FACILITY PAGE ========== */
+function buildFacilityPage(container,clinicData,facName,oldFacility,prevLabel){
+  let tArr=0,tNdx=0,tWdx=0,tDis=0;
+  clinicData.forEach(r=>{tArr+=r.Total_Arrived_Patients;tNdx+=r.Patients_Without_Diagnosis;tWdx+=r.Patients_With_Diagnosis;tDis+=r.Discharged_Patients;});
+  let remaining=tArr-tDis;
+  let ndxRate=safePct(tNdx,tArr),disRate=safePct(tDis,tArr);
+  let oldNdx=null,oldDis=null;
+  if(oldFacility&&oldFacility[facName]){oldNdx=oldFacility[facName].ndx;oldDis=oldFacility[facName].dis;}
+
+  let page=document.createElement('div');page.className='page';
+
+  let hdr=document.createElement('div');hdr.className='page-header';
+  hdr.innerHTML=`<h2>${facName}</h2><span>Health Information Management · ${new Date().toLocaleDateString('en',{year:'numeric',month:'long',day:'numeric'})}</span>`;
+  page.appendChild(hdr);
+
+  let gr=document.createElement('div');gr.className='gauges-row';
+  gr.appendChild(makeGaugeBox('Overall Discharge Rate','Target ≥ 90%',disRate,100,'discharge',oldDis,prevLabel));
+  gr.appendChild(makeGaugeBox('Without Diagnosis Rate','Target ≤ 10%',ndxRate,100,'risk',oldNdx,prevLabel));
+  page.appendChild(gr);
+
+  let kr=document.createElement('div');kr.className='kpi-row';
+  [['Total Arrived',tArr,C.blue,null],['Without Dx',tNdx,riskColor(ndxRate),ndxRate.toFixed(1)+'%'],
+   ['With Dx',tWdx,C.low,null],['Discharged',tDis,discColor(disRate),disRate.toFixed(1)+'%'],
+   ['Remaining',remaining,C.med,null]
+  ].forEach(([l,v,c,s])=>kr.appendChild(makeKPI(l,v,c,s)));
+  page.appendChild(kr);
+
+  // clinic table
+  let tw=document.createElement('div');tw.className='tbl-wrap';
+  tw.innerHTML='<h3>Clinic Summary Table</h3>';
+  let tbl=document.createElement('table');tbl.className='dash';
+  let thead='<tr><th>Clinic</th><th>Arrived</th><th>No Dx</th><th>With Dx</th><th>Discharged</th><th>No Dx %</th><th>Discharge %</th></tr>';
+  let tbody='';
+  [...clinicData].sort((a,b)=>(a.Clinic_Name||'').localeCompare(b.Clinic_Name||'')).forEach(r=>{
+    let a=r.Total_Arrived_Patients,n=r.Patients_Without_Diagnosis,w=r.Patients_With_Diagnosis,d=r.Discharged_Patients;
+    let nr=safePct(n,a),dr=safePct(d,a);
+    tbody+=`<tr><td>${r.Clinic_Name||''}</td><td>${fmt(a)}</td><td>${fmt(n)}</td><td>${fmt(w)}</td><td>${fmt(d)}</td><td style="background:${riskColor(nr)}22">${nr.toFixed(1)}%</td><td style="background:${discColor(dr)}22">${dr.toFixed(1)}%</td></tr>`;
+  });
+  tbl.innerHTML=thead+tbody;
+  tw.appendChild(tbl);
+  page.appendChild(tw);
+
+  page.appendChild(makeLegend());
+  container.appendChild(page);
+}
+
+/* ========== COMPONENTS ========== */
+function makeGaugeBox(title,target,value,maxVal,mode,oldVal,prevLabel){
+  let box=document.createElement('div');box.className='gauge-box';
+  box.innerHTML=`<h3>${title}</h3>`;
+  let canvas=document.createElement('canvas');canvas.width=320;canvas.height=200;
+  box.appendChild(canvas);
+  box.innerHTML+=`<div class="target">${target}</div>`;
+  setTimeout(()=>drawGauge(canvas,value,maxVal,mode,oldVal,prevLabel),10);
+  return box;
+}
+function makeKPI(label,val,color,sub){
+  let card=document.createElement('div');card.className='kpi-card';
+  card.innerHTML=`<div class="accent" style="background:${color}"></div><div class="val" style="color:${color}">${fmt(val)}</div><div class="lbl">${label}</div>${sub?`<div class="sub" style="color:${color}">${sub}</div>`:''}`;
+  return card;
+}
+function makeBarItem(name,subtext,rate,color,lightColor,oldRate,higherGood,prevLabel){
+  let item=document.createElement('div');item.className='bar-item';
+  let pct=Math.min(rate,100);
+  let deltaHtml='';
+  if(oldRate!=null){
+    let da=deltaArrow(rate,oldRate,higherGood);
+    deltaHtml=`<span class="bar-delta" style="color:${da.c}">${da.a} ${da.t}</span>`;
+  }
+  item.innerHTML=`<div class="bar-name">${name}<small>${subtext}</small></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><span class="bar-val" style="color:${color}">${rate.toFixed(1)}%</span>${deltaHtml}`;
+  return item;
+}
+function makeLegend(){
+  let l=document.createElement('div');l.className='legend-row';
+  l.innerHTML=`<span><span class="legend-dot" style="background:${C.low}"></span>Good</span><span><span class="legend-dot" style="background:${C.med}"></span>Moderate</span><span><span class="legend-dot" style="background:${C.high}"></span>Needs Attention</span>`;
+  return l;
+}
+
+/* ========== DOWNLOAD ========== */
+async function downloadAll(){
+  // Use html2canvas via CDN
+  if(!window.html2canvas){
+    let s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    document.head.appendChild(s);
+    await new Promise(r=>s.onload=r);
+  }
+  let pages=document.querySelectorAll('#pages .page');
+  for(let i=0;i<pages.length;i++){
+    let canvas=await html2canvas(pages[i],{scale:2,backgroundColor:'#f0f2f5',useCORS:true});
+    let link=document.createElement('a');
+    link.download=`OPD_Dashboard_Page_${i+1}.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    await new Promise(r=>setTimeout(r,500));
+  }
+}
+
+function resetAll(){
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('pages').innerHTML='';
+  ['clusterToday','facilityToday','clusterPrev','facilityPrev'].forEach(id=>document.getElementById(id).value='');
+  ['cn1','cn2','cn3','cn4'].forEach(id=>document.getElementById(id).textContent='');
+}
+</script>
+</body>
+</html>
