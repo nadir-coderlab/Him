@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1a2332; }
@@ -25,44 +24,32 @@
     <div class="max-w-7xl mx-auto upload-section shadow-sm flex flex-col md:flex-row items-center justify-between gap-4" id="uploadSection">
         <div>
             <h2 class="text-lg font-bold text-[#1a2332]">Upload Today's CSV Files</h2>
-            <p class="text-sm text-gray-500">Please upload both <span class="font-bold">Facility_wise</span> and <span class="font-bold">Cluster_wise</span> CSVs together.</p>
+            <p class="text-sm text-gray-500">Please upload both Facility_wise and Cluster_wise CSVs together.</p>
         </div>
         <input type="file" id="csvFiles" multiple accept=".csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#2980b9] file:text-white hover:file:bg-[#1a5276]" />
     </div>
 
-    <div id="dashboard" class="max-w-7xl mx-auto hidden bg-[#f0f2f5] pb-6">
+    <div id="dashboard" class="max-w-7xl mx-auto hidden">
         
         <div class="bg-[#1a2332] text-white p-6 rounded-t-xl flex justify-between items-center mb-6">
-            <div>
-                <h1 class="text-3xl font-bold">Madinah Cluster</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <button id="downloadPdfBtn" class="bg-[#2980b9] hover:bg-[#1a5276] text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                    Download PDF
-                </button>
-                <div class="text-right text-[#bdc3c7] text-sm">
-                    Health Information Management<br>
-                    <span id="currentDate"></span>
-                </div>
+            <h1 class="text-3xl font-bold">Madinah Cluster</h1>
+            <div class="text-right text-[#bdc3c7] text-sm">
+                Health Information Management<br>
+                <span id="currentDate"></span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-[#dce1e8] flex flex-col items-center">
                 <h3 class="font-bold text-lg mb-2">Overall Discharge Rate</h3>
-                <div id="gaugeDischarge" style="width: 100%; height: 200px;"></div>
+                <div id="gaugeDischarge" style="width: 100%; height: 220px;"></div>
                 <p class="text-[#27ae60] font-bold text-sm mt-[-20px]">Target ≥ 90%</p>
-                <p id="gapDis" class="text-xs font-bold text-[#e74c3c] mt-2 bg-[#fadbd8] px-2 py-1 rounded hidden"></p>
             </div>
 
             <div class="bg-white p-4 rounded-xl shadow-sm border border-[#dce1e8] flex flex-col items-center">
                 <h3 class="font-bold text-lg mb-2">Without Diagnosis Rate</h3>
-                <div id="gaugeNoDx" style="width: 100%; height: 200px;"></div>
+                <div id="gaugeNoDx" style="width: 100%; height: 220px;"></div>
                 <p class="text-[#27ae60] font-bold text-sm mt-[-20px]">Target ≤ 10%</p>
-                <p id="gapNdx" class="text-xs font-bold text-[#e74c3c] mt-2 bg-[#fadbd8] px-2 py-1 rounded hidden"></p>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -102,36 +89,12 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 px-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-[#dce1e8]">
-                <h3 class="font-bold text-md mb-3 flex items-center gap-2">
-                    <span class="text-[#e74c3c]">⚠️</span> Top 5 Clinics Missing Diagnosis (Action Required)
-                </h3>
-                <table id="top5Table" class="w-full text-sm mt-2">
-                    <thead>
-                        <tr>
-                            <th class="text-left text-xs bg-[#f0f2f5] text-[#1a2332] p-2 border-b">Clinic</th>
-                            <th class="text-left text-xs bg-[#f0f2f5] text-[#1a2332] p-2 border-b">Facility</th>
-                            <th class="text-xs bg-[#f0f2f5] text-[#1a2332] p-2 border-b">Arrived</th>
-                            <th class="text-xs bg-[#fadbd8] text-[#e74c3c] p-2 border-b">No Dx Count</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-[#dce1e8]">
-                <h3 class="font-bold text-md mb-2">Without Diagnosis Rate by Clinic Type</h3>
-                <div id="clinicTypeChart" style="width: 100%; height: 200px;"></div>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-[#dce1e8] mb-6 mx-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-[#dce1e8] mb-8">
             <h3 class="font-bold text-lg mb-4">Without Diagnosis Rate by Facility</h3>
-            <div id="barChart" style="width: 100%; height: 350px;"></div>
+            <div id="barChart" style="width: 100%; height: 400px;"></div>
         </div>
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-[#dce1e8] overflow-x-auto mx-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-[#dce1e8] overflow-x-auto">
             <h3 class="font-bold text-lg mb-4">Facility Summary</h3>
             <table id="summaryTable">
                 <thead>
@@ -147,14 +110,17 @@
                         <th>Discharge %</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    </tbody>
             </table>
         </div>
 
     </div>
 
     <script>
+        // الألوان من كود البايثون
         const C_LOW = "#27ae60", C_MED = "#f39c12", C_HIGH = "#e74c3c", C_BLUE = "#2980b9";
+        
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
         document.getElementById('csvFiles').addEventListener('change', function(e) {
@@ -170,6 +136,7 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
+                        // تنظيف البيانات وتخطي الصفوف الخاطئة لو وجدت
                         let data = results.data.filter(row => row.Facility_Name || row.Clinic_Name);
                         
                         if (files[i].name.includes("Facility")) {
@@ -180,7 +147,9 @@
                         
                         filesRead++;
                         if (filesRead === files.length) {
-                            processData(clusterData, facilityData);
+                            // استخدام بيانات Cluster لأنها تحتوي على المجاميع الخاصة بكل مستشفى
+                            const dataToUse = clusterData.length > 0 ? clusterData : facilityData;
+                            processData(dataToUse);
                             document.getElementById('uploadSection').classList.add('hidden');
                             document.getElementById('dashboard').classList.remove('hidden');
                         }
@@ -193,13 +162,11 @@
         function riskColor(r) { return r > 20 ? C_HIGH : (r > 10 ? C_MED : C_LOW); }
         function dischargeColor(r) { return r >= 70 ? C_LOW : (r >= 40 ? C_MED : C_HIGH); }
 
-        function processData(clusterData, facilityData) {
-            // بيانات المستشفيات والمجموع
-            let mainData = clusterData.length > 0 ? clusterData : facilityData;
+        function processData(data) {
             let totalBooked = 0, totalArr = 0, totalDis = 0, totalWdx = 0, totalNdx = 0;
             let facilities = [];
 
-            mainData.forEach(row => {
+            data.forEach(row => {
                 const booked = parseInt(row["OPD BOOKED TODAY"]) || 0;
                 const arr = parseInt(row["Total_Arrived_Patients"]) || 0;
                 const dis = parseInt(row["Discharged_Patients"]) || 0;
@@ -208,10 +175,9 @@
 
                 totalBooked += booked; totalArr += arr; totalDis += dis; totalWdx += wdx; totalNdx += ndx;
 
-                if (arr > 0 && !row.Clinic_Name) { 
-                    // عشان نجمع بيانات المستشفيات بس بدون تكرار
+                if (arr > 0) {
                     facilities.push({
-                        name: row["Facility_Name"],
+                        name: row["Facility_Name"] || row["Clinic_Name"],
                         booked, arr, dis, wdx, ndx,
                         ndxRate: safePct(ndx, arr),
                         disRate: safePct(dis, arr),
@@ -220,49 +186,12 @@
                 }
             });
 
-            // إذا ما كان في Cluster_wise، نجمع من Facility_wise يدوياً
-            if (facilities.length === 0 && facilityData.length > 0) {
-                let facMap = {};
-                facilityData.forEach(row => {
-                    let fac = row["Facility_Name"];
-                    if (!facMap[fac]) facMap[fac] = { name: fac, booked:0, arr:0, dis:0, wdx:0, ndx:0 };
-                    facMap[fac].booked += parseInt(row["OPD BOOKED TODAY"]) || 0;
-                    facMap[fac].arr += parseInt(row["Total_Arrived_Patients"]) || 0;
-                    facMap[fac].dis += parseInt(row["Discharged_Patients"]) || 0;
-                    facMap[fac].wdx += parseInt(row["Patients_With_Diagnosis"]) || 0;
-                    facMap[fac].ndx += parseInt(row["Patients_Without_Diagnosis"]) || 0;
-                });
-                facilities = Object.values(facMap).filter(f => f.arr > 0).map(f => ({
-                    ...f, ndxRate: safePct(f.ndx, f.arr), disRate: safePct(f.dis, f.arr), arrRate: safePct(f.arr, f.booked)
-                }));
-            }
-
-            // معالجة بيانات العيادات للإضافات الجديدة
-            let clinicTypeMap = {};
-            let allClinics = [];
-
-            if (facilityData.length > 0) {
-                facilityData.forEach(row => {
-                    let arr = parseInt(row["Total_Arrived_Patients"]) || 0;
-                    let ndx = parseInt(row["Patients_Without_Diagnosis"]) || 0;
-                    let type = row["Clinic Type"] || "Unspecified";
-                    let name = row["Clinic_Name"];
-                    
-                    if (arr > 0 && name) {
-                        allClinics.push({ name: name, facility: row["Facility_Name"], arr: arr, ndx: ndx });
-                        if (!clinicTypeMap[type]) clinicTypeMap[type] = { type: type, arr: 0, ndx: 0 };
-                        clinicTypeMap[type].arr += arr;
-                        clinicTypeMap[type].ndx += ndx;
-                    }
-                });
-            }
-
-            // 1. تحديث بطاقات KPI
             const overallArrRate = safePct(totalArr, totalBooked);
             const overallDisRate = safePct(totalDis, totalArr);
             const overallNdxRate = safePct(totalNdx, totalArr);
             const remaining = totalArr - totalDis;
 
+            // تحديث KPIs
             document.getElementById('kpiBooked').innerText = totalBooked.toLocaleString();
             document.getElementById('kpiArrived').innerText = totalArr.toLocaleString();
             document.getElementById('kpiArrivedPct').innerText = overallArrRate.toFixed(1) + '%';
@@ -274,62 +203,32 @@
             document.getElementById('kpiNoDxAccent').style.backgroundColor = riskColor(overallNdxRate);
 
             document.getElementById('kpiWithDx').innerText = totalWdx.toLocaleString();
+            
             document.getElementById('kpiDischarged').innerText = totalDis.toLocaleString();
             document.getElementById('kpiDischargedPct').innerText = overallDisRate.toFixed(1) + '%';
             document.getElementById('kpiDischarged').style.color = dischargeColor(overallDisRate);
             document.getElementById('kpiDischargedPct').style.color = dischargeColor(overallDisRate);
             document.getElementById('kpiDischargedAccent').style.backgroundColor = dischargeColor(overallDisRate);
+
             document.getElementById('kpiRemaining').innerText = remaining.toLocaleString();
 
+            // رسم العدادات
             drawGauge('gaugeDischarge', overallDisRate, 'discharge');
             drawGauge('gaugeNoDx', overallNdxRate, 'risk');
 
-            // 2. حساب الفجوة للهدف (الملفات المطلوبة للوصول للأخضر)
-            let gapNdx = Math.max(0, totalNdx - Math.floor(totalArr * 0.10));
-            let gapDis = Math.max(0, Math.ceil(totalArr * 0.90) - totalDis);
-            
-            if (gapNdx > 0) {
-                document.getElementById('gapNdx').innerText = `يحتاج إدخال تشخيص ${gapNdx.toLocaleString()} ملف مريض للوصول للهدف`;
-                document.getElementById('gapNdx').classList.remove('hidden');
-            }
-            if (gapDis > 0) {
-                document.getElementById('gapDis').innerText = `يحتاج إغلاق ${gapDis.toLocaleString()} ملف مريض للوصول للهدف`;
-                document.getElementById('gapDis').classList.remove('hidden');
-            }
-
-            // 3. أسوأ 5 عيادات
-            allClinics.sort((a, b) => b.ndx - a.ndx);
-            const tbodyTop5 = document.querySelector('#top5Table tbody');
-            tbodyTop5.innerHTML = '';
-            allClinics.slice(0, 5).forEach(c => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-left font-bold p-2 border-b text-[12px]">${c.name}</td>
-                    <td class="text-left text-gray-500 p-2 border-b text-[11px]">${c.facility.length > 25 ? c.facility.substring(0,25)+'...' : c.facility}</td>
-                    <td class="p-2 border-b">${c.arr}</td>
-                    <td class="font-bold text-[#e74c3c] bg-[#fadbd8] bg-opacity-30 p-2 border-b">${c.ndx}</td>
-                `;
-                tbodyTop5.appendChild(tr);
-            });
-
-            // 4. رسم أنواع العيادات
-            let clinicTypesData = Object.values(clinicTypeMap).map(c => ({
-                name: c.type,
-                value: safePct(c.ndx, c.arr)
-            })).sort((a, b) => a.value - b.value); // ترتيب تصاعدي لأن الرسمة أفقية
-            drawClinicTypeChart('clinicTypeChart', clinicTypesData);
-
-            // 5. باقي الجداول والرسومات الأصلية
+            // ترتيب المرافق للرسم البياني والجدول (حسب النسبة)
             facilities.sort((a, b) => a.ndxRate - b.ndxRate);
             drawBarChart('barChart', facilities);
             
-            facilities.sort((a, b) => b.arr - a.arr);
+            // تعبئة الجدول
+            facilities.sort((a, b) => b.arr - a.arr); // ترتيب الجدول حسب الحضور
             const tbody = document.querySelector('#summaryTable tbody');
             tbody.innerHTML = '';
             facilities.forEach(f => {
                 const tr = document.createElement('tr');
-                const ndxColor = riskColor(f.ndxRate) + '22';
+                const ndxColor = riskColor(f.ndxRate) + '22'; // شفافة شوي
                 const disColor = dischargeColor(f.disRate) + '22';
+                
                 tr.innerHTML = `
                     <td style="text-align: left; font-weight: bold;">${f.name.substring(0, 40)}</td>
                     <td>${f.booked.toLocaleString()}</td>
@@ -348,14 +247,27 @@
         function drawGauge(elementId, value, mode) {
             const chart = echarts.init(document.getElementById(elementId));
             const color = mode === 'risk' ? riskColor(value) : dischargeColor(value);
+            
             const option = {
                 series: [{
-                    type: 'gauge', startAngle: 180, endAngle: 0, min: 0, max: 100, splitNumber: 5,
-                    itemStyle: { color: color }, progress: { show: true, width: 20 },
-                    pointer: { show: true, length: '60%', width: 5 },
-                    axisLine: { lineStyle: { width: 20, color: [[1, '#e8ecf0']] } },
-                    axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
-                    detail: { formatter: '{value}%', color: color, fontSize: 24, fontWeight: 'bold', offsetCenter: [0, '25%'] },
+                    type: 'gauge',
+                    startAngle: 180, endAngle: 0,
+                    min: 0, max: 100, splitNumber: 5,
+                    itemStyle: { color: color },
+                    progress: { show: true, width: 25 },
+                    pointer: { show: true, length: '60%', width: 6 },
+                    axisLine: { lineStyle: { width: 25, color: [[1, '#e8ecf0']] } },
+                    axisTick: { show: false },
+                    splitLine: { show: false },
+                    axisLabel: { show: false },
+                    detail: {
+                        valueAnimation: true,
+                        formatter: '{value}%',
+                        color: color,
+                        fontSize: 28,
+                        fontWeight: 'bold',
+                        offsetCenter: [0, '30%']
+                    },
                     data: [{ value: value.toFixed(1) }]
                 }]
             };
@@ -367,51 +279,28 @@
             const names = data.map(d => d.name.length > 25 ? d.name.substring(0, 25) + '...' : d.name);
             const values = data.map(d => parseFloat(d.ndxRate.toFixed(1)));
             const colors = data.map(d => riskColor(d.ndxRate));
+
             const option = {
                 grid: { left: '25%', right: '10%', top: '5%', bottom: '5%' },
                 xAxis: { type: 'value', max: 100, show: false },
-                yAxis: { type: 'category', data: names, axisLine: {show: false}, axisTick: {show: false}, axisLabel: {fontWeight: 'bold', color: '#1a2332', fontSize: 10} },
+                yAxis: { type: 'category', data: names, axisLine: {show: false}, axisTick: {show: false}, axisLabel: {fontWeight: 'bold', color: '#1a2332'} },
                 series: [{
-                    type: 'bar', data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [0, 8, 8, 0] } })),
-                    barWidth: '45%', label: { show: true, position: 'right', formatter: '{c}%', fontWeight: 'bold', fontSize: 11 },
-                    showBackground: true, backgroundStyle: { color: '#eaecf0', borderRadius: [0, 8, 8, 0] }
-                }]
-            };
-            chart.setOption(option);
-        }
-
-        function drawClinicTypeChart(elementId, data) {
-            const chart = echarts.init(document.getElementById(elementId));
-            const option = {
-                tooltip: { formatter: '{b}: {c}%' },
-                grid: { left: '30%', right: '15%', top: '10%', bottom: '5%' },
-                xAxis: { type: 'value', show: false },
-                yAxis: { type: 'category', data: data.map(d => d.name), axisLine: {show: false}, axisTick: {show: false}, axisLabel: {fontWeight: 'bold', fontSize: 11} },
-                series: [{
-                    type: 'bar', data: data.map(d => ({ value: parseFloat(d.value.toFixed(1)), itemStyle: { color: riskColor(d.value), borderRadius: [0, 4, 4, 0] } })),
-                    barWidth: '50%', label: { show: true, position: 'right', formatter: '{c}%', fontWeight: 'bold', fontSize: 10 },
-                    showBackground: true, backgroundStyle: { color: '#eaecf0', borderRadius: [0, 4, 4, 0] }
+                    type: 'bar',
+                    data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [0, 10, 10, 0] } })),
+                    barWidth: '50%',
+                    label: { show: true, position: 'right', formatter: '{c}%', fontWeight: 'bold' },
+                    showBackground: true,
+                    backgroundStyle: { color: '#eaecf0', borderRadius: [0, 10, 10, 0] }
                 }]
             };
             chart.setOption(option);
         }
         
+        // إعادة تحجيم الرسوم عند تغيير حجم الشاشة
         window.addEventListener('resize', function() {
-            ['gaugeDischarge', 'gaugeNoDx', 'barChart', 'clinicTypeChart'].forEach(id => {
-                echarts.getInstanceByDom(document.getElementById(id))?.resize();
-            });
-        });
-
-        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-            const element = document.getElementById('dashboard');
-            const btn = this;
-            btn.style.display = 'none';
-            const opt = {
-                margin: [0.3, 0.3, 0.3, 0.3], filename: 'Clinical_Documentation_Dashboard.pdf',
-                image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save().then(() => { btn.style.display = 'flex'; });
+            echarts.getInstanceByDom(document.getElementById('gaugeDischarge'))?.resize();
+            echarts.getInstanceByDom(document.getElementById('gaugeNoDx'))?.resize();
+            echarts.getInstanceByDom(document.getElementById('barChart'))?.resize();
         });
     </script>
 </body>
