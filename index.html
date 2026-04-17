@@ -1,307 +1,246 @@
+```html
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPD Dashboard - Madinah Cluster</title>
+    <title>الملخص التعريفي - مبادرة نسك ولياقة ١٤٤٧هـ</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: '#1B2A47',
+                        emerald: '#4A8B71',
+                        gold: '#C5A059',
+                        bglight: '#F8F9FA',
+                        graytext: '#4B5563'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1a2332; }
-        .kpi-card { background: #ffffff; border: 1px solid #dce1e8; border-radius: 12px; position: relative; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .kpi-accent { position: absolute; bottom: 8px; left: 5%; width: 90%; height: 6px; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; background: white; text-align: center; font-size: 0.85rem; }
-        th { background-color: #2c3e50; color: white; padding: 10px; font-weight: bold; }
-        td { border: 1px solid #dce1e8; padding: 8px; }
-        tr:nth-child(even) { background-color: #f7f9fc; }
-        .upload-section { background: white; padding: 20px; border-radius: 12px; border: 1px dashed #2980b9; margin-bottom: 20px; }
+        body {
+            background-color: #E5E7EB; /* خلفية متصفح رمادية */
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+
+        .document-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            border: 1px solid #F3F4F6;
+        }
+
+        .section-header {
+            padding: 1.5rem 2.5rem;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-body {
+            padding: 2.5rem;
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            background-color: #F8F9FA;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1B2A47;
+        }
     </style>
 </head>
-<body class="p-6">
+<body class="antialiased text-gray-800">
 
-    <div class="max-w-7xl mx-auto upload-section shadow-sm flex flex-col md:flex-row items-center justify-between gap-4" id="uploadSection">
-        <div>
-            <h2 class="text-lg font-bold text-[#1a2332]">Upload Today's CSV Files</h2>
-            <p class="text-sm text-gray-500">Please upload both Facility_wise and Cluster_wise CSVs together.</p>
-        </div>
-        <input type="file" id="csvFiles" multiple accept=".csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#2980b9] file:text-white hover:file:bg-[#1a5276]" />
-    </div>
+    <div class="document-container">
 
-    <div id="dashboard" class="max-w-7xl mx-auto hidden">
-        
-        <div class="bg-[#1a2332] text-white p-6 rounded-t-xl flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold">Madinah Cluster</h1>
-            <div class="text-right text-[#bdc3c7] text-sm">
-                Health Information Management<br>
-                <span id="currentDate"></span>
+        <!-- الغلاف والمقدمة -->
+        <section class="section-card border-t-8 border-t-emerald">
+            <div class="section-body text-center py-16">
+                <h3 class="text-xl font-bold text-gray-500 tracking-wide mb-4">إدارة التأهيل الطبي - تجمع المدينة المنورة الصحي</h3>
+                <h1 class="text-5xl font-black text-navy mb-4 leading-tight">مبادرة "نسك ولياقة"</h1>
+                <h2 class="text-2xl font-bold text-emerald mb-8">التحول من الرعاية العلاجية إلى الجاهزية الوقائية لحج ١٤٤٧هـ</h2>
+                <div class="h-1 w-24 bg-gold mx-auto mb-8"></div>
+                <p class="text-xl text-graytext max-w-3xl mx-auto leading-relaxed font-semibold">
+                    مبادرة استراتيجية ميدانية تهدف إلى تقييم وتهيئة الحجاج بدنياً وصحياً فور وصولهم للمدينة المنورة، للحد من المخاطر الصحية المرتبطة بأداء المناسك (كالإجهاد الحراري والتنفسي والعضلي) قبل حدوثها.
+                </p>
             </div>
-        </div>
+        </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-[#dce1e8] flex flex-col items-center">
-                <h3 class="font-bold text-lg mb-2">Overall Discharge Rate</h3>
-                <div id="gaugeDischarge" style="width: 100%; height: 220px;"></div>
-                <p class="text-[#27ae60] font-bold text-sm mt-[-20px]">Target ≥ 90%</p>
+        <!-- العوائد الاستراتيجية (Why) -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">العوائد الاستراتيجية والتشغيلية</h2>
             </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-[#dce1e8] flex flex-col items-center">
-                <h3 class="font-bold text-lg mb-2">Without Diagnosis Rate</h3>
-                <div id="gaugeNoDx" style="width: 100%; height: 220px;"></div>
-                <p class="text-[#27ae60] font-bold text-sm mt-[-20px]">Target ≤ 10%</p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="kpi-card p-4 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-gray-500">Booked</span>
-                    <span class="text-2xl font-bold text-[#2980b9]" id="kpiBooked">0</span>
-                    <div class="kpi-accent bg-[#2980b9]"></div>
-                </div>
-                <div class="kpi-card p-4 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-gray-500">Arrived</span>
-                    <span class="text-2xl font-bold text-[#2980b9]" id="kpiArrived">0</span>
-                    <span class="text-xs font-bold text-[#2980b9]" id="kpiArrivedPct">0%</span>
-                    <div class="kpi-accent bg-[#2980b9]"></div>
-                </div>
-                <div class="kpi-card p-4 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-gray-500">Without Dx</span>
-                    <span class="text-2xl font-bold" id="kpiNoDx">0</span>
-                    <span class="text-xs font-bold" id="kpiNoDxPct">0%</span>
-                    <div class="kpi-accent" id="kpiNoDxAccent"></div>
-                </div>
-                <div class="kpi-card p-4 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-gray-500">With Dx</span>
-                    <span class="text-2xl font-bold text-[#27ae60]" id="kpiWithDx">0</span>
-                    <div class="kpi-accent bg-[#27ae60]"></div>
-                </div>
-                <div class="kpi-card p-4 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-gray-500">Discharged</span>
-                    <span class="text-2xl font-bold" id="kpiDischarged">0</span>
-                    <span class="text-xs font-bold" id="kpiDischargedPct">0%</span>
-                    <div class="kpi-accent" id="kpiDischargedAccent"></div>
-                </div>
-                <div class="kpi-card p-4 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-gray-500">Remaining</span>
-                    <span class="text-2xl font-bold text-[#f39c12]" id="kpiRemaining">0</span>
-                    <div class="kpi-accent bg-[#f39c12]"></div>
+            <div class="section-body">
+                <p class="text-lg text-graytext mb-8 font-semibold leading-relaxed">
+                    تستهدف المبادرة تحقيق أثر ملموس ينعكس إيجاباً على أداء المنظومة الصحية خلال موسم الحج، ويتمثل في:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-navy">
+                        <h3 class="text-xl font-bold text-navy mb-3">١. خفض العبء على الطوارئ والعيادات</h3>
+                        <p class="text-graytext font-semibold">تقليل تدفق الحالات الطارئة الناتجة عن الإجهاد الحراري، السقوط، والشد العضلي الشديد من خلال الفرز والتدخل الوقائي المبكر.</p>
+                    </div>
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
+                        <h3 class="text-xl font-bold text-navy mb-3">٢. كفاءة الإنفاق الطبي</h3>
+                        <p class="text-graytext font-semibold">تخفيف التكاليف المرتبطة بالرعاية السريرية (التنويم، الأشعة، والأدوية) بالتحول إلى التدخلات الوقائية منخفضة التكلفة وعالية التأثير.</p>
+                    </div>
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-gold">
+                        <h3 class="text-xl font-bold text-navy mb-3">٣. إدارة الأمراض المزمنة استباقياً</h3>
+                        <p class="text-graytext font-semibold">الحد من تفاقم حالات مرضى الجهاز التنفسي (الربو و COPD) وتوجيه كبار السن لكيفية حفظ مجهودهم البدني أثناء أداء النسك.</p>
+                    </div>
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-navy">
+                        <h3 class="text-xl font-bold text-navy mb-3">٤. تحسين تجربة ضيوف الرحمن</h3>
+                        <p class="text-graytext font-semibold">الارتقاء بجودة الخدمات المقدمة للحاج، والمساهمة المباشرة في تحقيق مستهدفات رؤية المملكة 2030 (برنامج خدمة ضيوف الرحمن).</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-[#dce1e8] mb-8">
-            <h3 class="font-bold text-lg mb-4">Without Diagnosis Rate by Facility</h3>
-            <div id="barChart" style="width: 100%; height: 400px;"></div>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-[#dce1e8] overflow-x-auto">
-            <h3 class="font-bold text-lg mb-4">Facility Summary</h3>
-            <table id="summaryTable">
-                <thead>
-                    <tr>
-                        <th style="text-align: left;">Facility</th>
-                        <th>Booked</th>
-                        <th>Arrived</th>
-                        <th>Arrival %</th>
-                        <th>No Dx</th>
-                        <th>With Dx</th>
-                        <th>Discharged</th>
-                        <th>No Dx %</th>
-                        <th>Discharge %</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    </tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <script>
-        // الألوان من كود البايثون
-        const C_LOW = "#27ae60", C_MED = "#f39c12", C_HIGH = "#e74c3c", C_BLUE = "#2980b9";
-        
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-        document.getElementById('csvFiles').addEventListener('change', function(e) {
-            const files = e.target.files;
-            if (files.length === 0) return;
-
-            let clusterData = [];
-            let facilityData = [];
-            let filesRead = 0;
-
-            for (let i = 0; i < files.length; i++) {
-                Papa.parse(files[i], {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        // تنظيف البيانات وتخطي الصفوف الخاطئة لو وجدت
-                        let data = results.data.filter(row => row.Facility_Name || row.Clinic_Name);
-                        
-                        if (files[i].name.includes("Facility")) {
-                            facilityData = data;
-                        } else {
-                            clusterData = data;
-                        }
-                        
-                        filesRead++;
-                        if (filesRead === files.length) {
-                            // استخدام بيانات Cluster لأنها تحتوي على المجاميع الخاصة بكل مستشفى
-                            const dataToUse = clusterData.length > 0 ? clusterData : facilityData;
-                            processData(dataToUse);
-                            document.getElementById('uploadSection').classList.add('hidden');
-                            document.getElementById('dashboard').classList.remove('hidden');
-                        }
-                    }
-                });
-            }
-        });
-
-        function safePct(n, d) { return d ? ((n / d) * 100) : 0; }
-        function riskColor(r) { return r > 20 ? C_HIGH : (r > 10 ? C_MED : C_LOW); }
-        function dischargeColor(r) { return r >= 70 ? C_LOW : (r >= 40 ? C_MED : C_HIGH); }
-
-        function processData(data) {
-            let totalBooked = 0, totalArr = 0, totalDis = 0, totalWdx = 0, totalNdx = 0;
-            let facilities = [];
-
-            data.forEach(row => {
-                const booked = parseInt(row["OPD BOOKED TODAY"]) || 0;
-                const arr = parseInt(row["Total_Arrived_Patients"]) || 0;
-                const dis = parseInt(row["Discharged_Patients"]) || 0;
-                const wdx = parseInt(row["Patients_With_Diagnosis"]) || 0;
-                const ndx = parseInt(row["Patients_Without_Diagnosis"]) || 0;
-
-                totalBooked += booked; totalArr += arr; totalDis += dis; totalWdx += wdx; totalNdx += ndx;
-
-                if (arr > 0) {
-                    facilities.push({
-                        name: row["Facility_Name"] || row["Clinic_Name"],
-                        booked, arr, dis, wdx, ndx,
-                        ndxRate: safePct(ndx, arr),
-                        disRate: safePct(dis, arr),
-                        arrRate: safePct(arr, booked)
-                    });
-                }
-            });
-
-            const overallArrRate = safePct(totalArr, totalBooked);
-            const overallDisRate = safePct(totalDis, totalArr);
-            const overallNdxRate = safePct(totalNdx, totalArr);
-            const remaining = totalArr - totalDis;
-
-            // تحديث KPIs
-            document.getElementById('kpiBooked').innerText = totalBooked.toLocaleString();
-            document.getElementById('kpiArrived').innerText = totalArr.toLocaleString();
-            document.getElementById('kpiArrivedPct').innerText = overallArrRate.toFixed(1) + '%';
-            
-            document.getElementById('kpiNoDx').innerText = totalNdx.toLocaleString();
-            document.getElementById('kpiNoDxPct').innerText = overallNdxRate.toFixed(1) + '%';
-            document.getElementById('kpiNoDx').style.color = riskColor(overallNdxRate);
-            document.getElementById('kpiNoDxPct').style.color = riskColor(overallNdxRate);
-            document.getElementById('kpiNoDxAccent').style.backgroundColor = riskColor(overallNdxRate);
-
-            document.getElementById('kpiWithDx').innerText = totalWdx.toLocaleString();
-            
-            document.getElementById('kpiDischarged').innerText = totalDis.toLocaleString();
-            document.getElementById('kpiDischargedPct').innerText = overallDisRate.toFixed(1) + '%';
-            document.getElementById('kpiDischarged').style.color = dischargeColor(overallDisRate);
-            document.getElementById('kpiDischargedPct').style.color = dischargeColor(overallDisRate);
-            document.getElementById('kpiDischargedAccent').style.backgroundColor = dischargeColor(overallDisRate);
-
-            document.getElementById('kpiRemaining').innerText = remaining.toLocaleString();
-
-            // رسم العدادات
-            drawGauge('gaugeDischarge', overallDisRate, 'discharge');
-            drawGauge('gaugeNoDx', overallNdxRate, 'risk');
-
-            // ترتيب المرافق للرسم البياني والجدول (حسب النسبة)
-            facilities.sort((a, b) => a.ndxRate - b.ndxRate);
-            drawBarChart('barChart', facilities);
-            
-            // تعبئة الجدول
-            facilities.sort((a, b) => b.arr - a.arr); // ترتيب الجدول حسب الحضور
-            const tbody = document.querySelector('#summaryTable tbody');
-            tbody.innerHTML = '';
-            facilities.forEach(f => {
-                const tr = document.createElement('tr');
-                const ndxColor = riskColor(f.ndxRate) + '22'; // شفافة شوي
-                const disColor = dischargeColor(f.disRate) + '22';
+        <!-- آلية العمل الميداني (How & Where) -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">الاستهداف وآلية التنفيذ الميداني</h2>
+            </div>
+            <div class="section-body">
                 
-                tr.innerHTML = `
-                    <td style="text-align: left; font-weight: bold;">${f.name.substring(0, 40)}</td>
-                    <td>${f.booked.toLocaleString()}</td>
-                    <td>${f.arr.toLocaleString()}</td>
-                    <td>${f.arrRate.toFixed(1)}%</td>
-                    <td>${f.ndx.toLocaleString()}</td>
-                    <td>${f.wdx.toLocaleString()}</td>
-                    <td>${f.dis.toLocaleString()}</td>
-                    <td style="background-color: ${ndxColor}; font-weight:bold; color: ${riskColor(f.ndxRate)}">${f.ndxRate.toFixed(1)}%</td>
-                    <td style="background-color: ${disColor}; font-weight:bold; color: ${dischargeColor(f.disRate)}">${f.disRate.toFixed(1)}%</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+                <h3 class="text-2xl font-bold text-navy mb-4">النطاق المكاني (نقاط التواجد)</h3>
+                <p class="text-lg text-graytext mb-6 font-semibold">
+                    يتم استهداف الحجاج في النقاط ذات الكثافة العالية لضمان الوصول لأكبر شريحة ممكنة قبل البدء الفعلي بأداء المناسك المجهدة:
+                </p>
+                
+                <div class="flex flex-wrap gap-4 mb-10">
+                    <span class="px-5 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مطار الأمير محمد بن عبدالعزيز</span>
+                    <span class="px-5 py-2 bg-navy/10 text-navy font-bold rounded-lg border border-navy/20">مستشفى الميقات</span>
+                    <span class="px-5 py-2 bg-navy/10 text-navy font-bold rounded-lg border border-navy/20">مستشفى السلام</span>
+                    <span class="px-5 py-2 bg-navy/10 text-navy font-bold rounded-lg border border-navy/20">مستشفى الملك فهد</span>
+                    <span class="px-5 py-2 bg-gold/10 text-yellow-800 font-bold rounded-lg border border-gold/30">مركز صحي قباء</span>
+                    <span class="px-5 py-2 bg-gold/10 text-yellow-800 font-bold rounded-lg border border-gold/30">مركز صحي باقدو</span>
+                </div>
 
-        function drawGauge(elementId, value, mode) {
-            const chart = echarts.init(document.getElementById(elementId));
-            const color = mode === 'risk' ? riskColor(value) : dischargeColor(value);
-            
-            const option = {
-                series: [{
-                    type: 'gauge',
-                    startAngle: 180, endAngle: 0,
-                    min: 0, max: 100, splitNumber: 5,
-                    itemStyle: { color: color },
-                    progress: { show: true, width: 25 },
-                    pointer: { show: true, length: '60%', width: 6 },
-                    axisLine: { lineStyle: { width: 25, color: [[1, '#e8ecf0']] } },
-                    axisTick: { show: false },
-                    splitLine: { show: false },
-                    axisLabel: { show: false },
-                    detail: {
-                        valueAnimation: true,
-                        formatter: '{value}%',
-                        color: color,
-                        fontSize: 28,
-                        fontWeight: 'bold',
-                        offsetCenter: [0, '30%']
-                    },
-                    data: [{ value: value.toFixed(1) }]
-                }]
-            };
-            chart.setOption(option);
-        }
+                <h3 class="text-2xl font-bold text-navy mb-4 border-t pt-8">مسار الحاج (كيف يتم التقييم والتدخل؟)</h3>
+                <p class="text-lg text-graytext mb-6 font-semibold">
+                    يتم تخصيص مساحات محددة (أكشاك أو منصات توجيه) في المواقع المذكورة لعمل مسار سريع (Fast Track) يمر به الحاج وفق الخطوات التالية:
+                </p>
 
-        function drawBarChart(elementId, data) {
-            const chart = echarts.init(document.getElementById(elementId));
-            const names = data.map(d => d.name.length > 25 ? d.name.substring(0, 25) + '...' : d.name);
-            const values = data.map(d => parseFloat(d.ndxRate.toFixed(1)));
-            const colors = data.map(d => riskColor(d.ndxRate));
+                <div class="relative pl-8 rtl:pr-8 rtl:pl-0 space-y-8 before:absolute before:inset-y-0 before:right-3.5 before:w-0.5 before:bg-gray-200">
+                    <!-- الخطوة 1 -->
+                    <div class="relative">
+                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">١</div>
+                        <h4 class="text-xl font-bold text-navy">الفرز والتقييم المبدئي (Screening)</h4>
+                        <p class="text-graytext mt-2 font-semibold">بمجرد توجيه الحاج للمنصة، يتم قياس العلامات الحيوية (الضغط، السكر)، وإجراء تقييم سريع للتوازن (Dynamic Balance) والجهاز الهيكلي العضلي (MSK Screening) للتعرف على كبار السن وذوي الخطورة العالية.</p>
+                    </div>
+                    <!-- الخطوة 2 -->
+                    <div class="relative">
+                        <div class="absolute -right-8 bg-gold text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">٢</div>
+                        <h4 class="text-xl font-bold text-navy">التدخل التأهيلي السريع</h4>
+                        <p class="text-graytext mt-2 font-semibold">بناءً على التقييم، يتم تقديم الجلسة المناسبة في نفس الموقع (تدريب على تمارين التنفس لمرضى الربو، تمارين الإطالة للشد العضلي، أو تعديل طريقة استخدام العكازات لتجنب السقوط).</p>
+                    </div>
+                    <!-- الخطوة 3 -->
+                    <div class="relative">
+                        <div class="absolute -right-8 bg-navy text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">٣</div>
+                        <h4 class="text-xl font-bold text-navy">التثقيف والتمكين (الاستدامة)</h4>
+                        <p class="text-graytext mt-2 font-semibold">تزويد الحاج بملخص مرئي (أو عبر رمز الاستجابة QR) يحتوي على خطة مبسطة لكيفية التعامل مع الإجهاد الحراري، وبرنامج 6 دقائق اليومي لزيادة القوة العضلية أثناء التواجد في المشاعر.</p>
+                    </div>
+                </div>
 
-            const option = {
-                grid: { left: '25%', right: '10%', top: '5%', bottom: '5%' },
-                xAxis: { type: 'value', max: 100, show: false },
-                yAxis: { type: 'category', data: names, axisLine: {show: false}, axisTick: {show: false}, axisLabel: {fontWeight: 'bold', color: '#1a2332'} },
-                series: [{
-                    type: 'bar',
-                    data: values.map((v, i) => ({ value: v, itemStyle: { color: colors[i], borderRadius: [0, 10, 10, 0] } })),
-                    barWidth: '50%',
-                    label: { show: true, position: 'right', formatter: '{c}%', fontWeight: 'bold' },
-                    showBackground: true,
-                    backgroundStyle: { color: '#eaecf0', borderRadius: [0, 10, 10, 0] }
-                }]
-            };
-            chart.setOption(option);
-        }
-        
-        // إعادة تحجيم الرسوم عند تغيير حجم الشاشة
-        window.addEventListener('resize', function() {
-            echarts.getInstanceByDom(document.getElementById('gaugeDischarge'))?.resize();
-            echarts.getInstanceByDom(document.getElementById('gaugeNoDx'))?.resize();
-            echarts.getInstanceByDom(document.getElementById('barChart'))?.resize();
-        });
-    </script>
+            </div>
+        </section>
+
+        <!-- حزم البرامج الوقائية -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002 2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">البرامج والحزم التأهيلية المعتمدة</h2>
+            </div>
+            <div class="section-body">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div class="p-6 border border-gray-200 rounded-xl">
+                        <h3 class="text-xl font-bold text-navy mb-2">إدارة الإجهاد الحراري</h3>
+                        <div class="h-0.5 w-12 bg-emerald mb-3"></div>
+                        <p class="text-graytext font-semibold">تدريب الحجاج على بروتوكولات الإسعافات الأولية الذاتية (الترطيب، التبريد في مناطق النبض) والتعرف المبكر على أعراض ضربات الشمس.</p>
+                    </div>
+
+                    <div class="p-6 border border-gray-200 rounded-xl">
+                        <h3 class="text-xl font-bold text-navy mb-2">برنامج "نفس مطمئن"</h3>
+                        <div class="h-0.5 w-12 bg-emerald mb-3"></div>
+                        <p class="text-graytext font-semibold">يهدف لرفع كفاءة الجهاز التنفسي عبر تقييم (Spirometer) وتدريب الحاج على التنفس البطني وتنفس الشفاه المزمومة لتقليل الإجهاد التنفسي.</p>
+                    </div>
+
+                    <div class="p-6 border border-gray-200 rounded-xl">
+                        <h3 class="text-xl font-bold text-navy mb-2">الجاهزية العضلية والتقوية</h3>
+                        <div class="h-0.5 w-12 bg-emerald mb-3"></div>
+                        <p class="text-graytext font-semibold">برنامج تدريبي لا يتجاوز 6 دقائق باستخدام أدوات متاحة (حقيبة الحاج، جدار الغرفة) لتهيئة عضلات الساق والظهر للمشي الطويل وحمل الأمتعة.</p>
+                    </div>
+
+                    <div class="p-6 border border-gray-200 rounded-xl">
+                        <h3 class="text-xl font-bold text-navy mb-2">الوقاية من الإصابات والإطالة</h3>
+                        <div class="h-0.5 w-12 bg-emerald mb-3"></div>
+                        <p class="text-graytext font-semibold">تقييم مخاطر السقوط، فحص الأحذية الملائمة، وتقديم جلسات إطالة فورية لعضلات الرقبة والظهر لتخفيف التشنجات الناتجة عن الجلوس أو المشي الخاطئ.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- الموارد التشغيلية -->
+        <section class="section-card border-b-8 border-b-navy">
+            <div class="section-body bg-bglight flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <h2 class="text-2xl font-black text-navy mb-2">المتطلبات والموارد التشغيلية</h2>
+                    <p class="text-graytext font-semibold">لضمان تنفيذ المبادرة بكفاءة عالية خلال موسم الحج، تم حصر الاحتياج المبدئي كالتالي:</p>
+                </div>
+                <div class="flex gap-4 shrink-0">
+                    <div class="bg-white px-6 py-4 rounded-xl border border-gray-200 text-center shadow-sm">
+                        <span class="block text-3xl font-black text-emerald">١٨</span>
+                        <span class="text-sm font-bold text-navy">ممارس تأهيل طبي</span>
+                    </div>
+                    <div class="bg-white px-6 py-4 rounded-xl border border-gray-200 text-center shadow-sm">
+                        <span class="block text-3xl font-black text-emerald">٦</span>
+                        <span class="text-sm font-bold text-navy">مساحات فرز ميدانية</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
 </body>
 </html>
+
+```
