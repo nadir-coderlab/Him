@@ -1,99 +1,279 @@
-```latex
-\documentclass[12pt, a4paper]{article}
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملخص التعريفي - مبادرة نسك ولياقة ١٤٤٧هـ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: '#1B2A47',
+                        emerald: '#4A8B71',
+                        gold: '#C5A059',
+                        bglight: '#F8F9FA',
+                        graytext: '#4B5563'
+                    }
+                }
+            }
+        }
+    </script>
 
-% --- UNIVERSAL PREAMBLE BLOCK ---
-\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
-\usepackage{fontspec}
+    <style>
+        body {
+            background-color: #E5E7EB;
+            margin: 0;
+            padding: 2rem 1rem;
+        }
 
-\usepackage[arabic, bidi=basic, provide=*]{babel}
+        .document-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
 
-\babelprovide[import, onchar=ids fonts]{arabic}
-\babelprovide[import, onchar=ids fonts]{english}
+        .section-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            border: 1px solid #F3F4F6;
+        }
 
-% Set default/Latin font to Sans Serif in the main (rm) slot
-\babelfont{rm}{Noto Sans}
-% Assign a specific font for Arabic text
-\babelfont[arabic]{rm}{Noto Sans Arabic}
+        .section-header {
+            padding: 1.5rem 2.5rem;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-% Add because main language is not English
-\usepackage{enumitem}
-\setlist[itemize]{label=-}
-% --------------------------------
+        .section-body {
+            padding: 2.5rem;
+        }
 
-\usepackage{xcolor}
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            background-color: #F8F9FA;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1B2A47;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
 
-% تعريف الألوان الرسمية
-\definecolor{navy}{HTML}{1B2A47}
-\definecolor{emerald}{HTML}{4A8B71}
-\definecolor{gold}{HTML}{C5A059}
+    <div class="document-container">
 
-% مسافات الفقرات
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0.5em}
+        <!-- الغلاف والمقدمة -->
+        <section class="section-card border-t-8 border-t-emerald">
+            <div class="section-body text-center py-16 bg-white">
+                <h3 class="text-xl font-bold text-gray-500 tracking-wide mb-4">إدارة التأهيل الطبي - تجمع المدينة المنورة الصحي</h3>
+                <h1 class="text-5xl md:text-6xl font-black text-navy mb-4 leading-tight">مبادرة "نسك ولياقة"</h1>
+                <h2 class="text-2xl md:text-3xl font-bold text-emerald mb-8">التحول من الرعاية العلاجية إلى الجاهزية الوقائية لحج ١٤٤٧هـ</h2>
+                <div class="h-1 w-24 bg-gold mx-auto mb-8"></div>
+                <p class="text-xl text-graytext max-w-3xl mx-auto leading-relaxed font-semibold">
+                    مبادرة استراتيجية ميدانية تهدف إلى تقييم وتهيئة الحجاج بدنياً وصحياً فور وصولهم للمدينة المنورة، للحد من المخاطر الصحية المرتبطة بأداء المناسك (كالإجهاد الحراري والتنفسي والعضلي) قبل حدوثها.
+                </p>
+            </div>
+        </section>
 
-\begin{document}
+        <!-- العوائد الاستراتيجية (Why) -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">الفوائد الاستراتيجية والتشغيلية</h2>
+            </div>
+            <div class="section-body bg-white">
+                <p class="text-lg text-graytext mb-8 font-semibold leading-relaxed">
+                    تستهدف المبادرة تحقيق أثر ملموس ينعكس إيجاباً على أداء المنظومة الصحية وتجربة الحاج، ويتمثل في:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
+                        <h3 class="text-xl font-bold text-navy mb-3">١. تعزيز الجاهزية الصحية للحجاج</h3>
+                        <p class="text-graytext font-semibold">الحد من الإجهاد البدني والمضاعفات المحتملة كالإجهاد الحراري والشد العضلي من خلال الفرز المبكر وتقديم التوجيه المناسب.</p>
+                    </div>
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
+                        <h3 class="text-xl font-bold text-navy mb-3">٢. التركيز على الرعاية الوقائية</h3>
+                        <p class="text-graytext font-semibold">تقديم تدخلات تأهيلية مبكرة ومنخفضة التكلفة تساهم في الحفاظ على استقرار الحالة الصحية للحاج وتمنع تفاقم الإصابات.</p>
+                    </div>
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
+                        <h3 class="text-xl font-bold text-navy mb-3">٣. إدارة الأمراض المزمنة استباقياً</h3>
+                        <p class="text-graytext font-semibold">تثقيف وتوجيه مرضى الجهاز التنفسي (كالربو) وكبار السن لكيفية حفظ مجهودهم البدني أثناء أداء النسك بأمان.</p>
+                    </div>
+                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
+                        <h3 class="text-xl font-bold text-navy mb-3">٤. تحسين تجربة ضيوف الرحمن</h3>
+                        <p class="text-graytext font-semibold">الارتقاء بجودة الخدمات المقدمة للحاج، والمساهمة المباشرة في تحقيق مستهدفات رؤية المملكة 2030 (برنامج خدمة ضيوف الرحمن).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-\begin{center}
-    \textcolor{gray}{\large إدارة التأهيل الطبي - تجمع المدينة المنورة الصحي}\\[1cm]
-    \textcolor{navy}{\Huge \textbf{مبادرة "نسك ولياقة"}}\\[0.5cm]
-    \textcolor{emerald}{\Large \textbf{التحول من الرعاية العلاجية إلى الجاهزية الوقائية لحج 1447هـ}}\\[0.5cm]
-    \textcolor{gold}{\rule{5cm}{2pt}}\\[1cm]
-\end{center}
+        <!-- آلية العمل الميداني (How & Where) -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">الاستهداف وآلية التنفيذ الميداني</h2>
+            </div>
+            <div class="section-body bg-white">
+                
+                <h3 class="text-2xl font-bold text-navy mb-4 border-r-4 border-gold pr-3">النطاق المكاني (نقاط التواجد)</h3>
+                <p class="text-lg text-graytext mb-6 font-semibold">
+                    يتم استهداف الحجاج في النقاط ذات الكثافة العالية لضمان الوصول لأكبر شريحة ممكنة قبل البدء الفعلي بأداء المناسك المجهدة:
+                </p>
+                
+                <div class="flex flex-wrap gap-4 mb-10">
+                    <span class="px-5 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مطار الأمير محمد بن عبدالعزيز</span>
+                    <span class="px-5 py-2 bg-gray-100 text-navy font-bold rounded-lg border border-gray-200">مستشفى الميقات</span>
+                    <span class="px-5 py-2 bg-gray-100 text-navy font-bold rounded-lg border border-gray-200">مستشفى السلام</span>
+                    <span class="px-5 py-2 bg-gray-100 text-navy font-bold rounded-lg border border-gray-200">مستشفى الملك فهد</span>
+                    <span class="px-5 py-2 bg-gold/10 text-yellow-800 font-bold rounded-lg border border-gold/30">مركز صحي قباء</span>
+                    <span class="px-5 py-2 bg-gold/10 text-yellow-800 font-bold rounded-lg border border-gold/30">مركز صحي باقدو</span>
+                </div>
 
-\noindent\textcolor{navy}{\LARGE \textbf{العوائد الاستراتيجية والتشغيلية}}\\[0.2cm]
-تستهدف المبادرة تحقيق أثر ملموس ينعكس إيجاباً على أداء المنظومة الصحية خلال موسم الحج، ويتمثل في:
-\begin{itemize}
-    \item \textbf{\textcolor{emerald}{خفض العبء على الطوارئ والعيادات:}} تقليل تدفق الحالات الطارئة الناتجة عن الإجهاد الحراري، السقوط، والشد العضلي الشديد من خلال الفرز والتدخل الوقائي المبكر.
-    \item \textbf{\textcolor{emerald}{كفاءة الإنفاق الطبي:}} تخفيف التكاليف المرتبطة بالرعاية السريرية (التنويم، الأشعة، الأدوية) بالتحول إلى التدخلات الوقائية منخفضة التكلفة.
-    \item \textbf{\textcolor{emerald}{إدارة الأمراض المزمنة استباقياً:}} الحد من تفاقم حالات مرضى الجهاز التنفسي وتوجيه كبار السن لكيفية حفظ مجهودهم البدني.
-    \item \textbf{\textcolor{emerald}{تحسين تجربة ضيوف الرحمن:}} الارتقاء بجودة الخدمات والمساهمة المباشرة في تحقيق مستهدفات رؤية المملكة 2030.
-\end{itemize}
+                <h3 class="text-2xl font-bold text-navy mb-4 border-r-4 border-gold pr-3 border-t pt-8">مسار الحاج (كيف يتم التقييم والتدخل؟)</h3>
+                <p class="text-lg text-graytext mb-6 font-semibold">
+                    يتم تخصيص مساحات محددة (أكشاك أو منصات توجيه) في المواقع المذكورة لعمل مسار سريع (Fast Track) يمر به الحاج وفق الخطوات التالية:
+                </p>
 
-\vspace{0.8cm}
-\noindent\textcolor{navy}{\LARGE \textbf{الاستهداف وآلية التنفيذ الميداني}}\\[0.2cm]
+                <div class="relative pl-8 rtl:pr-8 rtl:pl-0 space-y-8 before:absolute before:inset-y-0 before:right-3.5 before:w-0.5 before:bg-gray-200">
+                    <!-- الخطوة 1 -->
+                    <div class="relative">
+                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">١</div>
+                        <h4 class="text-xl font-bold text-navy">الفرز والتقييم المبدئي (Screening)</h4>
+                        <p class="text-graytext mt-2 font-semibold">بمجرد توجيه الحاج للمنصة، يتم قياس العلامات الحيوية (الضغط، السكر)، وإجراء تقييم سريع للتوازن (Dynamic Balance) والجهاز الهيكلي العضلي (MSK Screening) للتعرف على كبار السن وذوي الخطورة العالية.</p>
+                    </div>
+                    <!-- الخطوة 2 -->
+                    <div class="relative">
+                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">٢</div>
+                        <h4 class="text-xl font-bold text-navy">التدخل التأهيلي السريع</h4>
+                        <p class="text-graytext mt-2 font-semibold">بناءً على التقييم، يتم تقديم الجلسة المناسبة في نفس الموقع (تدريب على تمارين التنفس لمرضى الربو، تمارين الإطالة للشد العضلي، أو تعديل طريقة استخدام العكازات لتجنب السقوط).</p>
+                    </div>
+                    <!-- الخطوة 3 -->
+                    <div class="relative">
+                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">٣</div>
+                        <h4 class="text-xl font-bold text-navy">التثقيف والتمكين (الاستدامة)</h4>
+                        <p class="text-graytext mt-2 font-semibold">تزويد الحاج بملخص مرئي (أو عبر رمز الاستجابة QR) يحتوي على خطة مبسطة لكيفية التعامل مع الإجهاد الحراري، وبرنامج 6 دقائق اليومي لزيادة القوة العضلية أثناء التواجد في المشاعر.</p>
+                    </div>
+                </div>
 
-\noindent\textcolor{emerald}{\large \textbf{النطاق المكاني (نقاط التواجد)}}\\
-يتم استهداف الحجاج في النقاط ذات الكثافة العالية لضمان الوصول لأكبر شريحة ممكنة:
-\begin{itemize}
-    \item \textbf{المستشفيات:} مستشفى الميقات، مستشفى السلام، مستشفى الملك فهد.
-    \item \textbf{المراكز الصحية:} مركز صحي قباء، مركز صحي باقدو.
-    \item \textbf{المنافذ:} مطار الأمير محمد بن عبدالعزيز.
-\end{itemize}
+            </div>
+        </section>
 
-\vspace{0.3cm}
-\noindent\textcolor{emerald}{\large \textbf{مسار الحاج (آلية التقييم والتدخل)}}\\
-يتم تخصيص مساحات محددة كمسار سريع (Fast Track) يمر به الحاج وفق الخطوات التالية:
-\begin{enumerate}
-    \item \textbf{الفرز والتقييم المبدئي:} قياس العلامات الحيوية، وإجراء تقييم سريع للتوازن والجهاز الهيكلي للتعرف على كبار السن وذوي الخطورة.
-    \item \textbf{التدخل التأهيلي السريع:} تقديم الجلسة المناسبة في نفس الموقع (تمارين تنفس، إطالة، تعديل طريقة استخدام العكازات).
-    \item \textbf{التثقيف والتمكين:} تزويد الحاج بخطة للتعامل مع الإجهاد الحراري وبرنامج لزيادة القوة العضلية أثناء التواجد في المشاعر.
-\end{enumerate}
+        <!-- حزم البرامج الوقائية -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002 2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">البرامج والحزم التأهيلية المعتمدة</h2>
+            </div>
+            <div class="section-body bg-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
+                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            إدارة الإجهاد الحراري
+                        </h3>
+                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
+                        <p class="text-graytext font-semibold">تدريب الحجاج على بروتوكولات الإسعافات الأولية الذاتية (الترطيب، التبريد في مناطق النبض) والتعرف المبكر على أعراض ضربات الشمس.</p>
+                    </div>
 
-\vspace{0.8cm}
-\noindent\textcolor{navy}{\LARGE \textbf{البرامج والحزم التأهيلية المعتمدة}}\\[0.2cm]
-\begin{itemize}
-    \item \textbf{\textcolor{navy}{إدارة الإجهاد الحراري:}} تدريب الحجاج على بروتوكولات الإسعافات الأولية الذاتية (الترطيب والتبريد) والتعرف المبكر على ضربات الشمس.
-    \item \textbf{\textcolor{navy}{برنامج "نفس مطمئن":}} يهدف لرفع كفاءة الجهاز التنفسي عبر تقييم (Spirometer) وتدريب الحاج على التنفس البطني لتقليل الإجهاد.
-    \item \textbf{\textcolor{navy}{الجاهزية العضلية والتقوية:}} برنامج تدريبي لا يتجاوز 6 دقائق لتهيئة عضلات الساق والظهر للمشي الطويل وحمل الأمتعة.
-    \item \textbf{\textcolor{navy}{الوقاية من الإصابات والإطالة:}} تقييم مخاطر السقوط، فحص الأحذية، وتقديم جلسات إطالة لتخفيف التشنجات.
-\end{itemize}
+                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
+                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            برنامج "نفس مطمئن"
+                        </h3>
+                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
+                        <p class="text-graytext font-semibold">يهدف لرفع كفاءة الجهاز التنفسي عبر تقييم (Spirometer) وتدريب الحاج على التنفس البطني وتنفس الشفاه المزمومة لتقليل الإجهاد التنفسي.</p>
+                    </div>
 
-\vspace{0.8cm}
-\noindent\textcolor{navy}{\LARGE \textbf{المتطلبات والموارد التشغيلية}}\\[0.2cm]
-لضمان تنفيذ المبادرة بكفاءة عالية، تم حصر الاحتياج المبدئي كالتالي:
-\begin{itemize}
-    \item \textbf{الكوادر المطلوبة:} 18 ممارس تأهيل طبي.
-    \item \textbf{المساحات:} 6 مساحات فرز ميدانية في المواقع المستهدفة.
-\end{itemize}
+                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
+                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            الجاهزية العضلية والتقوية
+                        </h3>
+                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
+                        <p class="text-graytext font-semibold">برنامج تدريبي لا يتجاوز 6 دقائق باستخدام أدوات متاحة (حقيبة الحاج، جدار الغرفة) لتهيئة عضلات الساق والظهر للمشي الطويل وحمل الأمتعة.</p>
+                    </div>
 
-\vspace{0.8cm}
-\noindent\textcolor{navy}{\LARGE \textbf{الخلاصة والتوصيات}}\\[0.2cm]
-ختاماً، تُمثل مبادرة "نسك ولياقة" خطوة استراتيجية للتحول نحو الرعاية الوقائية، مما يعزز من كفاءة المنظومة الصحية ويقلل الهدر المالي والتشغيلي في أقسام الطوارئ خلال موسم الحج. من خلال الاستثمار المسبق في صحة الحاج ولياقته، نضمن تقديم رعاية صحية استباقية تسهم في تحسين التجربة العامة لضيوف الرحمن.
+                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
+                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            الوقاية من الإصابات والإطالة
+                        </h3>
+                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
+                        <p class="text-graytext font-semibold">تقييم مخاطر السقوط، فحص الأحذية الملائمة، وتقديم جلسات إطالة فورية لعضلات الرقبة والظهر لتخفيف التشنجات الناتجة عن الجلوس أو المشي الخاطئ.</p>
+                    </div>
 
-\vspace{0.3cm}
-\noindent \textbf{\textcolor{emerald}{التوصية الاعتمادية:}} نوصي باعتماد هذه المبادرة والتوجيه بتسهيل تخصيص المساحات اللازمة للفرز في المواقع المستهدفة، ليتسنى لفرق التأهيل الطبي استكمال التجهيزات الميدانية وضمان الجاهزية التامة لخدمة الحجاج بما يعكس تطلعات تجمع المدينة المنورة الصحي.
+                </div>
+            </div>
+        </section>
 
-\end{document}
+        <!-- الموارد التشغيلية -->
+        <section class="section-card">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">المتطلبات والموارد التشغيلية</h2>
+            </div>
+            <div class="section-body bg-white flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <p class="text-lg text-graytext font-semibold leading-relaxed">لضمان تنفيذ المبادرة بكفاءة عالية خلال موسم الحج في النقاط المستهدفة، تم حصر الاحتياج المبدئي للكوادر والمساحات كالتالي:</p>
+                </div>
+                <div class="flex gap-4 shrink-0">
+                    <div class="bg-bglight px-8 py-5 rounded-xl border border-gray-200 text-center shadow-sm">
+                        <span class="block text-4xl font-black text-emerald mb-1">١٨</span>
+                        <span class="text-base font-bold text-navy">ممارس تأهيل طبي</span>
+                    </div>
+                    <div class="bg-bglight px-8 py-5 rounded-xl border border-gray-200 text-center shadow-sm">
+                        <span class="block text-4xl font-black text-emerald mb-1">٦</span>
+                        <span class="text-base font-bold text-navy">مساحات فرز ميدانية</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- الخلاصة -->
+        <section class="section-card border-b-8 border-b-gold">
+            <div class="section-header bg-bglight">
+                <div class="icon-box">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-navy">الخلاصة</h2>
+            </div>
+            <div class="section-body bg-white">
+                <p class="text-lg text-graytext font-semibold leading-relaxed">
+                    تمثل مبادرة "نسك ولياقة" نموذجاً متكاملاً للرعاية الصحية الوقائية، ترتكز بشكل أساسي على تهيئة الحجاج بدنياً وصحياً لأداء المناسك. من خلال حزم برامجها الأربعة (إدارة الإجهاد الحراري، التنفس الآمن، الجاهزية العضلية، والوقاية من الإصابات)، تسعى المبادرة للوصول للحاج في أماكن تواجده المبكرة بالمنافذ والمستشفيات، وتقديم التوعية والتدخلات التأهيلية السريعة. هذا التحول الاستباقي يضمن الارتقاء بجودة الخدمات الصحية المقدمة لضيوف الرحمن، ويحقق أثراً إيجابياً ملموساً ينعكس على تجربتهم العامة خلال موسم الحج.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
 
 
 ```
