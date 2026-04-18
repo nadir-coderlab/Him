@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الملخص التعريفي - مبادرة نسك ولياقة ١٤٤٧هـ</title>
+    <title>الملخص الشامل - مبادرة نسك ولياقة</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Cairo -->
@@ -74,6 +74,21 @@
             justify-content: center;
             color: #1B2A47;
         }
+
+        /* تنسيق القوائم */
+        .custom-list li {
+            position: relative;
+            padding-right: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .custom-list li::before {
+            content: '■';
+            color: #4A8B71;
+            position: absolute;
+            right: 0;
+            top: -0.1rem;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -83,190 +98,253 @@
         <!-- الغلاف والمقدمة -->
         <section class="section-card border-t-8 border-t-emerald">
             <div class="section-body text-center py-16 bg-white">
-                <h3 class="text-xl font-bold text-gray-500 tracking-wide mb-4">إدارة التأهيل الطبي - تجمع المدينة المنورة الصحي</h3>
                 <h1 class="text-5xl md:text-6xl font-black text-navy mb-4 leading-tight">مبادرة "نسك ولياقة"</h1>
-                <h2 class="text-2xl md:text-3xl font-bold text-emerald mb-8">التحول من الرعاية العلاجية إلى الجاهزية الوقائية لحج ١٤٤٧هـ</h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-emerald mb-8">التحول من الرعاية العلاجية إلى الجاهزية الوقائية</h2>
                 <div class="h-1 w-24 bg-gold mx-auto mb-8"></div>
                 <p class="text-xl text-graytext max-w-3xl mx-auto leading-relaxed font-semibold">
-                    مبادرة استراتيجية ميدانية تهدف إلى تقييم وتهيئة الحجاج بدنياً وصحياً فور وصولهم للمدينة المنورة، للحد من المخاطر الصحية المرتبطة بأداء المناسك (كالإجهاد الحراري والتنفسي والعضلي) قبل حدوثها.
+                    مبادرة صحية تهدف إلى رفع الجاهزية البدنية والصحية للحجاج القادمين إلى المدينة المنورة، من خلال تقديم خدمات تقييم صحي، توعية وقائية، وتدخلات طبية تسهم في تقليل المخاطر الصحية المرتبطة بموسم الحج (كالإجهاد الحراري، ضربات الشمس، والإجهاد العضلي)، بما يعزز من جودة تجربة الحاج ورفع كفاءة الخدمات.
                 </p>
             </div>
         </section>
 
-        <!-- العوائد الاستراتيجية (Why) -->
+        <!-- الأهداف ونطاق التنفيذ -->
         <section class="section-card">
             <div class="section-header bg-bglight">
                 <div class="icon-box">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 </div>
-                <h2 class="text-3xl font-black text-navy">الفوائد الاستراتيجية والتشغيلية</h2>
+                <h2 class="text-3xl font-black text-navy">الأهداف الاستراتيجية ونطاق التنفيذ</h2>
             </div>
             <div class="section-body bg-white">
-                <p class="text-lg text-graytext mb-8 font-semibold leading-relaxed">
-                    تستهدف المبادرة تحقيق أثر ملموس ينعكس إيجاباً على أداء المنظومة الصحية وتجربة الحاج، ويتمثل في:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
-                        <h3 class="text-xl font-bold text-navy mb-3">١. تعزيز الجاهزية الصحية للحجاج</h3>
-                        <p class="text-graytext font-semibold">الحد من الإجهاد البدني والمضاعفات المحتملة كالإجهاد الحراري والشد العضلي من خلال الفرز المبكر وتقديم التوجيه المناسب.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="text-2xl font-bold text-navy mb-4 border-r-4 border-emerald pr-3">أهداف المبادرة</h3>
+                        <ul class="custom-list text-graytext font-semibold text-lg">
+                            <li><strong class="text-navy">التهيئة البدنية:</strong> تمكين ضيوف الرحمن من أداء المناسك بلياقة عالية.</li>
+                            <li><strong class="text-navy">الوقاية الاستباقية:</strong> الحد من الإصابات العضلية والمضاعفات الصحية المرتبطة بالمجهود البدني.</li>
+                            <li><strong class="text-navy">دعم المنظومة:</strong> تعزيز الجهود الوقائية وتخفيف العبء عن المستشفيات مع تحسين تجربة الحاج.</li>
+                        </ul>
                     </div>
-                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
-                        <h3 class="text-xl font-bold text-navy mb-3">٢. التركيز على الرعاية الوقائية</h3>
-                        <p class="text-graytext font-semibold">تقديم تدخلات تأهيلية مبكرة ومنخفضة التكلفة تساهم في الحفاظ على استقرار الحالة الصحية للحاج وتمنع تفاقم الإصابات.</p>
-                    </div>
-                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
-                        <h3 class="text-xl font-bold text-navy mb-3">٣. إدارة الأمراض المزمنة استباقياً</h3>
-                        <p class="text-graytext font-semibold">تثقيف وتوجيه مرضى الجهاز التنفسي (كالربو) وكبار السن لكيفية حفظ مجهودهم البدني أثناء أداء النسك بأمان.</p>
-                    </div>
-                    <div class="p-6 border border-gray-100 rounded-xl bg-bglight border-r-4 border-r-emerald">
-                        <h3 class="text-xl font-bold text-navy mb-3">٤. تحسين تجربة ضيوف الرحمن</h3>
-                        <p class="text-graytext font-semibold">الارتقاء بجودة الخدمات المقدمة للحاج، والمساهمة المباشرة في تحقيق مستهدفات رؤية المملكة 2030 (برنامج خدمة ضيوف الرحمن).</p>
+                    <div>
+                        <h3 class="text-2xl font-bold text-navy mb-4 border-r-4 border-gold pr-3">مواقع التنفيذ الميداني</h3>
+                        <p class="text-graytext font-semibold mb-4">تشمل المبادرة التنفيذ في عدة مواقع صحية داخل المدينة المنورة، للوصول لأكبر شريحة ممكنة:</p>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مستشفى السلام</span>
+                            <span class="px-4 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مستشفى الميقات</span>
+                            <span class="px-4 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مستشفى الملك فهد</span>
+                            <span class="px-4 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مركز صحي باقدو</span>
+                            <span class="px-4 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مركز صحي قباء</span>
+                            <span class="px-4 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مطار الأمير محمد بن عبدالعزيز</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- آلية العمل الميداني (How & Where) -->
+        <!-- الأنشطة الصحية (التفاصيل السريرية) -->
         <section class="section-card">
             <div class="section-header bg-bglight">
                 <div class="icon-box">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 </div>
-                <h2 class="text-3xl font-black text-navy">الاستهداف وآلية التنفيذ الميداني</h2>
+                <h2 class="text-3xl font-black text-navy">الأنشطة والخدمات الطبية المُقدمة</h2>
             </div>
             <div class="section-body bg-white">
+                <p class="text-lg text-graytext mb-6 font-semibold">تُقدم المبادرة حزمة من الخدمات السريرية والتقييمية عبر مسار مخصص (Screening Card) يشمل:</p>
                 
-                <h3 class="text-2xl font-bold text-navy mb-4 border-r-4 border-gold pr-3">النطاق المكاني (نقاط التواجد)</h3>
-                <p class="text-lg text-graytext mb-6 font-semibold">
-                    يتم استهداف الحجاج في النقاط ذات الكثافة العالية لضمان الوصول لأكبر شريحة ممكنة قبل البدء الفعلي بأداء المناسك المجهدة:
-                </p>
-                
-                <div class="flex flex-wrap gap-4 mb-10">
-                    <span class="px-5 py-2 bg-emerald/10 text-emerald font-bold rounded-lg border border-emerald/20">مطار الأمير محمد بن عبدالعزيز</span>
-                    <span class="px-5 py-2 bg-gray-100 text-navy font-bold rounded-lg border border-gray-200">مستشفى الميقات</span>
-                    <span class="px-5 py-2 bg-gray-100 text-navy font-bold rounded-lg border border-gray-200">مستشفى السلام</span>
-                    <span class="px-5 py-2 bg-gray-100 text-navy font-bold rounded-lg border border-gray-200">مستشفى الملك فهد</span>
-                    <span class="px-5 py-2 bg-gold/10 text-yellow-800 font-bold rounded-lg border border-gold/30">مركز صحي قباء</span>
-                    <span class="px-5 py-2 bg-gold/10 text-yellow-800 font-bold rounded-lg border border-gold/30">مركز صحي باقدو</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- عنصر -->
+                    <div class="p-4 bg-bglight rounded-lg border border-gray-100 flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-emerald text-white flex items-center justify-center font-bold shrink-0">١</div>
+                        <div>
+                            <h4 class="font-bold text-navy text-lg">تقييم الجهاز الهيكلي العضلي (MSK)</h4>
+                            <p class="text-graytext text-sm font-semibold mt-1">فحص المفاصل والعضلات للوقاية من تفاقم الإصابات أثناء المشي.</p>
+                        </div>
+                    </div>
+                    <!-- عنصر -->
+                    <div class="p-4 bg-bglight rounded-lg border border-gray-100 flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-emerald text-white flex items-center justify-center font-bold shrink-0">٢</div>
+                        <div>
+                            <h4 class="font-bold text-navy text-lg">تقييم التوازن وخطر السقوط</h4>
+                            <p class="text-graytext text-sm font-semibold mt-1">إجراء اختبارات التوازن الديناميكي والثابت لتجنب إصابات السقوط.</p>
+                        </div>
+                    </div>
+                    <!-- عنصر -->
+                    <div class="p-4 bg-bglight rounded-lg border border-gray-100 flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-emerald text-white flex items-center justify-center font-bold shrink-0">٣</div>
+                        <div>
+                            <h4 class="font-bold text-navy text-lg">تدريب استخدام الأدوات المساعدة</h4>
+                            <p class="text-graytext text-sm font-semibold mt-1">التوجيه الصحيح لاستخدام العكازات والمشايات لتعزيز الاستقلالية.</p>
+                        </div>
+                    </div>
+                    <!-- عنصر -->
+                    <div class="p-4 bg-bglight rounded-lg border border-gray-100 flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-emerald text-white flex items-center justify-center font-bold shrink-0">٤</div>
+                        <div>
+                            <h4 class="font-bold text-navy text-lg">فحص القدم والحذاء المناسب</h4>
+                            <p class="text-graytext text-sm font-semibold mt-1">لتقليل الإصابات كالتقرحات والتهاب اللفافة الأخمصية.</p>
+                        </div>
+                    </div>
+                    <!-- عنصر -->
+                    <div class="p-4 bg-bglight rounded-lg border border-gray-100 flex gap-4">
+                        <div class="w-8 h-8 rounded-full bg-emerald text-white flex items-center justify-center font-bold shrink-0">٥</div>
+                        <div>
+                            <h4 class="font-bold text-navy text-lg">متابعة الحالات عالية الخطورة</h4>
+                            <p class="text-graytext text-sm font-semibold mt-1">رعاية مستمرة لكبار السن وذوي الأمراض المزمنة لضمان سلامتهم.</p>
+                        </div>
+                    </div>
                 </div>
-
-                <h3 class="text-2xl font-bold text-navy mb-4 border-r-4 border-gold pr-3 border-t pt-8">مسار الحاج (كيف يتم التقييم والتدخل؟)</h3>
-                <p class="text-lg text-graytext mb-6 font-semibold">
-                    يتم تخصيص مساحات محددة (أكشاك أو منصات توجيه) في المواقع المذكورة لعمل مسار سريع (Fast Track) يمر به الحاج وفق الخطوات التالية:
-                </p>
-
-                <div class="relative pl-8 rtl:pr-8 rtl:pl-0 space-y-8 before:absolute before:inset-y-0 before:right-3.5 before:w-0.5 before:bg-gray-200">
-                    <!-- الخطوة 1 -->
-                    <div class="relative">
-                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">١</div>
-                        <h4 class="text-xl font-bold text-navy">الفرز والتقييم المبدئي (Screening)</h4>
-                        <p class="text-graytext mt-2 font-semibold">بمجرد توجيه الحاج للمنصة، يتم قياس العلامات الحيوية (الضغط، السكر)، وإجراء تقييم سريع للتوازن (Dynamic Balance) والجهاز الهيكلي العضلي (MSK Screening) للتعرف على كبار السن وذوي الخطورة العالية.</p>
-                    </div>
-                    <!-- الخطوة 2 -->
-                    <div class="relative">
-                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">٢</div>
-                        <h4 class="text-xl font-bold text-navy">التدخل التأهيلي السريع</h4>
-                        <p class="text-graytext mt-2 font-semibold">بناءً على التقييم، يتم تقديم الجلسة المناسبة في نفس الموقع (تدريب على تمارين التنفس لمرضى الربو، تمارين الإطالة للشد العضلي، أو تعديل طريقة استخدام العكازات لتجنب السقوط).</p>
-                    </div>
-                    <!-- الخطوة 3 -->
-                    <div class="relative">
-                        <div class="absolute -right-8 bg-emerald text-white w-8 h-8 rounded-full flex items-center justify-center font-bold border-4 border-white">٣</div>
-                        <h4 class="text-xl font-bold text-navy">التثقيف والتمكين (الاستدامة)</h4>
-                        <p class="text-graytext mt-2 font-semibold">تزويد الحاج بملخص مرئي (أو عبر رمز الاستجابة QR) يحتوي على خطة مبسطة لكيفية التعامل مع الإجهاد الحراري، وبرنامج 6 دقائق اليومي لزيادة القوة العضلية أثناء التواجد في المشاعر.</p>
-                    </div>
-                </div>
-
             </div>
         </section>
 
-        <!-- حزم البرامج الوقائية -->
+        <!-- حزم البرامج الوقائية (التفصيلية مع الرسومات) -->
         <section class="section-card">
             <div class="section-header bg-bglight">
                 <div class="icon-box">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002 2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 </div>
-                <h2 class="text-3xl font-black text-navy">البرامج والحزم التأهيلية المعتمدة</h2>
+                <h2 class="text-3xl font-black text-navy">البرامج التأهيلية المتخصصة</h2>
             </div>
             <div class="section-body bg-white">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-10">
                     
-                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
-                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            إدارة الإجهاد الحراري
-                        </h3>
-                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
-                        <p class="text-graytext font-semibold">تدريب الحجاج على بروتوكولات الإسعافات الأولية الذاتية (الترطيب، التبريد في مناطق النبض) والتعرف المبكر على أعراض ضربات الشمس.</p>
+                    <!-- البرنامج 1: الإجهاد الحراري -->
+                    <div class="flex flex-col md:flex-row gap-6 border-b border-gray-100 pb-8">
+                        <div class="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden bg-[#F0F7F4] border border-gray-200">
+                            <svg viewBox="0 0 400 250" class="w-full h-full">
+                                <!-- الشمس -->
+                                <circle cx="320" cy="60" r="35" fill="#C5A059" opacity="0.8"/>
+                                <path d="M320 15 L320 10 M320 105 L320 110 M275 60 L270 60 M365 60 L370 60" stroke="#C5A059" stroke-width="4" stroke-linecap="round"/>
+                                <!-- قطرات الماء -->
+                                <path d="M80 80 Q 90 100 80 120 Q 70 100 80 80 Z" fill="#4A8B71" opacity="0.6"/>
+                                <path d="M120 50 Q 130 70 120 90 Q 110 70 120 50 Z" fill="#4A8B71" opacity="0.4"/>
+                                <!-- الحاج -->
+                                <g transform="translate(180, 80)">
+                                    <circle cx="20" cy="15" r="15" fill="#1B2A47" />
+                                    <!-- الإحرام -->
+                                    <path d="M-5 45 Q 20 30 45 45 L 55 130 L -15 130 Z" fill="#FFFFFF" stroke="#1B2A47" stroke-width="2.5" stroke-linejoin="round"/>
+                                    <path d="M-5 45 Q 25 75 45 85" fill="none" stroke="#1B2A47" stroke-width="2.5" stroke-linecap="round"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-navy mb-2">١. طرق التعامل مع الإجهاد الحراري</h3>
+                            <p class="text-graytext font-semibold mb-3">حالة تحدث عند فشل الجسم في تنظيم حرارته، وقد تتطور لضربة شمس مهددة للحياة.</p>
+                            <ul class="custom-list text-graytext font-semibold text-sm">
+                                <li><strong class="text-navy">الأعراض:</strong> تعرق كثيف، برودة وشحوب في لون الجلد.</li>
+                                <li><strong class="text-navy">الإسعافات الأولية:</strong> تحريك المصاب لمكان بارد، تخفيف الملابس ورش الماء، وضع كمادات باردة (رقبة أو إبط)، وشرب الماء.</li>
+                                <li><strong class="text-navy">الوقاية:</strong> استخدام مظلة شمسية (بلون فاتح)، وتجنب التعرض المباشر للشمس.</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
-                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            برنامج "نفس مطمئن"
-                        </h3>
-                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
-                        <p class="text-graytext font-semibold">يهدف لرفع كفاءة الجهاز التنفسي عبر تقييم (Spirometer) وتدريب الحاج على التنفس البطني وتنفس الشفاه المزمومة لتقليل الإجهاد التنفسي.</p>
+                    <!-- البرنامج 2: نفس مطمئن -->
+                    <div class="flex flex-col md:flex-row gap-6 border-b border-gray-100 pb-8">
+                        <div class="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden bg-[#F5F7FA] border border-gray-200">
+                            <svg viewBox="0 0 400 250" class="w-full h-full">
+                                <!-- الرئتين -->
+                                <path d="M80 140 C 60 110, 40 160, 80 190 C 120 160, 100 110, 80 140 Z" fill="#4A8B71" opacity="0.5"/>
+                                <path d="M130 140 C 110 110, 90 160, 130 190 C 170 160, 150 110, 130 140 Z" fill="#4A8B71" opacity="0.5"/>
+                                <path d="M105 90 L 105 140" stroke="#1B2A47" stroke-width="3" stroke-linecap="round"/>
+                                <!-- الهواء -->
+                                <path d="M260 60 Q 290 40 320 60 T 380 60" fill="none" stroke="#C5A059" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+                                <!-- الحاج -->
+                                <g transform="translate(200, 80)">
+                                    <circle cx="20" cy="15" r="15" fill="#1B2A47" />
+                                    <!-- الإحرام -->
+                                    <path d="M-5 45 Q 20 30 45 45 L 55 130 L -15 130 Z" fill="#FFFFFF" stroke="#1B2A47" stroke-width="2.5" stroke-linejoin="round"/>
+                                    <path d="M-5 45 Q 25 75 45 85" fill="none" stroke="#1B2A47" stroke-width="2.5" stroke-linecap="round"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-navy mb-2">٢. برنامج "نفس مطمئن"</h3>
+                            <p class="text-graytext font-semibold mb-3">يهدف لرفع كفاءة الجهاز التنفسي لدى كبار السن والمصابين بأمراض مزمنة (كالربو).</p>
+                            <ul class="custom-list text-graytext font-semibold text-sm">
+                                <li><strong class="text-navy">التقييم:</strong> استخدام جهاز قياس وظائف الرئة (Spirometer).</li>
+                                <li><strong class="text-navy">التنفس البطني:</strong> شهيق من الأنف 4 ثوانٍ، حبس النفس لثانيتين، ثم زفير ببطء.</li>
+                                <li><strong class="text-navy">تنفس الشفاه المزمومة:</strong> لتقليل التعب، عبر زم الشفاه عند الزفير كإطفاء شمعة.</li>
+                                <li><strong class="text-navy">تنفس 4-7-8:</strong> لتهدئة القلق، يكرر 4 مرات فقط.</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
-                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            الجاهزية العضلية والتقوية
-                        </h3>
-                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
-                        <p class="text-graytext font-semibold">برنامج تدريبي لا يتجاوز 6 دقائق باستخدام أدوات متاحة (حقيبة الحاج، جدار الغرفة) لتهيئة عضلات الساق والظهر للمشي الطويل وحمل الأمتعة.</p>
+                    <!-- البرنامج 3: القوة العضلية -->
+                    <div class="flex flex-col md:flex-row gap-6 border-b border-gray-100 pb-8">
+                        <div class="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden bg-[#FCFBF8] border border-gray-200">
+                            <svg viewBox="0 0 400 250" class="w-full h-full">
+                                <!-- مسار مشي -->
+                                <path d="M0 200 L 400 200" stroke="#E5E7EB" stroke-width="4"/>
+                                <path d="M50 200 L 150 200" stroke="#C5A059" stroke-width="4"/>
+                                <!-- مفاصل وعضلات -->
+                                <circle cx="100" cy="110" r="30" fill="#4A8B71" opacity="0.2"/>
+                                <!-- الحاج (حركة) -->
+                                <g transform="translate(180, 80)">
+                                    <circle cx="20" cy="15" r="15" fill="#1B2A47" />
+                                    <!-- الإحرام -->
+                                    <path d="M-5 45 Q 20 30 45 45 L 75 130 L -35 130 Z" fill="#FFFFFF" stroke="#1B2A47" stroke-width="2.5" stroke-linejoin="round"/>
+                                    <path d="M45 45 Q 65 70 60 90" fill="none" stroke="#1B2A47" stroke-width="2.5" stroke-linecap="round"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-navy mb-2">٣. برنامج زيادة القوة العضلية</h3>
+                            <p class="text-graytext font-semibold mb-3">بناء جسد قادر على أداء المناسك بإتقان، وتجهيز عضلات الساق للوقوف والمشي، والظهر والكتف لحمل الأغراض.</p>
+                            <ul class="custom-list text-graytext font-semibold text-sm">
+                                <li><strong class="text-navy">روتين 6 دقائق:</strong> دقيقة سكوات، دقيقة إطالة ساق، دقيقة توازن، دقيقة دوران كتف، دقيقة دفع حائط، دقيقة تنفس عميق.</li>
+                                <li><strong class="text-navy">أدوات بديلة:</strong> استخدام الحقيبة كمقاومة، السرير للتمدد، والجدار لتوازن الحركات.</li>
+                                <li><strong class="text-navy">إرشادات:</strong> لا تجهد نفسك فجأة، ولا تهمل إشارات التعب.</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="p-6 border border-gray-200 rounded-xl hover:border-emerald transition-colors">
-                        <h3 class="text-xl font-bold text-navy mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            الوقاية من الإصابات والإطالة
-                        </h3>
-                        <div class="h-0.5 w-12 bg-gold mb-3"></div>
-                        <p class="text-graytext font-semibold">تقييم مخاطر السقوط، فحص الأحذية الملائمة، وتقديم جلسات إطالة فورية لعضلات الرقبة والظهر لتخفيف التشنجات الناتجة عن الجلوس أو المشي الخاطئ.</p>
+                    <!-- البرنامج 4: الإطالة العضلية -->
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/3 shrink-0 rounded-xl overflow-hidden bg-[#F0F4F8] border border-gray-200">
+                            <svg viewBox="0 0 400 250" class="w-full h-full">
+                                <!-- عصا المشي والتوازن -->
+                                <path d="M260 120 L 260 200" stroke="#C5A059" stroke-width="5" stroke-linecap="round"/>
+                                <path d="M245 120 L 260 120 Q 275 120 275 135" fill="none" stroke="#C5A059" stroke-width="5" stroke-linecap="round"/>
+                                <!-- الحاج -->
+                                <g transform="translate(160, 80)">
+                                    <circle cx="20" cy="15" r="15" fill="#1B2A47" />
+                                    <!-- الإحرام -->
+                                    <path d="M-5 45 Q 20 30 45 45 L 55 130 L -15 130 Z" fill="#FFFFFF" stroke="#1B2A47" stroke-width="2.5" stroke-linejoin="round"/>
+                                    <path d="M-5 45 Q 25 75 45 85" fill="none" stroke="#1B2A47" stroke-width="2.5" stroke-linecap="round"/>
+                                    <path d="M45 45 Q 70 70 90 40" fill="none" stroke="#1B2A47" stroke-width="2.5" stroke-linecap="round"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-navy mb-2">٤. برنامج الإطالة العضلية</h3>
+                            <p class="text-graytext font-semibold mb-3">يتعرض الحاج لمجهود بدني كبير يسبب آلاماً في الرقبة والظهر نتيجة الإرهاق وحمل الحقائب.</p>
+                            <ul class="custom-list text-graytext font-semibold text-sm">
+                                <li><strong class="text-navy">تمارين الرقبة:</strong> الإطالة الجانبية (مسك المعصم خلف الظهر والميل)، ثني الرقبة للأمام، وتمرين ثني الذقن للخلف.</li>
+                                <li><strong class="text-navy">نمط حياة صحي:</strong> تبديل حمل الحقيبة بين الكتفين، وأخذ فترات راحة منتظمة بين الشعائر.</li>
+                            </ul>
+                        </div>
                     </div>
 
                 </div>
             </div>
         </section>
 
-        <!-- الموارد التشغيلية -->
-        <section class="section-card">
-            <div class="section-header bg-bglight">
-                <div class="icon-box">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                </div>
-                <h2 class="text-3xl font-black text-navy">المتطلبات والموارد التشغيلية</h2>
-            </div>
-            <div class="section-body bg-white flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                    <p class="text-lg text-graytext font-semibold leading-relaxed">لضمان تنفيذ المبادرة بكفاءة عالية خلال موسم الحج في النقاط المستهدفة، تم حصر الاحتياج المبدئي للكوادر والمساحات كالتالي:</p>
-                </div>
-                <div class="flex gap-4 shrink-0">
-                    <div class="bg-bglight px-8 py-5 rounded-xl border border-gray-200 text-center shadow-sm">
-                        <span class="block text-4xl font-black text-emerald mb-1">١٨</span>
-                        <span class="text-base font-bold text-navy">ممارس تأهيل طبي</span>
-                    </div>
-                    <div class="bg-bglight px-8 py-5 rounded-xl border border-gray-200 text-center shadow-sm">
-                        <span class="block text-4xl font-black text-emerald mb-1">٦</span>
-                        <span class="text-base font-bold text-navy">مساحات فرز ميدانية</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- الخلاصة -->
+        <!-- فريق العمل والخلاصة -->
         <section class="section-card border-b-8 border-b-gold">
-            <div class="section-header bg-bglight">
-                <div class="icon-box">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h2 class="text-3xl font-black text-navy">الخلاصة</h2>
-            </div>
             <div class="section-body bg-white">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-navy text-white rounded-full flex items-center justify-center font-black text-2xl">١٨</div>
+                    <h3 class="text-2xl font-bold text-navy">كادراً للتأهيل الطبي الميداني</h3>
+                </div>
                 <p class="text-lg text-graytext font-semibold leading-relaxed">
-                    تمثل مبادرة "نسك ولياقة" نموذجاً متكاملاً للرعاية الصحية الوقائية، ترتكز بشكل أساسي على تهيئة الحجاج بدنياً وصحياً لأداء المناسك. من خلال حزم برامجها الأربعة (إدارة الإجهاد الحراري، التنفس الآمن، الجاهزية العضلية، والوقاية من الإصابات)، تسعى المبادرة للوصول للحاج في أماكن تواجده المبكرة بالمنافذ والمستشفيات، وتقديم التوعية والتدخلات التأهيلية السريعة. هذا التحول الاستباقي يضمن الارتقاء بجودة الخدمات الصحية المقدمة لضيوف الرحمن، ويحقق أثراً إيجابياً ملموساً ينعكس على تجربتهم العامة خلال موسم الحج.
+                    يتم ترشيح (١٨) ممارساً من المستشفيات لدعم التنفيذ الميداني. 
                 </p>
+                <div class="mt-6 p-6 bg-bglight rounded-lg border-r-4 border-emerald">
+                    <h4 class="text-xl font-bold text-emerald mb-2">الخلاصة المرجوة</h4>
+                    <p class="text-navy font-semibold">
+                        تمثل هذه المبادرة تحولاً استباقياً يركز على اللياقة والاستعداد الجسدي. من خلال هذا النهج، يتم تقليل الحالات الطارئة المرتبطة بالإجهاد، وتعزيز الوقاية الصحية، مما يسهم في تحقيق تجربة آمنة وميسرة تعين الحاج على إتمام نسكه بصحة وعافية.
+                    </p>
+                </div>
             </div>
         </section>
 
