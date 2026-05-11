@@ -3399,20 +3399,16 @@ body {
 /* السلايد - 1920x1080 بخلفية شفافة */
 .hajj-slide {
     width: 1920px;
-    height: 1080px;
     position: relative;
     background: transparent;
     font-family: 'Cairo', 'Tajawal', 'Janna LT', sans-serif;
-    overflow: hidden;
     direction: rtl;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px;
-    box-sizing: border-box;
+    flex-direction: column;
+    gap: 40px;
     transform-origin: top center;
     transform: scale(var(--slide-scale, 0.45));
-    margin-bottom: calc(1080px * (1 - var(--slide-scale, 0.45)) * -1);
+    margin-bottom: calc((1080px + 1080px + 40px) * (1 - var(--slide-scale, 0.45)) * -1);
     text-rendering: optimizeLegibility;
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
@@ -3689,6 +3685,94 @@ body {
     height: 12px;
     border-radius: 50%;
     display: inline-block;
+}
+
+/* صفحات السلايد - كل صفحة بحجم 1920x1080 منفصل */
+.hajj-slide-page {
+    width: 1920px;
+    height: 1080px;
+    background: transparent;
+    padding: 60px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    direction: rtl;
+}
+.hajj-slide-page + .hajj-slide-page {
+    margin-top: 40px;
+}
+
+/* الخريطة الحرارية */
+.hajj-heat {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    table-layout: fixed;
+    margin-bottom: 22px;
+}
+.hajj-heat thead th {
+    background: transparent;
+    color: #4A5A6B;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 0;
+    text-align: center;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    border: none;
+}
+.hajj-heat .hh-corner {
+    background: #063A58;
+    color: #FFFFFF;
+    border-radius: 6px;
+    width: 200px;
+    text-align: right;
+    padding-right: 16px;
+    font-size: 14px;
+}
+.hajj-heat .hh-hour {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    color: #4A5A6B;
+    font-size: 12px;
+}
+.hajj-heat tbody tr {
+    background: transparent;
+}
+.hajj-heat .hh-name {
+    background: #F0F4F8;
+    color: #1A2433;
+    font-weight: 700;
+    text-align: right;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border-radius: 6px;
+    border: 1px solid #D5DEE7;
+}
+.hajj-heat .hh-cell {
+    padding: 4px 2px;
+    text-align: center;
+    border-radius: 4px;
+    vertical-align: middle;
+    line-height: 1.1;
+    height: 50px;
+    width: auto;
+}
+.hajj-heat .hh-cell.empty {
+    border: 1px dashed #CBD5E0;
+}
+.hajj-heat .hh-pct {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+}
+.hajj-heat .hh-cnt {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 400;
+    font-size: 10.5px;
+    opacity: 0.85;
+    margin-top: 3px;
+    line-height: 1;
 }
 
 /* LOADING */
@@ -7007,82 +7091,160 @@ function renderHajjSlide(data) {
         `;
     };
 
-    slide.innerHTML = `
-        <div class="hajj-card">
-            <div class="hajj-card-header">
-                <div class="hajj-card-title">مؤشرات أداء مختبرات الطوارئ</div>
-            </div>
+    // بناء بيانات الخريطة الحرارية (نسبة الالتزام بالـ TAT الإجمالي لكل ساعة لكل مستشفى)
+    const heatmapRows = hospitalRows.map(r => {
+        const p = STATE.processed[r.key];
+        const hours = [];
+        for (let h = 0; h < 24; h++) {
+            const hd = p && p.byHour ? p.byHour[h] : null;
+            hours.push({
+                hour: h,
+                count: hd && hd.count ? hd.count : 0,
+                comp: hd && hd.comp !== null ? hd.comp : null
+            });
+        }
+        return { name: r.name, hours };
+    });
 
-            <div class="hajj-info">
-                <div class="hajj-info-title">شرح المؤشرات</div>
-                <div class="hajj-info-grid">
-                    <div class="hajj-info-row">
-                        <span class="hajj-info-num">١</span>
-                        <span class="hajj-info-text">من الطلب إلى السحب</span>
-                        <span class="hajj-info-target">١٠ دقائق</span>
-                    </div>
-                    <div class="hajj-info-row">
-                        <span class="hajj-info-num">٢</span>
-                        <span class="hajj-info-text">من السحب إلى إرسالها للمختبر</span>
-                        <span class="hajj-info-target">١٠ دقائق</span>
-                    </div>
-                    <div class="hajj-info-row">
-                        <span class="hajj-info-num">٣</span>
-                        <span class="hajj-info-text">من استقبالها في المختبر إلى ظهور النتيجة</span>
-                        <span class="hajj-info-target">٤٠ دقيقة</span>
-                    </div>
-                    <div class="hajj-info-row strong">
-                        <span class="hajj-info-num">الإجمالي</span>
-                        <span class="hajj-info-text">من الطلب إلى ظهور النتيجة</span>
-                        <span class="hajj-info-target">٦٠ دقيقة</span>
+    // ألوان الـ heatmap بالنسبة المئوية
+    const heatColor = (v) => {
+        if (v == null) return '#F1F5F9';
+        if (v >= 90) return '#10B981';
+        if (v >= 70) return '#F59E0B';
+        return '#EF4444';
+    };
+    const heatTextColor = (v) => {
+        if (v == null) return '#94A3B8';
+        return '#FFFFFF';
+    };
+
+    slide.innerHTML = `
+        <div class="hajj-slide-page" data-page="1">
+            <div class="hajj-card">
+                <div class="hajj-card-header">
+                    <div class="hajj-card-title">مؤشرات أداء مختبرات الطوارئ</div>
+                </div>
+
+                <div class="hajj-info">
+                    <div class="hajj-info-title">شرح المؤشرات</div>
+                    <div class="hajj-info-grid">
+                        <div class="hajj-info-row">
+                            <span class="hajj-info-num">١</span>
+                            <span class="hajj-info-text">من الطلب إلى السحب</span>
+                            <span class="hajj-info-target">١٠ دقائق</span>
+                        </div>
+                        <div class="hajj-info-row">
+                            <span class="hajj-info-num">٢</span>
+                            <span class="hajj-info-text">من السحب إلى إرسالها للمختبر</span>
+                            <span class="hajj-info-target">١٠ دقائق</span>
+                        </div>
+                        <div class="hajj-info-row">
+                            <span class="hajj-info-num">٣</span>
+                            <span class="hajj-info-text">من استقبالها في المختبر إلى ظهور النتيجة</span>
+                            <span class="hajj-info-target">٤٠ دقيقة</span>
+                        </div>
+                        <div class="hajj-info-row strong">
+                            <span class="hajj-info-num">الإجمالي</span>
+                            <span class="hajj-info-text">من الطلب إلى ظهور النتيجة</span>
+                            <span class="hajj-info-target">٦٠ دقيقة</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <table class="hajj-table">
-                <thead>
-                    <tr>
-                        <th class="hosp-col">المستشفى</th>
-                        <th>
-                            <div class="th-main">من الطلب إلى السحب</div>
-                            <div class="th-target">المستهدف ١٠ دقائق</div>
-                        </th>
-                        <th>
-                            <div class="th-main">من السحب إلى إرسالها للمختبر</div>
-                            <div class="th-target">المستهدف ١٠ دقائق</div>
-                        </th>
-                        <th>
-                            <div class="th-main">من استقبالها في المختبر إلى ظهور النتيجة</div>
-                            <div class="th-target">المستهدف ٤٠ دقيقة</div>
-                        </th>
-                        <th class="th-strong">
-                            <div class="th-main">الإجمالي خلال ٦٠ دقيقة</div>
-                            <div class="th-target">من الطلب إلى ظهور النتيجة</div>
-                        </th>
-                        <th class="th-strong">
-                            <div class="th-main">متوسط الاختبارات لكل مريض</div>
-                            <div class="th-target">المستهدف ١٠ اختبارات</div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${hospitalRows.map(r => `
+                <table class="hajj-table">
+                    <thead>
                         <tr>
-                            <td class="hosp-name">${r.name}</td>
-                            <td>${cellPct(r.stage1Pct)}</td>
-                            <td>${cellPct(r.stage2Pct)}</td>
-                            <td>${cellPct(r.stage3Pct)}</td>
-                            <td>${cellPct(r.totalPct)}</td>
-                            <td>${cellAvg(r.avgTests)}</td>
+                            <th class="hosp-col">المستشفى</th>
+                            <th>
+                                <div class="th-main">من الطلب إلى السحب</div>
+                                <div class="th-target">المستهدف ١٠ دقائق</div>
+                            </th>
+                            <th>
+                                <div class="th-main">من السحب إلى إرسالها للمختبر</div>
+                                <div class="th-target">المستهدف ١٠ دقائق</div>
+                            </th>
+                            <th>
+                                <div class="th-main">من استقبالها في المختبر إلى ظهور النتيجة</div>
+                                <div class="th-target">المستهدف ٤٠ دقيقة</div>
+                            </th>
+                            <th class="th-strong">
+                                <div class="th-main">الإجمالي خلال ٦٠ دقيقة</div>
+                                <div class="th-target">من الطلب إلى ظهور النتيجة</div>
+                            </th>
+                            <th class="th-strong">
+                                <div class="th-main">متوسط الاختبارات لكل مريض</div>
+                                <div class="th-target">المستهدف ١٠ اختبارات</div>
+                            </th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${hospitalRows.map(r => `
+                            <tr>
+                                <td class="hosp-name">${r.name}</td>
+                                <td>${cellPct(r.stage1Pct)}</td>
+                                <td>${cellPct(r.stage2Pct)}</td>
+                                <td>${cellPct(r.stage3Pct)}</td>
+                                <td>${cellPct(r.totalPct)}</td>
+                                <td>${cellAvg(r.avgTests)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
 
-            <div class="hajj-legend">
-                <span><span class="leg-dot" style="background:#10B981;"></span>ضمن المستهدف</span>
-                <span><span class="leg-dot" style="background:#F59E0B;"></span>قريب من المستهدف</span>
-                <span><span class="leg-dot" style="background:#EF4444;"></span>خارج المستهدف</span>
+                <div class="hajj-legend">
+                    <span><span class="leg-dot" style="background:#10B981;"></span>ضمن المستهدف</span>
+                    <span><span class="leg-dot" style="background:#F59E0B;"></span>قريب من المستهدف</span>
+                    <span><span class="leg-dot" style="background:#EF4444;"></span>خارج المستهدف</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hajj-slide-page" data-page="2">
+            <div class="hajj-card">
+                <div class="hajj-card-header">
+                    <div class="hajj-card-title">الخريطة الحرارية لأداء المختبرات</div>
+                </div>
+
+                <div class="hajj-info">
+                    <div class="hajj-info-title">نسبة الالتزام بالـ ٦٠ دقيقة في كل ساعة من اليوم</div>
+                    <div style="font-size: 14px; color: #4A5A6B; line-height: 1.6;">
+                        كل خانة تمثّل ساعة واحدة في يوم لمستشفى معيّن. الرقم العلوي = نسبة العينات المنجزة ضمن ٦٠ دقيقة، الرقم السفلي = عدد العينات في تلك الساعة. الخانات الفارغة تعني عدم وجود عينات في تلك الساعة.
+                    </div>
+                </div>
+
+                <table class="hajj-heat">
+                    <thead>
+                        <tr>
+                            <th class="hh-corner">المستشفى</th>
+                            ${Array.from({length: 24}, (_, h) => `<th class="hh-hour">${String(h).padStart(2, '0')}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${heatmapRows.map(r => `
+                            <tr>
+                                <td class="hh-name">${r.name}</td>
+                                ${r.hours.map(c => {
+                                    const bg = heatColor(c.comp);
+                                    const tc = heatTextColor(c.comp);
+                                    if (c.count === 0) {
+                                        return `<td class="hh-cell empty" style="background:${bg};"></td>`;
+                                    }
+                                    return `<td class="hh-cell" style="background:${bg}; color:${tc};">
+                                        <div class="hh-pct">${Math.round(c.comp)}%</div>
+                                        <div class="hh-cnt">${c.count}</div>
+                                    </td>`;
+                                }).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <div class="hajj-legend">
+                    <span><span class="leg-dot" style="background:#10B981;"></span>الالتزام ٩٠٪ فأكثر</span>
+                    <span><span class="leg-dot" style="background:#F59E0B;"></span>الالتزام ٧٠–٨٩٪</span>
+                    <span><span class="leg-dot" style="background:#EF4444;"></span>الالتزام أقل من ٧٠٪</span>
+                    <span><span class="leg-dot" style="background:#F1F5F9; border:1px solid #CBD5E0;"></span>لا توجد عينات</span>
+                </div>
             </div>
         </div>
     `;
@@ -7091,7 +7253,7 @@ function renderHajjSlide(data) {
 async function exportHajjPng() {
     const overlay = document.getElementById('loadingOverlay');
     overlay.classList.add('active');
-    document.getElementById('loadingText').textContent = 'جاري حفظ السلايد...';
+    document.getElementById('loadingText').textContent = 'جاري حفظ الصورة الأولى...';
     await new Promise(r => setTimeout(r, 50));
 
     const slide = document.getElementById('hajjSlide');
@@ -7109,25 +7271,40 @@ async function exportHajjPng() {
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         await new Promise(r => setTimeout(r, 250));
 
-        const canvas = await html2canvas(slide, {
-            scale: 1.5,
-            backgroundColor: null,
-            useCORS: true,
-            logging: false,
-            width: 1920,
-            height: 1080,
-            windowWidth: 1920,
-            windowHeight: 1080
-        });
+        const pages = slide.querySelectorAll('.hajj-slide-page');
+        const dateStr = new Date().toISOString().slice(0, 10);
+        const filenames = ['ER_Lab_Slide', 'ER_Lab_Heatmap'];
 
-        canvas.toBlob(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
-            a.click();
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-        }, 'image/png');
+        for (let i = 0; i < pages.length; i++) {
+            document.getElementById('loadingText').textContent =
+                `جاري حفظ الصورة ${i + 1} من ${pages.length}...`;
+            await new Promise(r => setTimeout(r, 50));
+
+            const canvas = await html2canvas(pages[i], {
+                scale: 1.5,
+                backgroundColor: null,
+                useCORS: true,
+                logging: false,
+                width: 1920,
+                height: 1080,
+                windowWidth: 1920,
+                windowHeight: 1080
+            });
+
+            await new Promise(resolve => {
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filenames[i] || 'ER_Lab_Page_' + (i+1)}_${dateStr}.png`;
+                    a.click();
+                    setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                        resolve();
+                    }, 600);  // فترة بين كل تحميل عشان المتصفح ما يحجبه
+                }, 'image/png');
+            });
+        }
     } catch (err) {
         console.error(err);
         alert('فشل حفظ السلايد: ' + err.message);
