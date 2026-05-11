@@ -3438,8 +3438,8 @@ body {
 }
 
 .hajj-card-title {
-    font-family: 'Geeza Pro', 'Damascus', 'Tahoma', 'Arial', sans-serif;
-    font-size: 38px;
+    font-family: 'Cairo', 'Tajawal', 'Geeza Pro', 'Tahoma', sans-serif;
+    font-size: 44px;
     font-weight: 700;
     color: #063A58;
     letter-spacing: 0;
@@ -7109,8 +7109,8 @@ function renderHajjSlide(data) {
     // ألوان الـ heatmap بالنسبة المئوية
     const heatColor = (v) => {
         if (v == null) return '#F1F5F9';
-        if (v >= 90) return '#10B981';
-        if (v >= 70) return '#F59E0B';
+        if (v >= 95) return '#10B981';
+        if (v >= 85) return '#F59E0B';
         return '#EF4444';
     };
     const heatTextColor = (v) => {
@@ -7240,9 +7240,9 @@ function renderHajjSlide(data) {
                 </table>
 
                 <div class="hajj-legend">
-                    <span><span class="leg-dot" style="background:#10B981;"></span>الالتزام ٩٠٪ فأكثر</span>
-                    <span><span class="leg-dot" style="background:#F59E0B;"></span>الالتزام ٧٠–٨٩٪</span>
-                    <span><span class="leg-dot" style="background:#EF4444;"></span>الالتزام أقل من ٧٠٪</span>
+                    <span><span class="leg-dot" style="background:#10B981;"></span>الالتزام ٩٥٪ فأكثر</span>
+                    <span><span class="leg-dot" style="background:#F59E0B;"></span>الالتزام ٨٥–٩٤٪</span>
+                    <span><span class="leg-dot" style="background:#EF4444;"></span>الالتزام أقل من ٨٥٪</span>
                     <span><span class="leg-dot" style="background:#F1F5F9; border:1px solid #CBD5E0;"></span>لا توجد عينات</span>
                 </div>
             </div>
@@ -7265,7 +7265,6 @@ async function exportHajjPng() {
             try { await document.fonts.ready; } catch (_) {}
         }
 
-        // إلغاء scale
         slide.style.transform = 'none';
         slide.style.marginBottom = '0';
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -7275,9 +7274,11 @@ async function exportHajjPng() {
         const dateStr = new Date().toISOString().slice(0, 10);
         const filenames = ['ER_Lab_Slide', 'ER_Lab_Heatmap'];
 
+        // الخطوة 1: نلتقط كل الصور أولاً ونحوّلها لـ blobs
+        const blobs = [];
         for (let i = 0; i < pages.length; i++) {
             document.getElementById('loadingText').textContent =
-                `جاري حفظ الصورة ${i + 1} من ${pages.length}...`;
+                `جاري إنشاء الصورة ${i + 1} من ${pages.length}...`;
             await new Promise(r => setTimeout(r, 50));
 
             const canvas = await html2canvas(pages[i], {
@@ -7291,19 +7292,31 @@ async function exportHajjPng() {
                 windowHeight: 1080
             });
 
-            await new Promise(resolve => {
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filenames[i] || 'ER_Lab_Page_' + (i+1)}_${dateStr}.png`;
-                    a.click();
-                    setTimeout(() => {
-                        URL.revokeObjectURL(url);
-                        resolve();
-                    }, 600);  // فترة بين كل تحميل عشان المتصفح ما يحجبه
-                }, 'image/png');
-            });
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            blobs.push({ blob, filename: `${filenames[i] || 'ER_Lab_Page_' + (i+1)}_${dateStr}.png` });
+        }
+
+        // الخطوة 2: تنزيل كل الـ blobs بفواصل زمنية كافية لتجنّب حجب المتصفح
+        for (let i = 0; i < blobs.length; i++) {
+            document.getElementById('loadingText').textContent =
+                `جاري تنزيل الصورة ${i + 1} من ${blobs.length}...`;
+            await new Promise(r => setTimeout(r, 50));
+
+            const url = URL.createObjectURL(blobs[i].blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = blobs[i].filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            await new Promise(r => setTimeout(r, 100));
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // فاصل زمني أطول بين كل تنزيل
+            if (i < blobs.length - 1) {
+                await new Promise(r => setTimeout(r, 800));
+            }
         }
     } catch (err) {
         console.error(err);
