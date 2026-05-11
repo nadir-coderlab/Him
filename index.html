@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -16,15 +15,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Cairo:wght@600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script>
 if (typeof XLSX === 'undefined') {
     document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
 }
 </script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
@@ -3557,6 +3553,33 @@ body {
     font-size: 22px;
 }
 
+/* خلية تصميم بصري: رقم + شريط تقدّم */
+.m-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 0 6px;
+}
+.m-val {
+    font-family: 'Janna LT', 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 1.1;
+    direction: ltr;
+}
+.m-bar {
+    width: 100%;
+    height: 8px;
+    background: #E5EAF0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.m-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
 .hajj-legend {
     margin-top: 24px;
     padding-top: 18px;
@@ -3699,100 +3722,97 @@ body {
 
 <main class="cmd-main">
 
-```
-<section class="upload-section">
-    <div class="section-title">
-        <h2>رفع ملفات المستشفيات</h2>
-        <span class="badge">١٥ مستشفى مستهدف</span>
-    </div>
-    <div class="upload-grid" id="uploadGrid"></div>
-</section>
-
-<div class="actions-bar">
-    <div class="actions-info">
-        <div class="info-stat">
-            <span class="label">الملفات المرفوعة</span>
-            <span class="value" id="filesCount">٠ / ١٥</span>
+    <section class="upload-section">
+        <div class="section-title">
+            <h2>رفع ملفات المستشفيات</h2>
+            <span class="badge">١٥ مستشفى مستهدف</span>
         </div>
-        <div class="info-stat">
-            <span class="label">إجمالي Sample ID المكتمل</span>
-            <span class="value" id="totalSamples">--</span>
-        </div>
-        <div class="info-stat">
-            <span class="label">المستهدف الكلي</span>
-            <span class="value" style="color: var(--accent-emerald);">٦٠ دقيقة</span>
-        </div>
-    </div>
-    <div class="actions-buttons">
-        <button class="btn btn-promise" id="btnPromise" disabled>الوعد التنفيذي</button>
-        <button class="btn btn-live" id="btnLive" disabled>وضع العرض المباشر</button>
-        <button class="btn btn-hajj" id="btnHajj" disabled>سلايد اجتماع الحج</button>
-        <button class="btn btn-exec" id="btnExecSummary" disabled>📊 ملخص تنفيذي</button>
-        <button class="btn" id="btnExportCompare" disabled>مقارنة (صورة)</button>
-        <button class="btn" id="btnExportDashPng" disabled>الداشبورد (صورة)</button>
-        <button class="btn" id="btnExportMobilePdf" disabled>PDF (للجوال)</button>
-        <button class="btn" id="btnExportSlidesPdf" disabled>PDF (للاجتماعات)</button>
-        <button class="btn" id="btnReset">إعادة تعيين</button>
-        <button class="btn btn-primary" id="btnAnalyze" disabled>تحليل البيانات</button>
-    </div>
-</div>
+        <div class="upload-grid" id="uploadGrid"></div>
+    </section>
 
-<!-- DATE FILTER -->
-<div class="date-filter-bar" id="dateFilterBar">
-    <div class="date-filter-title">فلترة حسب التاريخ</div>
-    <div class="date-filter-group">
-        <label class="date-filter-label">من:</label>
-        <input type="date" class="date-filter-input" id="dateFrom">
-    </div>
-    <div class="date-filter-group">
-        <label class="date-filter-label">إلى:</label>
-        <input type="date" class="date-filter-input" id="dateTo">
-    </div>
-    <div class="date-filter-info" id="dateFilterInfo">النطاق المتاح: --</div>
-    <div class="date-filter-actions">
-        <button class="btn" id="btnApplyDate">تطبيق الفلتر</button>
-        <button class="btn" id="btnClearDate">عرض الكل</button>
-    </div>
-</div>
-
-<div class="empty-state" id="emptyState">
-    <h3>ارفع ملف واحد على الأقل لبدء التحليل</h3>
-    <p>الداشبورد يحلل عينات الطوارئ ER ويستثني العينات المرفوضة والملغاة والمعلقة</p>
-</div>
-
-<section class="results-section" id="resultsSection">
-    <div class="indicator-explainer">
-        <h2>تعريف المؤشر</h2>
-        <p class="indicator-text">
-            مؤشر زمن إنجاز عينات الطوارئ (TAT) يقيس الزمن الكلي بين طلب الفحص من قسم الطوارئ وحتى ظهور النتيجة معتمدة في النظام. المستهدف العام هو ٦٠ دقيقة فأقل. لتحديد نقطة التأخير بدقة، تم تقسيم رحلة العينة إلى ثلاث مراحل تشغيلية مستقلة، يخضع كل منها لمستهدف زمني خاص.
-        </p>
-        <div class="indicator-stages-grid">
-            <div class="indicator-stage-box">
-                <span class="num">١</span>
-                <div class="nm">من الطلب إلى سحب العينة</div>
-                <div class="tg">المستهدف ≤ 10 دقائق</div>
+    <div class="actions-bar">
+        <div class="actions-info">
+            <div class="info-stat">
+                <span class="label">الملفات المرفوعة</span>
+                <span class="value" id="filesCount">٠ / ١٥</span>
             </div>
-            <div class="indicator-stage-box">
-                <span class="num">٢</span>
-                <div class="nm">من سحب العينة إلى استقبال المختبر</div>
-                <div class="tg">المستهدف ≤ 10 دقائق</div>
+            <div class="info-stat">
+                <span class="label">إجمالي Sample ID المكتمل</span>
+                <span class="value" id="totalSamples">--</span>
             </div>
-            <div class="indicator-stage-box">
-                <span class="num">٣</span>
-                <div class="nm">من استقبال المختبر إلى ظهور النتيجة</div>
-                <div class="tg">المستهدف ≤ 40 دقيقة</div>
+            <div class="info-stat">
+                <span class="label">المستهدف الكلي</span>
+                <span class="value" style="color: var(--accent-emerald);">٦٠ دقيقة</span>
             </div>
         </div>
+        <div class="actions-buttons">
+            <button class="btn btn-promise" id="btnPromise" disabled>الوعد التنفيذي</button>
+            <button class="btn btn-live" id="btnLive" disabled>وضع العرض المباشر</button>
+            <button class="btn btn-hajj" id="btnHajj" disabled>سلايد اجتماع الحج</button>
+            <button class="btn btn-exec" id="btnExecSummary" disabled>📊 ملخص تنفيذي</button>
+            <button class="btn" id="btnExportCompare" disabled>مقارنة (صورة)</button>
+            <button class="btn" id="btnExportDashPng" disabled>الداشبورد (صورة)</button>
+            <button class="btn" id="btnExportMobilePdf" disabled>PDF (للجوال)</button>
+            <button class="btn" id="btnExportSlidesPdf" disabled>PDF (للاجتماعات)</button>
+            <button class="btn" id="btnReset">إعادة تعيين</button>
+            <button class="btn btn-primary" id="btnAnalyze" disabled>تحليل البيانات</button>
+        </div>
     </div>
 
-    <div class="hospitals-section" id="hospitalsSection"></div>
-</section>
-```
+    <!-- DATE FILTER -->
+    <div class="date-filter-bar" id="dateFilterBar">
+        <div class="date-filter-title">فلترة حسب التاريخ</div>
+        <div class="date-filter-group">
+            <label class="date-filter-label">من:</label>
+            <input type="date" class="date-filter-input" id="dateFrom">
+        </div>
+        <div class="date-filter-group">
+            <label class="date-filter-label">إلى:</label>
+            <input type="date" class="date-filter-input" id="dateTo">
+        </div>
+        <div class="date-filter-info" id="dateFilterInfo">النطاق المتاح: --</div>
+        <div class="date-filter-actions">
+            <button class="btn" id="btnApplyDate">تطبيق الفلتر</button>
+            <button class="btn" id="btnClearDate">عرض الكل</button>
+        </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+        <h3>ارفع ملف واحد على الأقل لبدء التحليل</h3>
+        <p>الداشبورد يحلل عينات الطوارئ ER ويستثني العينات المرفوضة والملغاة والمعلقة</p>
+    </div>
+
+    <section class="results-section" id="resultsSection">
+        <div class="indicator-explainer">
+            <h2>تعريف المؤشر</h2>
+            <p class="indicator-text">
+                مؤشر زمن إنجاز عينات الطوارئ (TAT) يقيس الزمن الكلي بين طلب الفحص من قسم الطوارئ وحتى ظهور النتيجة معتمدة في النظام. المستهدف العام هو ٦٠ دقيقة فأقل. لتحديد نقطة التأخير بدقة، تم تقسيم رحلة العينة إلى ثلاث مراحل تشغيلية مستقلة، يخضع كل منها لمستهدف زمني خاص.
+            </p>
+            <div class="indicator-stages-grid">
+                <div class="indicator-stage-box">
+                    <span class="num">١</span>
+                    <div class="nm">من الطلب إلى سحب العينة</div>
+                    <div class="tg">المستهدف ≤ 10 دقائق</div>
+                </div>
+                <div class="indicator-stage-box">
+                    <span class="num">٢</span>
+                    <div class="nm">من سحب العينة إلى استقبال المختبر</div>
+                    <div class="tg">المستهدف ≤ 10 دقائق</div>
+                </div>
+                <div class="indicator-stage-box">
+                    <span class="num">٣</span>
+                    <div class="nm">من استقبال المختبر إلى ظهور النتيجة</div>
+                    <div class="tg">المستهدف ≤ 40 دقيقة</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hospitals-section" id="hospitalsSection"></div>
+    </section>
 
 </main>
 
 <!-- Executive Summary Modal -->
-
 <div class="exec-summary-modal" id="execSummaryModal">
     <div class="exec-summary-content">
         <div class="exec-summary-toolbar">
@@ -3808,7 +3828,6 @@ body {
 </div>
 
 <!-- Promise Modal -->
-
 <div class="promise-modal" id="promiseModal">
     <div class="promise-content">
         <div class="promise-toolbar">
@@ -3824,7 +3843,6 @@ body {
 </div>
 
 <!-- Hospital Compare Modal -->
-
 <div class="promise-modal" id="hospCompareModal">
     <div class="promise-content">
         <div class="promise-toolbar">
@@ -3840,7 +3858,6 @@ body {
 </div>
 
 <!-- Live TV Display -->
-
 <div class="live-modal" id="liveModal">
     <div class="live-content">
         <button class="live-exit" id="btnLiveExit" title="إغلاق">×</button>
@@ -3849,7 +3866,6 @@ body {
 </div>
 
 <!-- Hajj Meeting Slide -->
-
 <div class="promise-modal" id="hajjModal">
     <div class="promise-content">
         <div class="promise-toolbar">
@@ -6845,7 +6861,6 @@ function closeHajj() {
 function renderHajjSlide(data) {
     const slide = document.getElementById('hajjSlide');
 
-    // فلتر المستشفيات التي عندها بيانات
     const hospitalRows = data.ranked.map(h => {
         const p = STATE.processed[h.key];
         const overall = p && p.overall ? p.overall : {};
@@ -6862,18 +6877,17 @@ function renderHajjSlide(data) {
         };
     }).filter(r => r.samples > 0 || r.avgTests > 0);
 
-    // ترتيب أبجدي
     hospitalRows.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
 
-    // ألوان النسب: الأعلى أفضل
+    // الألوان: الأعلى أفضل للنسب
     const pctColor = (v) => {
         if (v == null) return '#9CA3AF';
         if (v >= 90) return '#10B981';
         if (v >= 70) return '#F59E0B';
         return '#EF4444';
     };
-    // ألوان متوسط الاختبارات: الأقل أفضل
-    const avgClr = (v) => {
+    // الأقل أفضل للمتوسط
+    const avgColor = (v) => {
         if (v == null) return '#9CA3AF';
         if (v <= 10) return '#10B981';
         if (v <= 15) return '#F59E0B';
@@ -6883,11 +6897,34 @@ function renderHajjSlide(data) {
     const fmtPct = (v) => v == null ? '—' : Math.round(v) + '%';
     const fmtAvg = (v) => v == null ? '—' : v.toFixed(1);
 
+    // خلية = رقم + شريط تقدّم ملوّن أسفله
+    const cellPct = (v) => {
+        const color = pctColor(v);
+        const fill = v == null ? 0 : Math.min(100, Math.max(0, v));
+        return `
+            <div class="m-cell">
+                <div class="m-val" style="color:${color};">${fmtPct(v)}</div>
+                <div class="m-bar"><div class="m-bar-fill" style="width:${fill}%; background:${color};"></div></div>
+            </div>
+        `;
+    };
+    // متوسط الاختبارات: شريط مقياسه 0..20 (المستهدف ≤10)
+    const cellAvg = (v) => {
+        const color = avgColor(v);
+        const fill = v == null ? 0 : Math.min(100, (v / 20) * 100);
+        return `
+            <div class="m-cell">
+                <div class="m-val" style="color:${color};">${fmtAvg(v)}</div>
+                <div class="m-bar"><div class="m-bar-fill" style="width:${fill}%; background:${color};"></div></div>
+            </div>
+        `;
+    };
+
     slide.innerHTML = `
         <div class="hajj-card">
             <div class="hajj-card-header">
                 <div class="hajj-card-title">مؤشرات أداء مختبرات الطوارئ</div>
-                <div class="hajj-card-sub">زمن إنجاز العينات لكل مستشفى — متوسط عدد الاختبارات لكل مريض</div>
+                <div class="hajj-card-sub">زمن إنجاز العينات لكل مستشفى ومتوسط الاختبارات لكل مريض</div>
             </div>
 
             <table class="hajj-table">
@@ -6920,11 +6957,11 @@ function renderHajjSlide(data) {
                     ${hospitalRows.map(r => `
                         <tr>
                             <td class="hosp-name">${r.name}</td>
-                            <td><span class="cell-pct" style="color:${pctColor(r.stage1Pct)};">${fmtPct(r.stage1Pct)}</span></td>
-                            <td><span class="cell-pct" style="color:${pctColor(r.stage2Pct)};">${fmtPct(r.stage2Pct)}</span></td>
-                            <td><span class="cell-pct" style="color:${pctColor(r.stage3Pct)};">${fmtPct(r.stage3Pct)}</span></td>
-                            <td><span class="cell-pct strong" style="color:${pctColor(r.totalPct)};">${fmtPct(r.totalPct)}</span></td>
-                            <td><span class="cell-pct strong" style="color:${avgClr(r.avgTests)};">${fmtAvg(r.avgTests)}</span></td>
+                            <td>${cellPct(r.stage1Pct)}</td>
+                            <td>${cellPct(r.stage2Pct)}</td>
+                            <td>${cellPct(r.stage3Pct)}</td>
+                            <td>${cellPct(r.totalPct)}</td>
+                            <td>${cellAvg(r.avgTests)}</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -6946,7 +6983,6 @@ async function exportHajjPng() {
     await new Promise(r => setTimeout(r, 100));
 
     const slide = document.getElementById('hajjSlide');
-    // نحفظ الحالة الأصلية ونلغي التحجيم مؤقتاً
     const originalTransform = slide.style.transform;
     const originalMargin = slide.style.marginBottom;
 
@@ -6955,22 +6991,51 @@ async function exportHajjPng() {
             try { await document.fonts.ready; } catch (_) {}
         }
 
-        // إلغاء scaling عشان html2canvas يلتقط بالأبعاد الكاملة
+        // إلغاء التحجيم مؤقتاً
         slide.style.transform = 'none';
         slide.style.marginBottom = '0';
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 250));
 
-        const canvas = await html2canvas(slide, {
-            scale: 1,
-            backgroundColor: null,        // شفاف
-            useCORS: true,
-            logging: false,
-            width: 1920,
-            height: 1080,
-            windowWidth: 1920,
-            windowHeight: 1080
+        // ===== استخدام SVG foreignObject =====
+        // هذا يضمن تخطيط النص العربي الصحيح لأنه يستخدم محرك المتصفح
+        const W = 1920, H = 1080;
+
+        // نستخرج كل الـ CSS rules المطلوبة لتغذية SVG
+        const cssRules = collectRelevantCss();
+
+        // نأخذ outerHTML للسلايد
+        const slideHtml = slide.outerHTML;
+
+        const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+            <foreignObject width="100%" height="100%">
+                <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="width:${W}px; height:${H}px;">
+                    <style>${cssRules}</style>
+                    ${slideHtml}
+                </div>
+            </foreignObject>
+        </svg>`;
+
+        // نحول SVG إلى blob ثم إلى image ثم نرسمه في canvas
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = (e) => reject(new Error('فشل تحميل الصورة الوسيطة'));
+            img.src = svgUrl;
         });
+
+        const canvas = document.createElement('canvas');
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext('2d');
+        // خلفية شفافة - لا نرسم backgroundColor
+        ctx.drawImage(img, 0, 0, W, H);
+        URL.revokeObjectURL(svgUrl);
 
         canvas.toBlob(blob => {
             const url = URL.createObjectURL(blob);
@@ -6982,13 +7047,63 @@ async function exportHajjPng() {
         }, 'image/png');
     } catch (err) {
         console.error(err);
-        alert('فشل حفظ السلايد: ' + err.message);
+        // fallback لـ html2canvas إذا فشل SVG (لبعض المتصفحات)
+        try {
+            const canvas = await html2canvas(slide, {
+                scale: 1,
+                backgroundColor: null,
+                useCORS: true,
+                logging: false,
+                width: 1920,
+                height: 1080,
+                windowWidth: 1920,
+                windowHeight: 1080
+            });
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            }, 'image/png');
+        } catch (e2) {
+            alert('فشل حفظ السلايد: ' + (err.message || e2.message));
+        }
     } finally {
-        // إرجاع الحالة الأصلية
         slide.style.transform = originalTransform;
         slide.style.marginBottom = originalMargin;
         overlay.classList.remove('active');
     }
+}
+
+// نجمع كل قواعد CSS اللي تخص السلايد لإدراجها في الـ SVG
+function collectRelevantCss() {
+    const prefixes = ['.hajj-', '.m-', '.leg-'];
+    let css = '';
+    // الخطوط من Google Fonts
+    css += `
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Tajawal:wght@400;700;800&display=swap');
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; }
+    `;
+    try {
+        for (const sheet of document.styleSheets) {
+            let rules;
+            try { rules = sheet.cssRules; } catch (e) { continue; }
+            if (!rules) continue;
+            for (const rule of rules) {
+                if (!rule.cssText) continue;
+                const txt = rule.cssText;
+                if (prefixes.some(p => txt.includes(p))) {
+                    css += txt + '\\n';
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('CSS collection partial:', e);
+    }
+    return css;
 }
 
 // Hajj Slide buttons
