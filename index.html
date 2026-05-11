@@ -3382,10 +3382,17 @@ body {
     transform: translateY(-1px);
 }
 
-/* غلاف معاينة السلايد - يدعم تكبير/تصغير */
+/* معاينة السلايد - خلفية بشكل خانات (لإظهار الشفافية) */
 .hajj-preview-wrap {
-    background: #0A0E1A;
-    padding: 30px;
+    background:
+        linear-gradient(45deg, #1a1f2e 25%, transparent 25%),
+        linear-gradient(-45deg, #1a1f2e 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1a1f2e 75%),
+        linear-gradient(-45deg, transparent 75%, #1a1f2e 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
+    background-color: #0F141F;
+    padding: 40px;
     overflow: auto;
     max-height: calc(100vh - 80px);
     display: flex;
@@ -3393,18 +3400,20 @@ body {
     align-items: flex-start;
 }
 
-/* السلايد نفسه - أبعاد ثابتة 1920x1080 (16:9) */
+/* السلايد - 1920x1080 بخلفية شفافة */
 .hajj-slide {
     width: 1920px;
     height: 1080px;
     position: relative;
-    background: #032436;
+    background: transparent;
     font-family: 'Janna LT', 'Tajawal', 'Cairo', sans-serif;
-    color: #FFFFFF;
     overflow: hidden;
     direction: rtl;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-    /* تصغير العرض ليناسب الشاشة */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    box-sizing: border-box;
     transform-origin: top center;
     transform: scale(var(--slide-scale, 0.45));
     margin-bottom: calc(1080px * (1 - var(--slide-scale, 0.45)) * -1);
@@ -3419,257 +3428,157 @@ body {
     .hajj-slide { --slide-scale: 0.20; }
 }
 
-.hajj-bg-image {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    z-index: 1;
-}
-.hajj-bg-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(3, 36, 54, 0.92), rgba(6, 58, 88, 0.85));
-    z-index: 2;
+/* الكارد الرئيسي */
+.hajj-card {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 16px;
+    padding: 44px 52px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+    box-sizing: border-box;
 }
 
-/* الشعارات */
-.hajj-logo-rcc {
-    position: absolute;
-    top: 38px;
-    left: 56px;
-    height: 80px;
-    width: auto;
-    z-index: 10;
-}
-.hajj-logo-cluster {
-    position: absolute;
-    top: 38px;
-    right: 56px;
-    height: 80px;
-    width: auto;
-    z-index: 10;
-    filter: brightness(1.05);
-}
-
-/* العنوان */
-.hajj-title {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
+.hajj-card-header {
+    border-bottom: 3px solid #063A58;
+    padding-bottom: 22px;
+    margin-bottom: 28px;
     text-align: center;
-    z-index: 10;
+}
+
+.hajj-card-title {
     font-family: 'Janna LT', 'Cairo', sans-serif;
-    font-size: 44px;
+    font-size: 40px;
     font-weight: 800;
-    color: #FFFFFF;
+    color: #063A58;
     letter-spacing: -0.5px;
-}
-.hajj-subtitle {
-    position: absolute;
-    top: 118px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    z-index: 10;
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.65);
-    font-weight: 400;
+    margin-bottom: 6px;
 }
 
-/* شريط التحذير */
-.hajj-warning {
-    position: absolute;
-    top: 170px;
-    left: 56px;
-    right: 56px;
-    z-index: 10;
-    background: rgba(245, 158, 11, 0.12);
-    border: 1px solid rgba(245, 158, 11, 0.4);
-    color: #FCD34D;
-    padding: 10px 22px;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
+.hajj-card-sub {
+    font-size: 18px;
+    color: #4A5A6B;
     font-weight: 500;
 }
 
-/* بطاقة KPIs */
-.hajj-kpis-card {
-    position: absolute;
-    top: 230px;
-    left: 56px;
-    right: 56px;
-    height: 120px;
-    z-index: 10;
-    background: rgba(6, 58, 88, 0.85);
-    border: 1px solid #126280;
-    border-radius: 6px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1px;
-}
-.hajj-kpi {
-    background: rgba(3, 36, 54, 0.5);
-    padding: 16px 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-}
-.hajj-kpi:not(:last-child) { border-left: 1px solid rgba(18, 98, 128, 0.5); }
-.hajj-kpi-label {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 6px;
-}
-.hajj-kpi-value {
-    font-family: 'Janna LT', 'JetBrains Mono', monospace;
-    font-size: 44px;
-    font-weight: 800;
-    color: #FFFFFF;
-    line-height: 1;
-}
-.hajj-kpi-target {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.45);
-    margin-top: 6px;
-}
-
-/* جدول المستشفيات */
-.hajj-table-card {
-    position: absolute;
-    top: 370px;
-    left: 56px;
-    right: 56px;
-    bottom: 80px;
-    z-index: 10;
-    background: rgba(6, 58, 88, 0.85);
-    border: 1px solid #126280;
-    border-radius: 6px;
-    padding: 18px 22px;
-    display: flex;
-    flex-direction: column;
-}
-.hajj-table-title {
-    font-family: 'Janna LT', 'Cairo', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: #FFFFFF;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(18, 98, 128, 0.6);
-}
+/* الجدول */
 .hajj-table {
     width: 100%;
-    border-collapse: collapse;
-    flex: 1;
+    border-collapse: separate;
+    border-spacing: 0;
 }
+
 .hajj-table thead th {
-    background: rgba(3, 36, 54, 0.6);
-    color: #F5F9FB;
-    font-size: 13px;
+    background: #063A58;
+    color: #FFFFFF;
+    font-size: 15px;
     font-weight: 700;
-    padding: 12px 8px;
+    padding: 16px 10px;
     text-align: center;
-    border-bottom: 2px solid #126280;
     vertical-align: middle;
+    line-height: 1.5;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+.hajj-table thead th:last-child { border-left: none; }
+.hajj-table thead th:first-child {
+    border-top-right-radius: 8px;
+}
+.hajj-table thead th:last-child {
+    border-top-left-radius: 8px;
+}
+.hajj-table thead th.hosp-col {
+    text-align: right;
+    padding-right: 22px;
+    width: 220px;
+    font-size: 17px;
+}
+.hajj-table thead th.th-strong {
+    background: #08506E;
+}
+
+.hajj-table .th-main {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
     line-height: 1.4;
 }
-.hajj-table thead th.hosp-col { text-align: right; padding-right: 16px; }
-.hajj-table .th-sub {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 400;
-    display: inline-block;
-    margin-top: 2px;
-}
 .hajj-table .th-target {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-    display: inline-block;
-    margin-top: 2px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1px 6px;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 8px;
     border-radius: 3px;
+    display: inline-block;
 }
+
 .hajj-table tbody tr {
-    border-bottom: 1px solid rgba(18, 98, 128, 0.25);
+    transition: background 0.15s;
 }
-.hajj-table tbody tr:hover {
-    background: rgba(18, 98, 128, 0.08);
+.hajj-table tbody tr:nth-child(even) {
+    background: #F7FAFC;
 }
+.hajj-table tbody tr:nth-child(odd) {
+    background: #FFFFFF;
+}
+.hajj-table tbody tr:last-child td:first-child {
+    border-bottom-right-radius: 8px;
+}
+.hajj-table tbody tr:last-child td:last-child {
+    border-bottom-left-radius: 8px;
+}
+
 .hajj-table td {
-    padding: 8px 6px;
+    padding: 14px 10px;
     text-align: center;
-    font-size: 14px;
-    color: #FFFFFF;
+    font-size: 16px;
+    border-bottom: 1px solid #E5EAF0;
 }
+
+.hajj-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
 .hajj-table td.hosp-name {
     text-align: right;
-    padding-right: 16px;
+    padding-right: 22px;
     font-weight: 700;
-    color: #FFFFFF;
-    font-size: 14.5px;
+    color: #1A2433;
+    font-size: 17px;
 }
+
 .cell-pct {
     display: inline-block;
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 14px;
-    min-width: 56px;
+    font-family: 'Janna LT', 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    min-width: 64px;
 }
-.cell-pct.strong { font-size: 15px; padding: 6px 14px; }
+.cell-pct.strong {
+    font-size: 22px;
+}
 
 .hajj-legend {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(18, 98, 128, 0.4);
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #E5EAF0;
     display: flex;
-    gap: 18px;
-    align-items: center;
+    justify-content: center;
+    gap: 32px;
     flex-wrap: wrap;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
+    font-size: 14px;
+    color: #4A5A6B;
+    font-weight: 600;
 }
-.hajj-legend .leg-sq {
-    display: inline-block;
+.hajj-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.hajj-legend .leg-dot {
     width: 12px;
     height: 12px;
-    border-radius: 2px;
-    margin-left: 5px;
-    vertical-align: middle;
-}
-.hajj-legend .leg-spacer { flex: 1; }
-.hajj-legend .leg-note {
-    font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.45);
-}
-
-/* التذييل */
-.hajj-footer {
-    position: absolute;
-    bottom: 20px;
-    left: 56px;
-    right: 56px;
-    height: 40px;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12.5px;
-    color: rgba(255, 255, 255, 0.5);
-    border-top: 1px solid rgba(18, 98, 128, 0.4);
-    padding-top: 12px;
-}
-.hajj-footer-left {
-    font-family: 'JetBrains Mono', monospace;
-    direction: ltr;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 /* LOADING */
@@ -6937,20 +6846,12 @@ function closeHajj() {
 
 function renderHajjSlide(data) {
     const slide = document.getElementById('hajjSlide');
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('ar-SA-u-ca-gregory', {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
 
-    // نطاق البيانات
-    const periodTag = data.dailyCluster.length > 0
-        ? `${data.dailyCluster[0].day} → ${data.dailyCluster[data.dailyCluster.length - 1].day}`
-        : '';
-
-    // نحسب TAT لكل مستشفى من STATE.processed (للمراحل الثلاث + الإجمالي)
+    // فلتر المستشفيات التي عندها بيانات
     const hospitalRows = data.ranked.map(h => {
         const p = STATE.processed[h.key];
         const overall = p && p.overall ? p.overall : {};
+        const samplesCount = p && p.completed ? p.completed : 0;
         return {
             key: h.key,
             name: h.name,
@@ -6958,123 +6859,86 @@ function renderHajjSlide(data) {
             stage2Pct: overall.stage2_compliance != null ? overall.stage2_compliance : null,
             stage3Pct: overall.stage3_compliance != null ? overall.stage3_compliance : null,
             totalPct: overall.total_compliance != null ? overall.total_compliance : null,
-            avgTests: h.avg
+            avgTests: h.avg,
+            samples: samplesCount
         };
-    });
+    }).filter(r => r.samples > 0 || r.avgTests > 0);
 
-    // ترتيب أبجدي حسب الاسم (مفيد للسلايد)
+    // ترتيب أبجدي
     hospitalRows.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
 
-    // دالة لون النسبة (للالتزام: الأعلى أفضل)
+    // ألوان النسب: الأعلى أفضل
     const pctColor = (v) => {
-        if (v == null) return '#94A3B8';
+        if (v == null) return '#9CA3AF';
         if (v >= 90) return '#10B981';
         if (v >= 70) return '#F59E0B';
         return '#EF4444';
     };
-    // دالة لون متوسط الاختبارات (الأقل أفضل)
+    // ألوان متوسط الاختبارات: الأقل أفضل
     const avgClr = (v) => {
-        if (v == null) return '#94A3B8';
+        if (v == null) return '#9CA3AF';
         if (v <= 10) return '#10B981';
         if (v <= 15) return '#F59E0B';
         return '#EF4444';
     };
 
-    const fmtPct = (v) => v == null ? '—' : `${Math.round(v)}%`;
+    const fmtPct = (v) => v == null ? '—' : Math.round(v) + '%';
     const fmtAvg = (v) => v == null ? '—' : v.toFixed(1);
 
     slide.innerHTML = `
-        <div class="hajj-bg-image" style="background-image: url('${window.HAJJ_BG_B64 || ''}');"></div>
-        <div class="hajj-bg-overlay"></div>
-
-        <!-- الشعارات -->
-        <img class="hajj-logo-rcc" src="${window.HAJJ_RCC_B64 || ''}" alt="RCC">
-        <img class="hajj-logo-cluster" src="${window.HAJJ_CLUSTER_B64 || ''}" alt="Cluster">
-
-        <!-- العنوان الرئيسي -->
-        <div class="hajj-title">مؤشرات أداء مختبرات الطوارئ</div>
-        <div class="hajj-subtitle">غرفة عمليات الحج — مركز التحكم بالموارد — RCC</div>
-
-        <!-- شريط التحذير -->
-        <div class="hajj-warning">
-            ⚠ يحتوي هذا التقرير على بيانات سرية. يمنع منعاً باتاً نسخ أو مشاركة أو تداول هذا المحتوى مع أي أطراف غير مصرح لها.
-        </div>
-
-        <!-- بطاقة KPIs -->
-        <div class="hajj-kpis-card">
-            <div class="hajj-kpi">
-                <div class="hajj-kpi-label">المتوسط العام للالتزام بالـ TAT</div>
-                <div class="hajj-kpi-value" style="color:${pctColor(getClusterTotalCompliance())};">${fmtPct(getClusterTotalCompliance())}</div>
-                <div class="hajj-kpi-target">الهدف ≥ 90%</div>
+        <div class="hajj-card">
+            <div class="hajj-card-header">
+                <div class="hajj-card-title">مؤشرات أداء مختبرات الطوارئ</div>
+                <div class="hajj-card-sub">زمن إنجاز العينات لكل مستشفى — متوسط عدد الاختبارات لكل مريض</div>
             </div>
-            <div class="hajj-kpi">
-                <div class="hajj-kpi-label">متوسط الاختبارات لكل مريض</div>
-                <div class="hajj-kpi-value" style="color:${avgClr(data.overallAvg)};">${data.overallAvg.toFixed(2)}</div>
-                <div class="hajj-kpi-target">الهدف ≤ 10</div>
-            </div>
-            <div class="hajj-kpi">
-                <div class="hajj-kpi-label">عدد المستشفيات المشمولة</div>
-                <div class="hajj-kpi-value">${data.hospitalCount}</div>
-                <div class="hajj-kpi-target">${periodTag || dateStr}</div>
-            </div>
-        </div>
 
-        <!-- جدول المستشفيات -->
-        <div class="hajj-table-card">
-            <div class="hajj-table-title">مؤشرات الـ TAT ومتوسط الاختبارات لكل مستشفى</div>
             <table class="hajj-table">
                 <thead>
                     <tr>
                         <th class="hosp-col">المستشفى</th>
-                        <th>المرحلة الأولى<br><span class="th-sub">طلب ← سحب العينة</span><br><span class="th-target">≤ 10 د</span></th>
-                        <th>المرحلة الثانية<br><span class="th-sub">سحب ← استلام في المختبر</span><br><span class="th-target">≤ 10 د</span></th>
-                        <th>المرحلة الثالثة<br><span class="th-sub">استلام ← نتيجة</span><br><span class="th-target">≤ 40 د</span></th>
-                        <th>الإجمالي<br><span class="th-sub">من الطلب إلى النتيجة</span><br><span class="th-target">≤ 60 د</span></th>
-                        <th>الاختبارات/مريض<br><span class="th-sub">الوعد التنفيذي</span><br><span class="th-target">≤ 10</span></th>
+                        <th>
+                            <div class="th-main">من طلب العينة إلى سحبها</div>
+                            <div class="th-target">المستهدف ١٠ دقائق فأقل</div>
+                        </th>
+                        <th>
+                            <div class="th-main">من سحب العينة إلى استلامها في المختبر</div>
+                            <div class="th-target">المستهدف ١٠ دقائق فأقل</div>
+                        </th>
+                        <th>
+                            <div class="th-main">من استلام العينة إلى ظهور النتيجة</div>
+                            <div class="th-target">المستهدف ٤٠ دقيقة فأقل</div>
+                        </th>
+                        <th class="th-strong">
+                            <div class="th-main">من طلب العينة إلى ظهور النتيجة</div>
+                            <div class="th-target">المستهدف ٦٠ دقيقة فأقل</div>
+                        </th>
+                        <th class="th-strong">
+                            <div class="th-main">متوسط الاختبارات لكل مريض</div>
+                            <div class="th-target">المستهدف ١٠ اختبارات فأقل</div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     ${hospitalRows.map(r => `
                         <tr>
                             <td class="hosp-name">${r.name}</td>
-                            <td><span class="cell-pct" style="background:${pctColor(r.stage1Pct)}20; color:${pctColor(r.stage1Pct)};">${fmtPct(r.stage1Pct)}</span></td>
-                            <td><span class="cell-pct" style="background:${pctColor(r.stage2Pct)}20; color:${pctColor(r.stage2Pct)};">${fmtPct(r.stage2Pct)}</span></td>
-                            <td><span class="cell-pct" style="background:${pctColor(r.stage3Pct)}20; color:${pctColor(r.stage3Pct)};">${fmtPct(r.stage3Pct)}</span></td>
-                            <td><span class="cell-pct strong" style="background:${pctColor(r.totalPct)}20; color:${pctColor(r.totalPct)};">${fmtPct(r.totalPct)}</span></td>
-                            <td><span class="cell-pct strong" style="background:${avgClr(r.avgTests)}20; color:${avgClr(r.avgTests)};">${fmtAvg(r.avgTests)}</span></td>
+                            <td><span class="cell-pct" style="color:${pctColor(r.stage1Pct)};">${fmtPct(r.stage1Pct)}</span></td>
+                            <td><span class="cell-pct" style="color:${pctColor(r.stage2Pct)};">${fmtPct(r.stage2Pct)}</span></td>
+                            <td><span class="cell-pct" style="color:${pctColor(r.stage3Pct)};">${fmtPct(r.stage3Pct)}</span></td>
+                            <td><span class="cell-pct strong" style="color:${pctColor(r.totalPct)};">${fmtPct(r.totalPct)}</span></td>
+                            <td><span class="cell-pct strong" style="color:${avgClr(r.avgTests)};">${fmtAvg(r.avgTests)}</span></td>
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
+
             <div class="hajj-legend">
-                <span><span class="leg-sq" style="background:#10B981;"></span> ضمن الهدف</span>
-                <span><span class="leg-sq" style="background:#F59E0B;"></span> قريب من الهدف</span>
-                <span><span class="leg-sq" style="background:#EF4444;"></span> خارج الهدف</span>
-                <span class="leg-spacer"></span>
-                <span class="leg-note">الالتزام: نسبة العينات المنجزة ضمن الزمن المستهدف • الاختبارات/مريض: متوسط عدد الاختبارات لكل مريض في الطوارئ</span>
+                <span><span class="leg-dot" style="background:#10B981;"></span>ضمن المستهدف</span>
+                <span><span class="leg-dot" style="background:#F59E0B;"></span>قريب من المستهدف</span>
+                <span><span class="leg-dot" style="background:#EF4444;"></span>خارج المستهدف</span>
             </div>
         </div>
-
-        <!-- التذييل -->
-        <div class="hajj-footer">
-            <div class="hajj-footer-right">الإدارة العامة للخدمات الصحية المساندة • تجمع المدينة المنورة الصحي</div>
-            <div class="hajj-footer-left">${dateStr}</div>
-        </div>
     `;
-}
-
-// حساب متوسط الالتزام للكل المستشفيات (مرجح بعدد العينات)
-function getClusterTotalCompliance() {
-    const valid = Object.values(STATE.processed).filter(p => p && !p.empty && p.overall);
-    if (valid.length === 0) return null;
-    let totalComplied = 0, totalSamples = 0;
-    valid.forEach(p => {
-        const samples = p.completed || 0;
-        const pct = p.overall.total_compliance || 0;
-        totalComplied += (pct / 100) * samples;
-        totalSamples += samples;
-    });
-    return totalSamples > 0 ? (totalComplied / totalSamples) * 100 : null;
 }
 
 async function exportHajjPng() {
@@ -7083,18 +6947,25 @@ async function exportHajjPng() {
     document.getElementById('loadingText').textContent = 'جاري حفظ السلايد...';
     await new Promise(r => setTimeout(r, 100));
 
+    const slide = document.getElementById('hajjSlide');
+    // نحفظ الحالة الأصلية ونلغي التحجيم مؤقتاً
+    const originalTransform = slide.style.transform;
+    const originalMargin = slide.style.marginBottom;
+
     try {
-        const slide = document.getElementById('hajjSlide');
-        // السلايد مرسوم بعرض 1920px ثابت داخل CSS، لكن نستخدم رفع جودة للتصدير
         if (document.fonts && document.fonts.ready) {
             try { await document.fonts.ready; } catch (_) {}
         }
+
+        // إلغاء scaling عشان html2canvas يلتقط بالأبعاد الكاملة
+        slide.style.transform = 'none';
+        slide.style.marginBottom = '0';
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        await new Promise(r => setTimeout(r, 250));
+        await new Promise(r => setTimeout(r, 300));
 
         const canvas = await html2canvas(slide, {
-            scale: 1,                    // السلايد بالفعل 1920×1080
-            backgroundColor: HAJJ_COLORS.bgDark,
+            scale: 1,
+            backgroundColor: null,        // شفاف
             useCORS: true,
             logging: false,
             width: 1920,
@@ -7107,7 +6978,7 @@ async function exportHajjPng() {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `Hajj_Slide_ER_Lab_${new Date().toISOString().slice(0,10)}.png`;
+            a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
             a.click();
             setTimeout(() => URL.revokeObjectURL(url), 100);
         }, 'image/png');
@@ -7115,6 +6986,9 @@ async function exportHajjPng() {
         console.error(err);
         alert('فشل حفظ السلايد: ' + err.message);
     } finally {
+        // إرجاع الحالة الأصلية
+        slide.style.transform = originalTransform;
+        slide.style.marginBottom = originalMargin;
         overlay.classList.remove('active');
     }
 }
