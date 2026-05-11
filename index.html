@@ -3442,11 +3442,11 @@ body {
 }
 
 .hajj-card-title {
-    font-family: 'Cairo', 'Janna LT', sans-serif;
-    font-size: 40px;
-    font-weight: 800;
+    font-family: 'Geeza Pro', 'Damascus', 'Tahoma', 'Arial', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
     color: #063A58;
-    letter-spacing: -0.5px;
+    letter-spacing: 0;
     margin-bottom: 6px;
 }
 
@@ -3468,23 +3468,25 @@ body {
 .hajj-info-title {
     font-family: 'Cairo', 'Tajawal', sans-serif;
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 700;
     color: #063A58;
     margin-bottom: 12px;
 }
 .hajj-info-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 .hajj-info-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    text-align: center;
+    gap: 8px;
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 6px;
-    padding: 10px 14px;
+    padding: 14px 12px;
 }
 .hajj-info-row.strong {
     background: #063A58;
@@ -3502,31 +3504,33 @@ body {
     background: #063A58;
     color: #FFFFFF;
     font-family: 'Cairo', 'Tajawal', sans-serif;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 14px;
-    width: 28px;
-    height: 28px;
+    min-width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    padding: 0 8px;
 }
 .hajj-info-row.strong .hajj-info-num {
     background: #FFFFFF;
     color: #063A58;
     width: auto;
+    min-width: auto;
     height: auto;
-    padding: 3px 12px;
+    padding: 4px 14px;
     border-radius: 4px;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 700;
 }
 .hajj-info-text {
-    flex: 1;
     font-size: 14.5px;
     color: #1A2433;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.5;
+    flex: 1;
 }
 .hajj-info-target {
     background: #E2E8F0;
@@ -3534,7 +3538,7 @@ body {
     font-family: 'Cairo', 'Tajawal', sans-serif;
     font-weight: 700;
     font-size: 13px;
-    padding: 4px 10px;
+    padding: 5px 14px;
     border-radius: 4px;
     white-space: nowrap;
 }
@@ -3628,7 +3632,7 @@ body {
 .cell-pct {
     display: inline-block;
     font-family: 'Cairo', 'Tajawal', sans-serif;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 20px;
     min-width: 64px;
 }
@@ -3646,7 +3650,7 @@ body {
 }
 .m-val {
     font-family: 'Cairo', 'Tajawal', sans-serif;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 24px;
     line-height: 1.1;
     direction: ltr;
@@ -7084,48 +7088,10 @@ function renderHajjSlide(data) {
     `;
 }
 
-// محاولة جلب خط Cairo وتحويله لـ data URL لتضمينه في الـ SVG
-async function fetchFontAsDataUrl(url) {
-    try {
-        const response = await fetch(url, { mode: 'cors' });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const blob = await response.blob();
-        return await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    } catch (e) {
-        console.warn('Font fetch failed:', url, e.message);
-        return null;
-    }
-}
-
-let CACHED_FONT_CSS = null;
-async function buildFontCss() {
-    if (CACHED_FONT_CSS !== null) return CACHED_FONT_CSS;
-    // نحاول جلب Cairo بأوزان مختلفة من Google Fonts CDN
-    const fontUrls = {
-        400: 'https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSscLgs.woff2',
-        700: 'https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs_Sgs.woff2',
-        800: 'https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs9Tgs.woff2'
-    };
-    const fontFaces = [];
-    for (const [weight, url] of Object.entries(fontUrls)) {
-        const dataUrl = await fetchFontAsDataUrl(url);
-        if (dataUrl) {
-            fontFaces.push(`@font-face { font-family: 'Cairo'; font-style: normal; font-weight: ${weight}; src: url('${dataUrl}') format('woff2'); font-display: block; }`);
-        }
-    }
-    CACHED_FONT_CSS = fontFaces.join('\n');
-    return CACHED_FONT_CSS;
-}
-
 async function exportHajjPng() {
     const overlay = document.getElementById('loadingOverlay');
     overlay.classList.add('active');
-    document.getElementById('loadingText').textContent = 'جاري تحميل الخطوط...';
+    document.getElementById('loadingText').textContent = 'جاري حفظ السلايد...';
     await new Promise(r => setTimeout(r, 50));
 
     const slide = document.getElementById('hajjSlide');
@@ -7133,71 +7099,38 @@ async function exportHajjPng() {
     const originalMargin = slide.style.marginBottom;
 
     try {
-        // 1. جلب الخط وتضمينه
-        const fontCss = await buildFontCss();
-        document.getElementById('loadingText').textContent = 'جاري إنشاء الصورة...';
-
-        // 2. ننتظر تحميل الخطوط في DOM
         if (document.fonts && document.fonts.ready) {
             try { await document.fonts.ready; } catch (_) {}
         }
 
-        // 3. إلغاء scale
+        // إلغاء scale
         slide.style.transform = 'none';
         slide.style.marginBottom = '0';
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 250));
 
-        const W = 1920, H = 1080;
-        const localCss = collectRelevantCss();
-        const slideHtml = slide.outerHTML;
-
-        // 4. بناء SVG كامل مع الخط المضمّن
-        const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-            <foreignObject width="100%" height="100%">
-                <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="width:${W}px; height:${H}px; font-family: 'Cairo', 'Tajawal', sans-serif;">
-                    <style>
-                        ${fontCss}
-                        * { box-sizing: border-box; font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif !important; }
-                        body, html { margin: 0; padding: 0; }
-                        ${localCss}
-                    </style>
-                    ${slideHtml}
-                </div>
-            </foreignObject>
-        </svg>`;
-
-        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-        const svgUrl = URL.createObjectURL(svgBlob);
-
-        const img = new Image();
-        await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = () => reject(new Error('فشل تحميل SVG'));
-            img.src = svgUrl;
+        const canvas = await html2canvas(slide, {
+            scale: 1.5,
+            backgroundColor: null,
+            useCORS: true,
+            logging: false,
+            width: 1920,
+            height: 1080,
+            windowWidth: 1920,
+            windowHeight: 1080
         });
 
-        const canvas = document.createElement('canvas');
-        canvas.width = W;
-        canvas.height = H;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, W, H);
-        URL.revokeObjectURL(svgUrl);
-
-        await new Promise(resolve => {
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
-                a.click();
-                setTimeout(() => URL.revokeObjectURL(url), 100);
-                resolve();
-            }, 'image/png');
-        });
+        canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+        }, 'image/png');
     } catch (err) {
         console.error(err);
-        alert('فشل حفظ السلايد: ' + err.message + '\n\nتأكد من اتصال الإنترنت لتحميل الخط، أو جرب من متصفح آخر.');
+        alert('فشل حفظ السلايد: ' + err.message);
     } finally {
         slide.style.transform = originalTransform;
         slide.style.marginBottom = originalMargin;
@@ -7205,28 +7138,8 @@ async function exportHajjPng() {
     }
 }
 
-// نجمع كل قواعد CSS اللي تخص السلايد لإدراجها في الـ SVG
-function collectRelevantCss() {
-    const prefixes = ['.hajj-', '.m-', '.leg-', '.cell-'];
-    let css = '';
-    try {
-        for (const sheet of document.styleSheets) {
-            let rules;
-            try { rules = sheet.cssRules; } catch (e) { continue; }
-            if (!rules) continue;
-            for (const rule of rules) {
-                if (!rule.cssText) continue;
-                const txt = rule.cssText;
-                if (prefixes.some(p => txt.includes(p))) {
-                    css += txt + '\n';
-                }
-            }
-        }
-    } catch (e) {
-        console.warn('CSS collection partial:', e);
-    }
-    return css;
-}
+// (لم تعد مستخدمة - السلايد يستخدم html2canvas مع خطوط النظام)
+function collectRelevantCss() { return ''; }
 
 // Hajj Slide buttons
 document.addEventListener('DOMContentLoaded', () => {
