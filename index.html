@@ -3378,6 +3378,173 @@ body {
     transform: translateY(-1px);
 }
 
+/* زر تحليل الأطباء */
+.btn-doctors {
+    background: linear-gradient(135deg, #7C3AED, #5B21B6);
+    color: #FFFFFF;
+    border: 1px solid #8B5CF6;
+    font-weight: 700;
+}
+.btn-doctors:hover:not(:disabled) {
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    transform: translateY(-1px);
+}
+
+/* صفحة تحليل الأطباء */
+.doctors-page {
+    background: #0F172A;
+    padding: 30px;
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+    color: #E2E8F0;
+}
+.doc-upload-card {
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+.doc-upload-card h3 {
+    color: #F1F5F9;
+    margin: 0 0 12px;
+    font-size: 22px;
+    font-weight: 700;
+}
+.doc-help {
+    color: #94A3B8;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0 0 24px;
+}
+.doc-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.doc-form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.doc-form-row label {
+    color: #CBD5E1;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+.doc-select, .doc-file {
+    background: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #E2E8F0;
+    font-size: 14px;
+    font-family: inherit;
+}
+.doc-status {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #94A3B8;
+    min-height: 20px;
+}
+.doc-status.error { color: #F87171; }
+.doc-status.success { color: #34D399; }
+
+.doc-results { color: #E2E8F0; }
+.doc-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.doc-kpi {
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 18px 20px;
+    text-align: center;
+}
+.doc-kpi-label { font-size: 13px; color: #94A3B8; margin-bottom: 8px; }
+.doc-kpi-value { font-size: 32px; font-weight: 800; color: #F1F5F9; line-height: 1; }
+.doc-kpi-sub { font-size: 12px; color: #64748B; margin-top: 6px; }
+
+.doc-section {
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+.doc-section h4 {
+    color: #F1F5F9;
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 700;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #334155;
+}
+.doc-section-note {
+    color: #94A3B8;
+    font-size: 12.5px;
+    margin: 0 0 14px;
+    line-height: 1.6;
+}
+
+.doc-table { width: 100%; border-collapse: collapse; }
+.doc-table thead th {
+    text-align: right;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #CBD5E1;
+    font-weight: 700;
+    background: #0F172A;
+    border-bottom: 2px solid #334155;
+}
+.doc-table thead th.num { text-align: center; }
+.doc-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.doc-table tbody td {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid #334155;
+    color: #E2E8F0;
+}
+.doc-table tbody td.num {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+}
+.doc-table .rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: #334155;
+    color: #F1F5F9;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 13px;
+}
+.doc-table .rank.gold { background: #EAB308; color: #1F2937; }
+.doc-table .rank.silver { background: #CBD5E1; color: #1F2937; }
+.doc-table .rank.bronze { background: #B45309; color: #FFFFFF; }
+.doc-table .avg-bad { color: #F87171; font-weight: 700; }
+.doc-table .avg-ok { color: #34D399; font-weight: 700; }
+.doc-table .avg-warn { color: #FBBF24; font-weight: 700; }
+.doc-back-btn {
+    background: #334155;
+    border: none;
+    color: #E2E8F0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+.doc-back-btn:hover { background: #475569; }
+
 /* معاينة السلايد - خلفية بشكل خانات (لإظهار الشفافية) */
 .hajj-preview-wrap {
     background:
@@ -3918,6 +4085,7 @@ body {
         </div>
         <div class="actions-buttons">
             <button class="btn btn-promise" id="btnPromise" disabled>الوعد التنفيذي</button>
+            <button class="btn btn-doctors" id="btnDoctors">تحليل الأطباء</button>
             <button class="btn btn-live" id="btnLive" disabled>وضع العرض المباشر</button>
             <button class="btn btn-hajj" id="btnHajj" disabled>سلايد اجتماع الحج</button>
             <button class="btn btn-exec" id="btnExecSummary" disabled>📊 ملخص تنفيذي</button>
@@ -4048,6 +4216,47 @@ body {
         </div>
         <div class="hajj-preview-wrap">
             <div class="hajj-slide" id="hajjSlide"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Doctors Analysis Modal -->
+<div class="promise-modal" id="doctorsModal">
+    <div class="promise-content">
+        <div class="promise-toolbar">
+            <h2>تحليل الأطباء — تحديد الأكثر طلباً للاختبارات</h2>
+            <div class="exec-toolbar-actions">
+                <button class="btn" id="btnDoctorsExportPng">حفظ صورة PNG</button>
+                <button class="btn btn-close" id="btnDoctorsClose">إغلاق</button>
+            </div>
+        </div>
+        <div class="doctors-page" id="doctorsPage">
+            <!-- Step 1: Upload form -->
+            <div class="doc-upload-card" id="docUploadCard">
+                <h3>تحليل طلبات الأطباء في الطوارئ</h3>
+                <p class="doc-help">ارفع الملفين لمستشفى معيّن: ملف Lab KPI (المعتاد) + ملف Lab Monitor Report. سيتم ربطهما برقم العينة (Sample ID) لمعرفة الطبيب الذي طلب كل اختبار.</p>
+
+                <div class="doc-form-grid">
+                    <div class="doc-form-row">
+                        <label>المستشفى:</label>
+                        <select id="docHospitalSelect" class="doc-select"></select>
+                    </div>
+                    <div class="doc-form-row">
+                        <label>ملف Lab KPI (المعتاد):</label>
+                        <input type="file" id="docKpiFile" accept=".xlsx,.xls" class="doc-file">
+                    </div>
+                    <div class="doc-form-row">
+                        <label>ملف Lab Monitor Report:</label>
+                        <input type="file" id="docMonitorFile" accept=".xlsx,.xls" class="doc-file">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="btnDocAnalyze" style="margin-top:18px;">حلّل البيانات</button>
+                <div class="doc-status" id="docStatus"></div>
+            </div>
+
+            <!-- Step 2: Results -->
+            <div class="doc-results" id="docResults" style="display:none;"></div>
         </div>
     </div>
 </div>
@@ -7015,6 +7224,439 @@ const HAJJ_COLORS = {
     textLight: '#F5F9FB',
     accent: '#1E88B5'
 };
+
+
+// ============================================
+// تحليل الأطباء — ربط Lab KPI + Lab Monitor بـ SampleID
+// ============================================
+
+let DOC_STATE = {
+    kpiRows: null,
+    monitorRows: null,
+    results: null
+};
+
+function openDoctors() {
+    populateDocHospitalSelect();
+    resetDoctorsForm();
+    document.getElementById('doctorsModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDoctors() {
+    document.getElementById('doctorsModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function resetDoctorsForm() {
+    document.getElementById('docKpiFile').value = '';
+    document.getElementById('docMonitorFile').value = '';
+    document.getElementById('docStatus').textContent = '';
+    document.getElementById('docStatus').className = 'doc-status';
+    document.getElementById('docUploadCard').style.display = 'block';
+    document.getElementById('docResults').style.display = 'none';
+    DOC_STATE.kpiRows = null;
+    DOC_STATE.monitorRows = null;
+    DOC_STATE.results = null;
+}
+
+function populateDocHospitalSelect() {
+    const select = document.getElementById('docHospitalSelect');
+    select.innerHTML = '';
+    Object.entries(HOSPITALS).forEach(([key, info]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = info.ar || info.name || key;
+        select.appendChild(opt);
+    });
+}
+
+// قراءة ملف Excel وإعادة الصفوف كـ array of arrays (raw)
+async function readExcelRaw(file) {
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data, { type: 'array', cellDates: true });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    return XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: null });
+}
+
+// قراءة ملف Excel كـ array of objects (لـ KPI - بدون أعمدة مكررة)
+async function readExcelObjects(file) {
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data, { type: 'array', cellDates: true });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    return XLSX.utils.sheet_to_json(ws, { raw: false, defval: null });
+}
+
+async function analyzeDoctors() {
+    const status = document.getElementById('docStatus');
+    const kpiFile = document.getElementById('docKpiFile').files[0];
+    const monitorFile = document.getElementById('docMonitorFile').files[0];
+    const hospitalKey = document.getElementById('docHospitalSelect').value;
+
+    if (!kpiFile || !monitorFile) {
+        status.textContent = '⚠ يرجى رفع كلا الملفين';
+        status.className = 'doc-status error';
+        return;
+    }
+
+    try {
+        status.textContent = 'جاري قراءة الملفات...';
+        status.className = 'doc-status';
+
+        const kpiRows = await readExcelObjects(kpiFile);
+        const monitorAoa = await readExcelRaw(monitorFile);
+
+        // Lab Monitor: header في الصف الثاني (index 1)
+        // نتعامل مع الصفوف كـ arrays بـ indices ثابتة:
+        // [8] Ordered By, [27] Samples ID (الـ ID الثاني), [33] Hospital
+        // لكن لتأكد من الـ indices في حالة تغير الملف، نقرأ الـ header ونحدد indices ديناميكياً
+        const monHeader = monitorAoa[1] || [];
+
+        // نبحث عن "Ordered By" و عن آخر عمود اسمه "ID" (الـ Samples ID)
+        let orderedByIdx = -1;
+        let sampleIdIdx = -1;
+        let hospitalIdx = -1;
+
+        for (let i = 0; i < monHeader.length; i++) {
+            const h = monHeader[i] == null ? '' : String(monHeader[i]).trim();
+            if (h === 'Ordered By' && orderedByIdx === -1) orderedByIdx = i;
+            if (h === 'ID') sampleIdIdx = i;  // آخر "ID" هو Sample ID (Patient MRN في عمود MRN)
+            if (h === 'Hospital') hospitalIdx = i;
+        }
+        // fallback: لو لقينا ID واحد فقط، نأخذ الموقع 27 (المعتاد)
+        if (sampleIdIdx === -1 && monHeader.length > 27) sampleIdIdx = 27;
+        if (orderedByIdx === -1 && monHeader.length > 8) orderedByIdx = 8;
+
+        console.log('Monitor indices:', { orderedByIdx, sampleIdIdx, hospitalIdx, totalCols: monHeader.length });
+
+        if (orderedByIdx === -1 || sampleIdIdx === -1) {
+            status.textContent = '❌ لم يتم العثور على أعمدة "Ordered By" أو "Sample ID" في ملف Monitor.';
+            status.className = 'doc-status error';
+            return;
+        }
+
+        status.textContent = `جاري الربط والتحليل... (${kpiRows.length} صف KPI، ${monitorAoa.length - 2} صف Monitor)`;
+        await new Promise(r => setTimeout(r, 100));
+
+        // نبني صفوف Monitor: من الصف 2 (index 2) لنهاية
+        const monitorRows = [];
+        for (let i = 2; i < monitorAoa.length; i++) {
+            const r = monitorAoa[i];
+            if (!r) continue;
+            monitorRows.push({
+                sampleId: r[sampleIdIdx],
+                orderedBy: r[orderedByIdx],
+                hospital: hospitalIdx >= 0 ? r[hospitalIdx] : null
+            });
+        }
+
+        const results = computeDoctorAnalysis(kpiRows, monitorRows, hospitalKey);
+
+        if (!results) {
+            status.textContent = `⚠ لم يتم العثور على بيانات صالحة. عينات Monitor: ${monitorRows.length}، عينات KPI ER: ${kpiRows.filter(r => isErType(r['Patient Type'])).length}`;
+            status.className = 'doc-status error';
+            return;
+        }
+
+        DOC_STATE.kpiRows = kpiRows;
+        DOC_STATE.monitorRows = monitorRows;
+        DOC_STATE.results = results;
+
+        renderDoctorResults(results);
+
+        document.getElementById('docUploadCard').style.display = 'none';
+        document.getElementById('docResults').style.display = 'block';
+    } catch (err) {
+        console.error(err);
+        status.textContent = '❌ خطأ في قراءة الملفات: ' + err.message;
+        status.className = 'doc-status error';
+    }
+}
+
+function isErType(type) {
+    if (!type) return false;
+    const t = String(type).toLowerCase().trim();
+    return t === 'er' || t === 'emergency' || t.includes('emerg');
+}
+
+function normalizeSampleId(sid) {
+    if (sid == null) return null;
+    let s = String(sid).trim();
+    if (!s) return null;
+    // نزيل أي .0 ملحقة من الأرقام
+    s = s.replace(/\.0+$/, '');
+    return s;
+}
+
+function computeDoctorAnalysis(kpiRows, monitorRows, hospitalKey) {
+    // الخطوة 1: نبني خريطة Sample ID → اسم الطبيب من Lab Monitor
+    const sampleToDoc = new Map();
+    monitorRows.forEach(row => {
+        const sid = normalizeSampleId(row.sampleId);
+        if (!sid) return;
+        const doctor = row.orderedBy;
+        if (!doctor || String(doctor).trim() === '') return;
+        if (!sampleToDoc.has(sid)) {
+            sampleToDoc.set(sid, String(doctor).trim());
+        }
+    });
+
+    console.log('Sample-to-doctor map size:', sampleToDoc.size);
+    console.log('First 5 entries:', Array.from(sampleToDoc.entries()).slice(0, 5));
+
+    if (sampleToDoc.size === 0) return null;
+
+    // الخطوة 2: نفلتر Lab KPI على ER فقط + غير الملغية
+    const erRows = kpiRows.filter(r => {
+        if (!isErType(r['Patient Type'])) return false;
+        const status = String(r['Sample Status'] || '').toLowerCase().trim();
+        if (status === 'rejected' || status === 'canceled' || status === 'cancelled') return false;
+        return true;
+    });
+
+    console.log('ER rows in KPI:', erRows.length);
+    console.log('First 3 ER samples:', erRows.slice(0, 3).map(r => ({sid: r['SampleID'], pt: r['Patient Type']})));
+
+    if (erRows.length === 0) return null;
+
+    // الخطوة 3: لكل صف ER، نربط Sample ID مع الطبيب
+    const doctorMap = new Map();
+    let unmatched = 0;
+    let matched = 0;
+
+    erRows.forEach(row => {
+        const sid = normalizeSampleId(row['SampleID']);
+        if (!sid) return;
+        const doctor = sampleToDoc.get(sid);
+        if (!doctor) { unmatched++; return; }
+        matched++;
+
+        const patientId = row['Patient ID'];
+        if (!patientId) return;
+        const episode = row['episode_key'] || 'noep';
+        const patientKey = `${patientId}|${episode}`;
+
+        if (!doctorMap.has(doctor)) {
+            doctorMap.set(doctor, { patients: new Map(), totalTests: 0 });
+        }
+        const docEntry = doctorMap.get(doctor);
+        docEntry.totalTests++;
+
+        if (!docEntry.patients.has(patientKey)) {
+            docEntry.patients.set(patientKey, { count: 0, patientId, episode });
+        }
+        docEntry.patients.get(patientKey).count++;
+    });
+
+    console.log('Matched:', matched, 'Unmatched:', unmatched, 'Doctors:', doctorMap.size);
+
+    if (doctorMap.size === 0) return null;
+
+    const doctors = [];
+    doctorMap.forEach((entry, name) => {
+        const patientsArr = Array.from(entry.patients.values());
+        const patientCount = patientsArr.length;
+        const totalTests = entry.totalTests;
+        const avgTestsPerPatient = totalTests / patientCount;
+        const patientsExceeding = patientsArr.filter(p => p.count > 10).length;
+        const maxTestsOnePatient = Math.max(...patientsArr.map(p => p.count));
+
+        doctors.push({
+            name, patientCount, totalTests, avgTestsPerPatient,
+            patientsExceeding, maxTestsOnePatient, patients: patientsArr
+        });
+    });
+
+    const totalDoctors = doctors.length;
+    const totalErTests = erRows.length;
+    const totalErPatients = new Set(
+        erRows.filter(r => r['Patient ID']).map(r => `${r['Patient ID']}|${r['episode_key'] || 'noep'}`)
+    ).size;
+    const overallAvg = totalErPatients > 0 ? (totalErTests / totalErPatients) : 0;
+    const doctorsAboveTarget = doctors.filter(d => d.avgTestsPerPatient > 10).length;
+
+    return {
+        hospitalKey,
+        hospitalName: HOSPITALS[hospitalKey] ? (HOSPITALS[hospitalKey].ar || HOSPITALS[hospitalKey].name || hospitalKey) : hospitalKey,
+        doctors, totalDoctors, totalErTests, totalErPatients,
+        overallAvg, doctorsAboveTarget, unmatched,
+        monitorSampleCount: sampleToDoc.size,
+        erSampleCount: erRows.length,
+        matched
+    };
+}
+
+function renderDoctorResults(R) {
+    const container = document.getElementById('docResults');
+
+    const avgClr = (v) => {
+        if (v <= 10) return 'avg-ok';
+        if (v <= 15) return 'avg-warn';
+        return 'avg-bad';
+    };
+    const rankClass = (i) => i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+
+    // ترتيب 1: إجمالي الاختبارات (الأكثر طلباً)
+    const byTotal = [...R.doctors].sort((a, b) => b.totalTests - a.totalTests);
+    const top10ByTotal = byTotal.slice(0, 10);
+
+    // ترتيب 2: متوسط الاختبارات/مريض (مع شرط ≥ 3 مرضى للتحليل العادل)
+    const eligible = R.doctors.filter(d => d.patientCount >= 3);
+    const byAvg = eligible.sort((a, b) => b.avgTestsPerPatient - a.avgTestsPerPatient);
+    const top10ByAvg = byAvg.slice(0, 10);
+
+    container.innerHTML = `
+        <button class="doc-back-btn" id="btnDocBack">→ تحليل ملفات أخرى</button>
+
+        <div class="doc-section">
+            <h4>${R.hospitalName} — ملخص تحليل الأطباء</h4>
+            <div class="doc-kpi-row">
+                <div class="doc-kpi">
+                    <div class="doc-kpi-label">إجمالي الأطباء</div>
+                    <div class="doc-kpi-value">${R.totalDoctors}</div>
+                    <div class="doc-kpi-sub">طبيب طلب اختبارات في الطوارئ</div>
+                </div>
+                <div class="doc-kpi">
+                    <div class="doc-kpi-label">إجمالي الاختبارات في الطوارئ</div>
+                    <div class="doc-kpi-value">${R.totalErTests.toLocaleString()}</div>
+                    <div class="doc-kpi-sub">${R.totalErPatients} مريض</div>
+                </div>
+                <div class="doc-kpi">
+                    <div class="doc-kpi-label">المتوسط العام</div>
+                    <div class="doc-kpi-value" style="color:${R.overallAvg <= 10 ? '#34D399' : R.overallAvg <= 15 ? '#FBBF24' : '#F87171'};">${R.overallAvg.toFixed(2)}</div>
+                    <div class="doc-kpi-sub">اختبار/مريض (الهدف ≤ ١٠)</div>
+                </div>
+                <div class="doc-kpi">
+                    <div class="doc-kpi-label">أطباء فوق الهدف</div>
+                    <div class="doc-kpi-value" style="color:${R.doctorsAboveTarget > 0 ? '#F87171' : '#34D399'};">${R.doctorsAboveTarget}</div>
+                    <div class="doc-kpi-sub">متوسطهم > ١٠ اختبارات/مريض</div>
+                </div>
+            </div>
+            ${R.unmatched > 0 ? `<p class="doc-section-note">⚠ ${R.unmatched} عينة طوارئ من ملف KPI لم يتم العثور على طبيبها في ملف Monitor (قد يكون مرفوض أو ملغي).</p>` : ''}
+        </div>
+
+        <div class="doc-section">
+            <h4>أكثر ١٠ أطباء طلباً للاختبارات (إجمالي)</h4>
+            <p class="doc-section-note">مرتّبة بإجمالي عدد الاختبارات المطلوبة. مفيد لمعرفة الأطباء الأكثر نشاطاً.</p>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th class="num">الترتيب</th>
+                        <th>اسم الطبيب</th>
+                        <th class="num">المرضى</th>
+                        <th class="num">إجمالي الاختبارات</th>
+                        <th class="num">المتوسط/مريض</th>
+                        <th class="num">مرضى فوق ١٠</th>
+                        <th class="num">أعلى لمريض واحد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${top10ByTotal.map((d, i) => `
+                        <tr>
+                            <td class="num"><span class="rank ${rankClass(i)}">${i + 1}</span></td>
+                            <td>${escapeHtml(d.name)}</td>
+                            <td class="num">${d.patientCount}</td>
+                            <td class="num">${d.totalTests.toLocaleString()}</td>
+                            <td class="num ${avgClr(d.avgTestsPerPatient)}">${d.avgTestsPerPatient.toFixed(2)}</td>
+                            <td class="num">${d.patientsExceeding}</td>
+                            <td class="num">${d.maxTestsOnePatient}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="doc-section">
+            <h4>أعلى ١٠ أطباء في متوسط الاختبارات لكل مريض</h4>
+            <p class="doc-section-note">مرتّبة بمتوسط الاختبارات/مريض. مشروط بأن يكون الطبيب طلب لـ ٣ مرضى على الأقل (لاستبعاد الحالات الاستثنائية). المؤشر الأهم لتحديد الإفراط في طلب الاختبارات.</p>
+            ${top10ByAvg.length === 0 ? '<p style="color:#94A3B8;">لا توجد بيانات كافية (يلزم ≥ ٣ مرضى لكل طبيب).</p>' : `
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th class="num">الترتيب</th>
+                        <th>اسم الطبيب</th>
+                        <th class="num">المتوسط/مريض</th>
+                        <th class="num">المرضى</th>
+                        <th class="num">إجمالي الاختبارات</th>
+                        <th class="num">مرضى فوق ١٠</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${top10ByAvg.map((d, i) => `
+                        <tr>
+                            <td class="num"><span class="rank ${rankClass(i)}">${i + 1}</span></td>
+                            <td>${escapeHtml(d.name)}</td>
+                            <td class="num ${avgClr(d.avgTestsPerPatient)}">${d.avgTestsPerPatient.toFixed(2)}</td>
+                            <td class="num">${d.patientCount}</td>
+                            <td class="num">${d.totalTests.toLocaleString()}</td>
+                            <td class="num">${d.patientsExceeding}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            `}
+        </div>
+    `;
+
+    document.getElementById('btnDocBack').addEventListener('click', () => {
+        document.getElementById('docUploadCard').style.display = 'block';
+        document.getElementById('docResults').style.display = 'none';
+        document.getElementById('docStatus').textContent = '';
+    });
+}
+
+function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function exportDoctorsPng() {
+    if (!DOC_STATE.results) {
+        alert('قم بتحليل البيانات أولاً');
+        return;
+    }
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('active');
+    document.getElementById('loadingText').textContent = 'جاري حفظ الصورة...';
+    await new Promise(r => setTimeout(r, 50));
+    try {
+        const el = document.getElementById('docResults');
+        const canvas = await html2canvas(el, {
+            scale: 1.5,
+            backgroundColor: '#0F172A',
+            useCORS: true,
+            logging: false
+        });
+        canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Doctors_Analysis_${DOC_STATE.results.hospitalKey}_${new Date().toISOString().slice(0,10)}.png`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+        }, 'image/png');
+    } catch (err) {
+        console.error(err);
+        alert('فشل حفظ الصورة: ' + err.message);
+    } finally {
+        overlay.classList.remove('active');
+    }
+}
+
+// Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const btnDoctors = document.getElementById('btnDoctors');
+    if (btnDoctors) btnDoctors.addEventListener('click', openDoctors);
+    const btnDoctorsClose = document.getElementById('btnDoctorsClose');
+    if (btnDoctorsClose) btnDoctorsClose.addEventListener('click', closeDoctors);
+    const btnDocAnalyze = document.getElementById('btnDocAnalyze');
+    if (btnDocAnalyze) btnDocAnalyze.addEventListener('click', analyzeDoctors);
+    const btnDoctorsExportPng = document.getElementById('btnDoctorsExportPng');
+    if (btnDoctorsExportPng) btnDoctorsExportPng.addEventListener('click', exportDoctorsPng);
+});
+
 
 function openHajj() {
     const data = buildPromiseData();
