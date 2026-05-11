@@ -3402,7 +3402,7 @@ body {
     height: 1080px;
     position: relative;
     background: transparent;
-    font-family: 'Janna LT', 'Tajawal', 'Cairo', sans-serif;
+    font-family: 'Cairo', 'Tajawal', 'Janna LT', sans-serif;
     overflow: hidden;
     direction: rtl;
     display: flex;
@@ -3442,7 +3442,7 @@ body {
 }
 
 .hajj-card-title {
-    font-family: 'Janna LT', 'Cairo', sans-serif;
+    font-family: 'Cairo', 'Janna LT', sans-serif;
     font-size: 40px;
     font-weight: 800;
     color: #063A58;
@@ -3454,6 +3454,89 @@ body {
     font-size: 18px;
     color: #4A5A6B;
     font-weight: 500;
+}
+
+/* بطاقة شرح المؤشر */
+.hajj-info {
+    background: #F0F4F8;
+    border: 1px solid #D5DEE7;
+    border-right: 5px solid #063A58;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 22px;
+}
+.hajj-info-title {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #063A58;
+    margin-bottom: 12px;
+}
+.hajj-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+.hajj-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 10px 14px;
+}
+.hajj-info-row.strong {
+    background: #063A58;
+    border-color: #08506E;
+}
+.hajj-info-row.strong .hajj-info-num,
+.hajj-info-row.strong .hajj-info-text {
+    color: #FFFFFF;
+}
+.hajj-info-row.strong .hajj-info-target {
+    background: rgba(255,255,255,0.18);
+    color: #FFFFFF;
+}
+.hajj-info-num {
+    background: #063A58;
+    color: #FFFFFF;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.hajj-info-row.strong .hajj-info-num {
+    background: #FFFFFF;
+    color: #063A58;
+    width: auto;
+    height: auto;
+    padding: 3px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.hajj-info-text {
+    flex: 1;
+    font-size: 14.5px;
+    color: #1A2433;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.hajj-info-target {
+    background: #E2E8F0;
+    color: #4A5568;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
 }
 
 /* الجدول */
@@ -3544,7 +3627,7 @@ body {
 
 .cell-pct {
     display: inline-block;
-    font-family: 'Janna LT', 'Tajawal', sans-serif;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
     font-weight: 800;
     font-size: 20px;
     min-width: 64px;
@@ -3562,7 +3645,7 @@ body {
     padding: 0 6px;
 }
 .m-val {
-    font-family: 'Janna LT', 'Tajawal', sans-serif;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
     font-weight: 800;
     font-size: 24px;
     line-height: 1.1;
@@ -6924,7 +7007,32 @@ function renderHajjSlide(data) {
         <div class="hajj-card">
             <div class="hajj-card-header">
                 <div class="hajj-card-title">مؤشرات أداء مختبرات الطوارئ</div>
-                <div class="hajj-card-sub">زمن إنجاز العينات لكل مستشفى ومتوسط الاختبارات لكل مريض</div>
+            </div>
+
+            <div class="hajj-info">
+                <div class="hajj-info-title">شرح المؤشرات</div>
+                <div class="hajj-info-grid">
+                    <div class="hajj-info-row">
+                        <span class="hajj-info-num">١</span>
+                        <span class="hajj-info-text">من الطلب إلى السحب</span>
+                        <span class="hajj-info-target">١٠ دقائق</span>
+                    </div>
+                    <div class="hajj-info-row">
+                        <span class="hajj-info-num">٢</span>
+                        <span class="hajj-info-text">من السحب إلى إرسالها للمختبر</span>
+                        <span class="hajj-info-target">١٠ دقائق</span>
+                    </div>
+                    <div class="hajj-info-row">
+                        <span class="hajj-info-num">٣</span>
+                        <span class="hajj-info-text">من استقبالها في المختبر إلى ظهور النتيجة</span>
+                        <span class="hajj-info-target">٤٠ دقيقة</span>
+                    </div>
+                    <div class="hajj-info-row strong">
+                        <span class="hajj-info-num">الإجمالي</span>
+                        <span class="hajj-info-text">من الطلب إلى ظهور النتيجة</span>
+                        <span class="hajj-info-target">٦٠ دقيقة</span>
+                    </div>
+                </div>
             </div>
 
             <table class="hajj-table">
@@ -6932,24 +7040,24 @@ function renderHajjSlide(data) {
                     <tr>
                         <th class="hosp-col">المستشفى</th>
                         <th>
-                            <div class="th-main">من طلب العينة إلى سحبها</div>
-                            <div class="th-target">المستهدف ١٠ دقائق فأقل</div>
+                            <div class="th-main">من الطلب إلى السحب</div>
+                            <div class="th-target">المستهدف ١٠ دقائق</div>
                         </th>
                         <th>
-                            <div class="th-main">من سحب العينة إلى استلامها في المختبر</div>
-                            <div class="th-target">المستهدف ١٠ دقائق فأقل</div>
+                            <div class="th-main">من السحب إلى إرسالها للمختبر</div>
+                            <div class="th-target">المستهدف ١٠ دقائق</div>
                         </th>
                         <th>
-                            <div class="th-main">من استلام العينة إلى ظهور النتيجة</div>
-                            <div class="th-target">المستهدف ٤٠ دقيقة فأقل</div>
+                            <div class="th-main">من استقبالها في المختبر إلى ظهور النتيجة</div>
+                            <div class="th-target">المستهدف ٤٠ دقيقة</div>
                         </th>
                         <th class="th-strong">
-                            <div class="th-main">من طلب العينة إلى ظهور النتيجة</div>
-                            <div class="th-target">المستهدف ٦٠ دقيقة فأقل</div>
+                            <div class="th-main">الإجمالي خلال ٦٠ دقيقة</div>
+                            <div class="th-target">من الطلب إلى ظهور النتيجة</div>
                         </th>
                         <th class="th-strong">
                             <div class="th-main">متوسط الاختبارات لكل مريض</div>
-                            <div class="th-target">المستهدف ١٠ اختبارات فأقل</div>
+                            <div class="th-target">المستهدف ١٠ اختبارات</div>
                         </th>
                     </tr>
                 </thead>
@@ -6976,56 +7084,96 @@ function renderHajjSlide(data) {
     `;
 }
 
+// محاولة جلب خط Cairo وتحويله لـ data URL لتضمينه في الـ SVG
+async function fetchFontAsDataUrl(url) {
+    try {
+        const response = await fetch(url, { mode: 'cors' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const blob = await response.blob();
+        return await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (e) {
+        console.warn('Font fetch failed:', url, e.message);
+        return null;
+    }
+}
+
+let CACHED_FONT_CSS = null;
+async function buildFontCss() {
+    if (CACHED_FONT_CSS !== null) return CACHED_FONT_CSS;
+    // نحاول جلب Cairo بأوزان مختلفة من Google Fonts CDN
+    const fontUrls = {
+        400: 'https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSscLgs.woff2',
+        700: 'https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs_Sgs.woff2',
+        800: 'https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs9Tgs.woff2'
+    };
+    const fontFaces = [];
+    for (const [weight, url] of Object.entries(fontUrls)) {
+        const dataUrl = await fetchFontAsDataUrl(url);
+        if (dataUrl) {
+            fontFaces.push(`@font-face { font-family: 'Cairo'; font-style: normal; font-weight: ${weight}; src: url('${dataUrl}') format('woff2'); font-display: block; }`);
+        }
+    }
+    CACHED_FONT_CSS = fontFaces.join('\n');
+    return CACHED_FONT_CSS;
+}
+
 async function exportHajjPng() {
     const overlay = document.getElementById('loadingOverlay');
     overlay.classList.add('active');
-    document.getElementById('loadingText').textContent = 'جاري حفظ السلايد...';
-    await new Promise(r => setTimeout(r, 100));
+    document.getElementById('loadingText').textContent = 'جاري تحميل الخطوط...';
+    await new Promise(r => setTimeout(r, 50));
 
     const slide = document.getElementById('hajjSlide');
     const originalTransform = slide.style.transform;
     const originalMargin = slide.style.marginBottom;
 
     try {
+        // 1. جلب الخط وتضمينه
+        const fontCss = await buildFontCss();
+        document.getElementById('loadingText').textContent = 'جاري إنشاء الصورة...';
+
+        // 2. ننتظر تحميل الخطوط في DOM
         if (document.fonts && document.fonts.ready) {
             try { await document.fonts.ready; } catch (_) {}
         }
 
-        // إلغاء التحجيم مؤقتاً
+        // 3. إلغاء scale
         slide.style.transform = 'none';
         slide.style.marginBottom = '0';
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        await new Promise(r => setTimeout(r, 250));
+        await new Promise(r => setTimeout(r, 200));
 
-        // ===== استخدام SVG foreignObject =====
-        // هذا يضمن تخطيط النص العربي الصحيح لأنه يستخدم محرك المتصفح
         const W = 1920, H = 1080;
-
-        // نستخرج كل الـ CSS rules المطلوبة لتغذية SVG
-        const cssRules = collectRelevantCss();
-
-        // نأخذ outerHTML للسلايد
+        const localCss = collectRelevantCss();
         const slideHtml = slide.outerHTML;
 
+        // 4. بناء SVG كامل مع الخط المضمّن
         const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
             <foreignObject width="100%" height="100%">
-                <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="width:${W}px; height:${H}px;">
-                    <style>${cssRules}</style>
+                <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="width:${W}px; height:${H}px; font-family: 'Cairo', 'Tajawal', sans-serif;">
+                    <style>
+                        ${fontCss}
+                        * { box-sizing: border-box; font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif !important; }
+                        body, html { margin: 0; padding: 0; }
+                        ${localCss}
+                    </style>
                     ${slideHtml}
                 </div>
             </foreignObject>
         </svg>`;
 
-        // نحول SVG إلى blob ثم إلى image ثم نرسمه في canvas
         const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
         const svgUrl = URL.createObjectURL(svgBlob);
 
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-
         await new Promise((resolve, reject) => {
             img.onload = resolve;
-            img.onerror = (e) => reject(new Error('فشل تحميل الصورة الوسيطة'));
+            img.onerror = () => reject(new Error('فشل تحميل SVG'));
             img.src = svgUrl;
         });
 
@@ -7033,32 +7181,10 @@ async function exportHajjPng() {
         canvas.width = W;
         canvas.height = H;
         const ctx = canvas.getContext('2d');
-        // خلفية شفافة - لا نرسم backgroundColor
         ctx.drawImage(img, 0, 0, W, H);
         URL.revokeObjectURL(svgUrl);
 
-        canvas.toBlob(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
-            a.click();
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-        }, 'image/png');
-    } catch (err) {
-        console.error(err);
-        // fallback لـ html2canvas إذا فشل SVG (لبعض المتصفحات)
-        try {
-            const canvas = await html2canvas(slide, {
-                scale: 1,
-                backgroundColor: null,
-                useCORS: true,
-                logging: false,
-                width: 1920,
-                height: 1080,
-                windowWidth: 1920,
-                windowHeight: 1080
-            });
+        await new Promise(resolve => {
             canvas.toBlob(blob => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -7066,10 +7192,12 @@ async function exportHajjPng() {
                 a.download = `ER_Lab_Slide_${new Date().toISOString().slice(0,10)}.png`;
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(url), 100);
+                resolve();
             }, 'image/png');
-        } catch (e2) {
-            alert('فشل حفظ السلايد: ' + (err.message || e2.message));
-        }
+        });
+    } catch (err) {
+        console.error(err);
+        alert('فشل حفظ السلايد: ' + err.message + '\n\nتأكد من اتصال الإنترنت لتحميل الخط، أو جرب من متصفح آخر.');
     } finally {
         slide.style.transform = originalTransform;
         slide.style.marginBottom = originalMargin;
@@ -7079,14 +7207,8 @@ async function exportHajjPng() {
 
 // نجمع كل قواعد CSS اللي تخص السلايد لإدراجها في الـ SVG
 function collectRelevantCss() {
-    const prefixes = ['.hajj-', '.m-', '.leg-'];
+    const prefixes = ['.hajj-', '.m-', '.leg-', '.cell-'];
     let css = '';
-    // الخطوط من Google Fonts
-    css += `
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Tajawal:wght@400;700;800&display=swap');
-        * { box-sizing: border-box; }
-        body, html { margin: 0; padding: 0; }
-    `;
     try {
         for (const sheet of document.styleSheets) {
             let rules;
@@ -7096,7 +7218,7 @@ function collectRelevantCss() {
                 if (!rule.cssText) continue;
                 const txt = rule.cssText;
                 if (prefixes.some(p => txt.includes(p))) {
-                    css += txt + '\\n';
+                    css += txt + '\n';
                 }
             }
         }
