@@ -601,6 +601,11 @@ body {
     display: flex; align-items: stretch; justify-content: stretch;
     direction: rtl;
 }
+/* Tall variant: lets the slide grow vertically to fit all content (delays slide). */
+.hajj-slide-page.tall {
+    height: auto;
+    min-height: 1080px;
+}
 
 .hajj-card {
     width: 100%;
@@ -2322,7 +2327,7 @@ function buildDelaysCombinedSlide(rows, key, pageNum) {
             ${sections}`;
 
     return `
-    <div class="hajj-slide-page" data-page="${pageNum}">
+    <div class="hajj-slide-page tall" data-page="${pageNum}">
         <div class="hajj-card">
             <div class="hajj-card-header">
                 <div class="hajj-card-title">التأخرات · ${stageName}</div>
@@ -2361,8 +2366,11 @@ async function exportSlidePngs() {
         for (let i = 0; i < pages.length; i++) {
             btn.textContent = `جاري حفظ الصورة ${i+1}/${pages.length}...`;
             const page = pages[i];
+            // Capture actual rendered size — tall delays pages grow beyond 1080.
+            const w = page.offsetWidth || 1920;
+            const h = page.offsetHeight || 1080;
             const canvas = await html2canvas(page, {
-                width: 1920, height: 1080,
+                width: w, height: h,
                 scale: 2,
                 backgroundColor: '#FFFFFF',
                 useCORS: true,
