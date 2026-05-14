@@ -3347,34 +3347,57 @@ async function generateFinalReportPDF() {
     }
 
     const { jsPDF } = window.jspdf;
-    // Start landscape for slides; will switch to portrait for reports.
+    // Start landscape for slides; will switch as needed.
     const pdf = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
-    const A4_L_W = pdf.internal.pageSize.getWidth();   // ~297
-    const A4_L_H = pdf.internal.pageSize.getHeight();  // ~210
     let firstPage = true;
 
-    const addLandscapeImage = (imgData, imgW, imgH) => {
-        if (firstPage) { firstPage = false; }
-        else { pdf.addPage('a4', 'l'); }
-        // Fit image into the A4 landscape page preserving aspect ratio.
-        // If wider than tall ratio of A4-L: fit to width; else fit to height.
-        const pageW = A4_L_W, pageH = A4_L_H;
+    // A4 dimensions
+    const A4_LONG = 297;
+    const A4_SHORT = 210;
+
+    // Add a slide image — choose orientation (landscape/portrait) by aspect ratio,
+    // and if the image is taller than what a single page can fit even in portrait,
+    // slice it vertically across multiple pages so no content is wasted.
+    const addSlideImage = (imgData, imgW, imgH) => {
         const imgRatio = imgW / imgH;
-        const pageRatio = pageW / pageH;
-        let drawW, drawH, x, y;
-        if (imgRatio >= pageRatio) {
-            drawW = pageW;
-            drawH = pageW / imgRatio;
-            x = 0;
-            y = (pageH - drawH) / 2;
+        // Landscape page ratio = 297/210 = 1.414, Portrait = 210/297 = 0.707
+        // If image is wider than landscape ratio → landscape, fit to width
+        // If image is between portrait and landscape → landscape, fit to height
+        // If image is narrower (taller) than portrait → portrait, fit to width, slice if needed
+        let orient, pageW, pageH;
+        if (imgRatio >= 1.0) {
+            orient = 'l'; pageW = A4_LONG; pageH = A4_SHORT;
         } else {
-            drawH = pageH;
-            drawW = pageH * imgRatio;
-            x = (pageW - drawW) / 2;
-            y = 0;
+            orient = 'p'; pageW = A4_SHORT; pageH = A4_LONG;
         }
-        pdf.addImage(imgData, 'JPEG', x, y, drawW, drawH);
+
+        // Image scaled to fill page width
+        const drawW = pageW;
+        const drawHFull = pageW / imgRatio;   // full image height at this width
+
+        if (drawHFull <= pageH + 0.5) {
+            // Fits in one page, center it
+            if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', orient); }
+            else { pdf.addPage('a4', orient); }
+            const y = (pageH - drawHFull) / 2;
+            pdf.addImage(imgData, 'JPEG', 0, y, drawW, drawHFull);
+            return;
+        }
+
+        // Image is taller than one page — slice it vertically across pages.
+        // Each page shows a portion of the image using addImage's x/y offsets.
+        const pages = Math.ceil(drawHFull / pageH);
+        const sliceMm = drawHFull / pages;  // each page shows this many mm of image
+        for (let i = 0; i < pages; i++) {
+            if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', orient); }
+            else { pdf.addPage('a4', orient); }
+            // Place the FULL image but offset upward by -i*sliceMm so this slice is visible.
+            // jsPDF clips to page bounds automatically.
+            const yOff = -i * sliceMm;
+            pdf.addImage(imgData, 'JPEG', 0, yOff, drawW, drawHFull);
+        }
     };
+
     const addPortraitImage = (imgData) => {
         if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', 'p'); }
         else { pdf.addPage('a4', 'p'); }
@@ -3397,7 +3420,7 @@ async function generateFinalReportPDF() {
             + buildSlidePage1_table(rows)
             + buildSlidePage2_heatmapCombined(rows)
             + '</div>';
-        await renderSlideGroup(stage, meetingSlidesHTML, addLandscapeImage, (i, n) =>
+        await renderSlideGroup(stage, meetingSlidesHTML, addSlideImage, (i, n) =>
             setMsg(`سلايد الاجتماع... ${i}/${n}`));
 
         // -------- SECTION 2: Delays slide pages (landscape, tall ratio ok) --------
@@ -3407,7 +3430,7 @@ async function generateFinalReportPDF() {
             + buildDelaysCombinedSlide(rows, 'o2a', 1)
             + buildDelaysCombinedSlide(rows, 'a2r', 2)
             + '</div>';
-        await renderSlideGroup(stage, delaysSlidesHTML, addLandscapeImage, (i, n) =>
+        await renderSlideGroup(stage, delaysSlidesHTML, addSlideImage, (i, n) =>
             setMsg(`سلايد التأخرات... ${i}/${n}`));
 
         // -------- SECTION 3: Detailed report per hospital (portrait) --------
