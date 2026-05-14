@@ -3706,22 +3706,16 @@ function buildReportBodyHTML(info, s) {
             <h2 class="r-title">أداء الأطباء القارئين (Radiologists)</h2>
             <table class="r-tbl">
                 <colgroup>
-                    <col style="width:*"><col style="width:10%"><col style="width:13%">
-                    <col style="width:12%"><col style="width:13%"><col style="width:12%"><col style="width:11%">
+                    <col style="width:*"><col style="width:15%"><col style="width:18%"><col style="width:15%">
                 </colgroup>
                 <thead><tr>
-                    <th>اسم الطبيب</th><th>عدد التقارير</th><th>متوسط زمن التقرير</th>
-                    <th>الالتزام (٤٥د)</th><th>متوسط زمن التصوير</th>
-                    <th>الالتزام (١٥د)</th><th>عدد التأخرات</th>
+                    <th>اسم الطبيب</th><th>عدد التقارير</th><th>متوسط زمن التقرير</th><th>الالتزام (٤٥د)</th>
                 </tr></thead>
                 <tbody>${tableRows(s.byRadiologist.filter(r => r.name !== '(غير محدد)'), r => `
                     <td>${shortName(r.name) || r.name}</td>
                     <td class="num">${r.n}</td>
                     <td class="num">${Math.round(r.a2r_mean)} د</td>
                     <td class="num ${r.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.a2r_comp)}%</td>
-                    <td class="num">${Math.round(r.o2a_mean)} د</td>
-                    <td class="num ${r.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.o2a_comp)}%</td>
-                    <td class="num over">${r.delayed_a2r + r.delayed_o2a}</td>
                 `)}</tbody>
             </table>
         </div>` : '';
