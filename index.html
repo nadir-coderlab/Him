@@ -1642,6 +1642,7 @@ body {
             <button class="btn" id="btnReset">إعادة تعيين</button>
             <button class="btn" id="btnHajjSlide" disabled style="background: linear-gradient(135deg, #126280, #063A58); color: white; border-color: #1E88B5;">سلايد الاجتماع</button>
             <button class="btn" id="btnDelaysSlide" disabled style="background: linear-gradient(135deg, #B45309, #92400E); color: white; border-color: #D97706;">سلايد التأخرات</button>
+            <button class="btn" id="btnFinalReport" disabled style="background: linear-gradient(135deg, #7C2D12, #4C1D95); color: white; border-color: #8B5CF6;">📑 التقرير النهائي</button>
             <button class="btn btn-primary" id="btnAnalyze" disabled>تحليل البيانات</button>
         </div>
     </div>
@@ -1716,6 +1717,7 @@ function init() {
     document.getElementById('btnReset').addEventListener('click', resetAll);
     document.getElementById('btnHajjSlide').addEventListener('click', openHajjSlide);
     document.getElementById('btnDelaysSlide').addEventListener('click', openDelaysSlide);
+    document.getElementById('btnFinalReport').addEventListener('click', generateFinalReportPDF);
     document.getElementById('btnSlideClose').addEventListener('click', () => {
         document.getElementById('slideModal').classList.remove('active');
     });
@@ -1904,6 +1906,7 @@ function resetAll() {
     document.getElementById('emptyState').style.display = 'block';
     document.getElementById('btnHajjSlide').disabled = true;
     document.getElementById('btnDelaysSlide').disabled = true;
+    document.getElementById('btnFinalReport').disabled = true;
 }
 
 // ====================== DATE PARSING ======================
@@ -1982,6 +1985,7 @@ function analyzeAll() {
     const hasAny = ready.some(k => (STATE.results[k]?.summary.total_studies || 0) > 0);
     document.getElementById('btnHajjSlide').disabled = !hasAny;
     document.getElementById('btnDelaysSlide').disabled = !hasAny;
+    document.getElementById('btnFinalReport').disabled = !hasAny;
 }
 
 function analyzeHospital(hkey) {
@@ -3322,6 +3326,263 @@ async function generateHospitalReportPDF(hkey, btn) {
         document.body.removeChild(overlay);
         if (btn) { btn.disabled = false; btn.textContent = oldBtnText; }
     }
+}
+
+// ====================== FINAL CONSOLIDATED PDF REPORT ======================
+// Produces a single PDF containing:
+//   - The meeting slide pages (comparison table + heatmaps) — landscape A4
+//   - The delays slide pages (both stages, all hospitals) — landscape A4
+//   - The detailed report for EACH hospital with results — portrait A4
+async function generateFinalReportPDF() {
+    // Pre-flight library checks
+    if (typeof html2canvas === 'undefined') {
+        alert('مكتبة html2canvas لم يتم تحميلها. تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.');
+        return;
+    }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('مكتبة jsPDF لم يتم تحميلها. تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.');
+        return;
+    }
+
+    // Collect hospitals with results
+    const rows = Object.keys(HOSPITALS)
+        .filter(k => STATE.results[k] && STATE.results[k].summary.total_studies > 0)
+        .map(k => ({ key: k, info: HOSPITALS[k], s: STATE.results[k].summary }))
+        .sort((a, b) => a.info.ar.localeCompare(b.info.ar, 'ar'));
+
+    if (rows.length === 0) {
+        alert('لا توجد مستشفيات بنتائج. ارفع الملفات واضغط "تحليل البيانات" أولاً.');
+        return;
+    }
+
+    const btn = document.getElementById('btnFinalReport');
+    const oldBtnText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '...جاري الإنشاء';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'r-progress-overlay';
+    overlay.innerHTML = '<div class="ring"></div><div class="msg">جاري إنشاء التقرير النهائي...</div>';
+    document.body.appendChild(overlay);
+    const setMsg = (m) => overlay.querySelector('.msg').textContent = m;
+
+    // Wait for fonts up front so every subsequent measurement is stable
+    if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch(e) {}
+    }
+
+    const { jsPDF } = window.jspdf;
+    // Start landscape for slides; will switch to portrait for reports.
+    const pdf = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+    const A4_L_W = pdf.internal.pageSize.getWidth();   // ~297
+    const A4_L_H = pdf.internal.pageSize.getHeight();  // ~210
+    let firstPage = true;
+
+    const addLandscapeImage = (imgData, imgW, imgH) => {
+        if (firstPage) { firstPage = false; }
+        else { pdf.addPage('a4', 'l'); }
+        // Fit image into the A4 landscape page preserving aspect ratio.
+        // If wider than tall ratio of A4-L: fit to width; else fit to height.
+        const pageW = A4_L_W, pageH = A4_L_H;
+        const imgRatio = imgW / imgH;
+        const pageRatio = pageW / pageH;
+        let drawW, drawH, x, y;
+        if (imgRatio >= pageRatio) {
+            drawW = pageW;
+            drawH = pageW / imgRatio;
+            x = 0;
+            y = (pageH - drawH) / 2;
+        } else {
+            drawH = pageH;
+            drawW = pageH * imgRatio;
+            x = (pageW - drawW) / 2;
+            y = 0;
+        }
+        pdf.addImage(imgData, 'JPEG', x, y, drawW, drawH);
+    };
+    const addPortraitImage = (imgData) => {
+        if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', 'p'); }
+        else { pdf.addPage('a4', 'p'); }
+        const w = pdf.internal.pageSize.getWidth();
+        const h = pdf.internal.pageSize.getHeight();
+        pdf.addImage(imgData, 'JPEG', 0, 0, w, h);
+    };
+
+    // Offscreen host that we'll reuse for each render. Use a fixed off-screen
+    // position (NOT display:none — html2canvas needs real layout).
+    const stage = document.createElement('div');
+    stage.style.cssText = 'position:fixed; top:0; left:-3000px; z-index:-1; pointer-events:none;';
+    document.body.appendChild(stage);
+
+    try {
+        // -------- SECTION 1: Meeting slide pages (landscape) --------
+        setMsg('جاري إنشاء سلايد الاجتماع...');
+        const meetingSlidesHTML =
+            '<div class="hajj-slide" style="transform:none; margin-bottom:0;">'
+            + buildSlidePage1_table(rows)
+            + buildSlidePage2_heatmapCombined(rows)
+            + '</div>';
+        await renderSlideGroup(stage, meetingSlidesHTML, addLandscapeImage, (i, n) =>
+            setMsg(`سلايد الاجتماع... ${i}/${n}`));
+
+        // -------- SECTION 2: Delays slide pages (landscape, tall ratio ok) --------
+        setMsg('جاري إنشاء سلايد التأخرات...');
+        const delaysSlidesHTML =
+            '<div class="hajj-slide" style="transform:none; margin-bottom:0;">'
+            + buildDelaysCombinedSlide(rows, 'o2a', 1)
+            + buildDelaysCombinedSlide(rows, 'a2r', 2)
+            + '</div>';
+        await renderSlideGroup(stage, delaysSlidesHTML, addLandscapeImage, (i, n) =>
+            setMsg(`سلايد التأخرات... ${i}/${n}`));
+
+        // -------- SECTION 3: Detailed report per hospital (portrait) --------
+        for (let h = 0; h < rows.length; h++) {
+            const r = rows[h];
+            setMsg(`التقرير التفصيلي ${h+1}/${rows.length} — ${r.info.ar}`);
+            await renderHospitalReportIntoPDF(stage, r.info, r.s, addPortraitImage,
+                (i, n) => setMsg(`${r.info.ar} — صفحة ${i}/${n}`));
+        }
+
+        setMsg('جاري حفظ الملف...');
+        const fileName = `radiology-final-report-${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(fileName);
+    } catch (e) {
+        console.error(e);
+        alert('فشل إنشاء التقرير النهائي: ' + (e.message || e));
+    } finally {
+        if (stage.parentNode) stage.parentNode.removeChild(stage);
+        document.body.removeChild(overlay);
+        btn.disabled = false;
+        btn.textContent = oldBtnText;
+    }
+}
+
+// Render one or more 1920×(any) hajj-slide-page elements as landscape JPEG pages.
+async function renderSlideGroup(stage, slidesHTML, addImageFn, progressFn) {
+    stage.innerHTML = slidesHTML;
+    // Wait two raf ticks for layout
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const pages = stage.querySelectorAll('.hajj-slide-page');
+    for (let i = 0; i < pages.length; i++) {
+        progressFn(i + 1, pages.length);
+        const page = pages[i];
+        const w = page.offsetWidth || 1920;
+        const h = page.offsetHeight || 1080;
+        const canvas = await html2canvas(page, {
+            backgroundColor: '#FFFFFF',
+            scale: 1,
+            useCORS: true,
+            logging: false,
+            width: w,
+            height: h
+        });
+        if (!canvas || !canvas.width) throw new Error('فشل التقاط السلايد');
+        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+        addImageFn(imgData, canvas.width, canvas.height);
+    }
+    stage.innerHTML = '';
+}
+
+// Render one hospital's detailed report as portrait A4 pages.
+// Mirrors generateHospitalReportPDF's slicing strategy but feeds pages into the
+// shared PDF via addImageFn.
+async function renderHospitalReportIntoPDF(stage, info, s, addImageFn, progressFn) {
+    const host = document.createElement('div');
+    host.className = 'r-host';
+    host.innerHTML = buildReportBodyHTML(info, s);
+    stage.appendChild(host);
+
+    // Wait for layout
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const hostH = host.offsetHeight;
+    if (!hostH) {
+        stage.removeChild(host);
+        throw new Error(`فشل قياس تقرير ${info.ar}`);
+    }
+
+    const fullCanvas = await html2canvas(host, {
+        backgroundColor: '#FFFFFF',
+        scale: 1.5,
+        useCORS: true,
+        logging: false,
+        width: PDF_RENDER_WIDTH,
+        height: hostH,
+        windowWidth: PDF_RENDER_WIDTH
+    });
+    if (!fullCanvas || !fullCanvas.width) {
+        stage.removeChild(host);
+        throw new Error(`فشل التقاط تقرير ${info.ar}`);
+    }
+
+    // Build safe-cut Y positions from data-atom elements
+    const atomEls = host.querySelectorAll('[data-atom]');
+    const atoms = [];
+    const hostRect = host.getBoundingClientRect();
+    atomEls.forEach(el => {
+        const r = el.getBoundingClientRect();
+        atoms.push({ top: r.top - hostRect.top, bottom: r.bottom - hostRect.top });
+    });
+
+    const usableH = (PDF_RENDER_WIDTH * PDF_A4_RATIO) - PDF_HEADER_H - PDF_FOOTER_H;
+    const totalH = hostH;
+    const cuts = [];
+    let cursor = 0;
+    while (cursor < totalH) {
+        const idealEnd = cursor + usableH;
+        if (idealEnd >= totalH) {
+            cuts.push({ startY: cursor, endY: totalH });
+            break;
+        }
+        let safeEnd = -1;
+        for (const a of atoms) {
+            if (a.bottom <= idealEnd && a.bottom > cursor && a.bottom > safeEnd) safeEnd = a.bottom;
+        }
+        if (safeEnd < 0) {
+            for (const a of atoms) {
+                if (a.top > cursor && a.top < idealEnd) { safeEnd = a.top; break; }
+            }
+        }
+        if (safeEnd < 0 || safeEnd <= cursor + 20) safeEnd = idealEnd;
+        cuts.push({ startY: cursor, endY: safeEnd });
+        cursor = safeEnd;
+    }
+
+    const scale = fullCanvas.width / PDF_RENDER_WIDTH;
+    const totalPages = cuts.length;
+    for (let i = 0; i < cuts.length; i++) {
+        progressFn(i + 1, totalPages);
+        const cut = cuts[i];
+        const sliceHDom = cut.endY - cut.startY;
+        const sliceHPx = Math.floor(sliceHDom * scale);
+
+        const pageCanvasW = fullCanvas.width;
+        const pageCanvasH = Math.floor((PDF_RENDER_WIDTH * PDF_A4_RATIO) * scale);
+        const headerPx = Math.floor(PDF_HEADER_H * scale);
+        const footerPx = Math.floor(PDF_FOOTER_H * scale);
+
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = pageCanvasW;
+        pageCanvas.height = pageCanvasH;
+        const ctx = pageCanvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, pageCanvasW, pageCanvasH);
+
+        drawPdfHeader(ctx, info, s, pageCanvasW, headerPx, scale);
+        ctx.drawImage(
+            fullCanvas,
+            0, Math.floor(cut.startY * scale),
+            pageCanvasW, sliceHPx,
+            0, headerPx,
+            pageCanvasW, sliceHPx
+        );
+        drawPdfFooter(ctx, i + 1, totalPages, pageCanvasW, pageCanvasH, footerPx, scale);
+
+        const imgData = pageCanvas.toDataURL('image/jpeg', 0.92);
+        addImageFn(imgData);
+    }
+
+    stage.removeChild(host);
 }
 
 function drawPdfHeader(ctx, info, s, w, hPx, scale) {
