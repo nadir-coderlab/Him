@@ -22,6 +22,7 @@ if (typeof XLSX === 'undefined') {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 :root {
@@ -1103,6 +1104,199 @@ body {
     background: rgba(16,185,129,0.25);
     color: #A7F3D0;
 }
+
+/* ============ DETAILED REPORT SHEET (rendered offscreen, exported to PDF) ============ */
+.report-host {
+    position: fixed;
+    top: -20000px;
+    left: -20000px;
+    width: 1240px;
+    background: #FFFFFF;
+    color: #1A2433;
+    font-family: 'Cairo','Tajawal',sans-serif;
+    direction: rtl;
+    padding: 60px 70px;
+    box-sizing: border-box;
+}
+.report-host * { box-sizing: border-box; }
+.report-host h1 {
+    font-family: 'Cairo','Tajawal',sans-serif;
+    font-size: 32px; font-weight: 800;
+    color: #063A58;
+    margin: 0;
+}
+.report-host h2 {
+    font-family: 'Cairo','Tajawal',sans-serif;
+    font-size: 22px; font-weight: 800;
+    color: #063A58;
+    margin: 0 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #063A58;
+}
+.report-host h3 {
+    font-family: 'Cairo','Tajawal',sans-serif;
+    font-size: 17px; font-weight: 700;
+    color: #1A2433;
+    margin: 0 0 10px 0;
+}
+.r-hdr {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 18px;
+    border-bottom: 3px solid #063A58;
+    margin-bottom: 28px;
+}
+.r-hdr .ar-name { font-size: 28px; font-weight: 800; color: #063A58; }
+.r-hdr .en-name { font-size: 14px; color: #6B7280; margin-top: 4px; }
+.r-hdr .meta { text-align: left; font-size: 13px; color: #4A5A6B; }
+.r-hdr .meta b { color: #063A58; font-size: 15px; }
+
+.r-section { margin-bottom: 32px; page-break-inside: avoid; }
+
+.r-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.r-kpi {
+    background: #F7FAFC;
+    border: 1px solid #E2E8F0;
+    border-right: 4px solid #063A58;
+    border-radius: 8px;
+    padding: 16px 18px;
+}
+.r-kpi.emerald { border-right-color: #10B981; }
+.r-kpi.amber { border-right-color: #F59E0B; }
+.r-kpi.rose { border-right-color: #EF4444; }
+.r-kpi .l {
+    font-size: 12px; color: #6B7280;
+    font-weight: 600; margin-bottom: 6px;
+}
+.r-kpi .v {
+    font-family: 'Cairo',sans-serif;
+    font-size: 28px; font-weight: 800;
+    color: #1A2433;
+    line-height: 1.1;
+}
+.r-kpi .v .u { font-size: 12px; color: #6B7280; font-weight: 600; margin-right: 4px; }
+.r-kpi .sub {
+    font-size: 11px; color: #6B7280;
+    margin-top: 8px; line-height: 1.4;
+}
+.r-kpi.emerald .v { color: #047857; }
+.r-kpi.amber .v { color: #B45309; }
+.r-kpi.rose .v { color: #B91C1C; }
+
+.r-stages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+.r-stage {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 18px 20px;
+}
+.r-stage .hd {
+    display: flex; justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #E2E8F0;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+.r-stage .hd .nm { font-size: 15px; font-weight: 800; color: #063A58; }
+.r-stage .hd .tg { font-size: 12px; color: #6B7280; }
+
+.r-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.r-stat {
+    text-align: center;
+    background: #F7FAFC;
+    border-radius: 6px;
+    padding: 8px 4px;
+}
+.r-stat .l { font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.r-stat .v { font-size: 18px; font-weight: 800; color: #1A2433; margin-top: 3px; }
+.r-stat .u { font-size: 10px; color: #6B7280; margin-right: 2px; }
+
+.r-buckets { display: flex; flex-direction: column; gap: 6px; }
+.r-bucket {
+    display: grid;
+    grid-template-columns: 14px 1fr 90px 60px;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+.r-bucket .sw { width: 12px; height: 12px; border-radius: 3px; }
+.r-bucket .lbl { color: #4A5A6B; }
+.r-bucket .bar {
+    height: 5px; background: #E5EAF0;
+    border-radius: 99px; overflow: hidden;
+}
+.r-bucket .bar > span { display: block; height: 100%; border-radius: 99px; }
+.r-bucket .n {
+    font-family: 'JetBrains Mono','Cairo',monospace;
+    font-size: 11px; color: #1A2433; font-weight: 700;
+    direction: ltr; text-align: left;
+}
+
+.r-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.r-table th, .r-table td {
+    border: 1px solid #E5EAF0;
+    padding: 8px 10px;
+    text-align: right;
+}
+.r-table th {
+    background: #063A58;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+}
+.r-table tr:nth-child(even) { background: #F7FAFC; }
+.r-table .right { text-align: left; direction: ltr; font-family: 'JetBrains Mono','Cairo',monospace; }
+.r-table .pid { font-family: 'JetBrains Mono','Cairo',monospace; direction: ltr; text-align: right; font-weight: 700; }
+.r-table .num { text-align: center; font-weight: 700; }
+.r-table .num.over { color: #B91C1C; }
+.r-table .num.ok { color: #047857; }
+
+.r-foot {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid #E5EAF0;
+    font-size: 11px;
+    color: #6B7280;
+    text-align: center;
+}
+
+.r-progress-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,14,26,0.85);
+    z-index: 3000;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+    color: #FFFFFF;
+}
+.r-progress-overlay .ring {
+    width: 42px; height: 42px;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: #F59E0B;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+.r-progress-overlay .msg {
+    font-family: 'Cairo','Tajawal',sans-serif;
+    font-size: 16px; font-weight: 700;
+}
 </style>
 </head>
 
@@ -1668,9 +1862,9 @@ function summarize(studies) {
         return {
             modality: m,
             n: arr.length,
-            o2a_med: median(arr.map(x=>x.o2a).sort((a,b)=>a-b)),
+            o2a_med: mean(arr.map(x=>x.o2a)),
             o2a_mean: mean(arr.map(x=>x.o2a)),
-            a2r_med: median(arr.map(x=>x.a2r).sort((a,b)=>a-b)),
+            a2r_med: mean(arr.map(x=>x.a2r)),
             a2r_mean: mean(arr.map(x=>x.a2r)),
             o2a_comp: 100*arr.filter(x=>x.o2a<=TARGET_O2A).length/arr.length,
             a2r_comp: 100*arr.filter(x=>x.a2r<=TARGET_A2R).length/arr.length
@@ -1689,8 +1883,8 @@ function summarize(studies) {
         return {
             name: p,
             n: arr.length,
-            o2a_med: median(arr.map(x=>x.o2a).sort((a,b)=>a-b)),
-            a2r_med: median(arr.map(x=>x.a2r).sort((a,b)=>a-b)),
+            o2a_med: mean(arr.map(x=>x.o2a)),
+            a2r_med: mean(arr.map(x=>x.a2r)),
             o2a_comp: 100*arr.filter(x=>x.o2a<=TARGET_O2A).length/arr.length,
             a2r_comp: 100*arr.filter(x=>x.a2r<=TARGET_A2R).length/arr.length
         };
@@ -1776,13 +1970,13 @@ function summarize(studies) {
         total_studies: n,
         unique_patients: new Set(studies.map(s=>s.pid)).size,
         date_range: fmtDate(minD) + (fmtDate(minD) !== fmtDate(maxD) ? ' – ' + fmtDate(maxD) : ''),
-        o2a_median: median(o2aVals),
+        o2a_median: mean(o2aVals),
         o2a_mean: mean(o2aVals),
         o2a_p75: pct(o2aVals, 0.75),
         o2a_p90: pct(o2aVals, 0.90),
         o2a_comp_n: o2aOk,
         o2a_comp_pct: 100*o2aOk/n,
-        a2r_median: median(a2rVals),
+        a2r_median: mean(a2rVals),
         a2r_mean: mean(a2rVals),
         a2r_p75: pct(a2rVals, 0.75),
         a2r_p90: pct(a2rVals, 0.90),
@@ -1810,6 +2004,10 @@ function renderResults() {
         .map(k => renderHospitalCard(k))
         .join('');
     wrap.innerHTML = html;
+    // Wire detailed-report buttons
+    wrap.querySelectorAll('[data-report-for]').forEach(btn => {
+        btn.addEventListener('click', () => generateHospitalReportPDF(btn.dataset.reportFor, btn));
+    });
 }
 
 function clsCompliance(pct, goodT=80, warnT=50) {
@@ -1892,6 +2090,7 @@ function renderHospitalCard(hkey) {
                 <div class="lab-tag">${info.en} · ${s.date_range}</div>
             </div>
             <div class="hospital-actions">
+                <button class="btn" data-report-for="${hkey}" style="background: linear-gradient(135deg, #C2410C, #B45309); color: white; border-color: #EA580C;">📄 تقرير تفصيلي PDF</button>
             </div>
         </div>
         <div class="hospital-body">
@@ -1902,12 +2101,12 @@ function renderHospitalCard(hkey) {
                     <div class="sub">${s.unique_patients} مريض طوارئ</div>
                 </div>
                 <div class="h-kpi">
-                    <div class="l">طلب → تصوير (وسيط)</div>
+                    <div class="l">طلب → تصوير (متوسط)</div>
                     <div class="v">${Math.round(s.o2a_median)}<span class="u">دقيقة</span></div>
                     <div class="sub">المتوسط ${s.o2a_mean.toFixed(1)} د · P90 = ${Math.round(s.o2a_p90)} د</div>
                 </div>
                 <div class="h-kpi amber">
-                    <div class="l">تصوير → تقرير (وسيط)</div>
+                    <div class="l">تصوير → تقرير (متوسط)</div>
                     <div class="v">${Math.round(s.a2r_median)}<span class="u">دقيقة</span></div>
                     <div class="sub">المتوسط ${s.a2r_mean.toFixed(1)} د · P90 = ${Math.round(s.a2r_p90)} د</div>
                 </div>
@@ -1930,7 +2129,7 @@ function renderHospitalCard(hkey) {
                         <div class="tg">Target ≤ 15 min</div>
                     </div>
                     <div class="h-stat-row">
-                        <div class="h-stat"><div class="l">Median</div><div class="v">${Math.round(s.o2a_median)}<span class="u">min</span></div></div>
+                        <div class="h-stat"><div class="l">Mean</div><div class="v">${Math.round(s.o2a_median)}<span class="u">min</span></div></div>
                         <div class="h-stat"><div class="l">Mean</div><div class="v">${Math.round(s.o2a_mean)}<span class="u">min</span></div></div>
                         <div class="h-stat"><div class="l">P90</div><div class="v">${Math.round(s.o2a_p90)}<span class="u">min</span></div></div>
                     </div>
@@ -1948,7 +2147,7 @@ function renderHospitalCard(hkey) {
                         <div class="tg">Target ≤ 45 min</div>
                     </div>
                     <div class="h-stat-row">
-                        <div class="h-stat"><div class="l">Median</div><div class="v">${Math.round(s.a2r_median)}<span class="u">min</span></div></div>
+                        <div class="h-stat"><div class="l">Mean</div><div class="v">${Math.round(s.a2r_median)}<span class="u">min</span></div></div>
                         <div class="h-stat"><div class="l">Mean</div><div class="v">${Math.round(s.a2r_mean)}<span class="u">min</span></div></div>
                         <div class="h-stat"><div class="l">P90</div><div class="v">${Math.round(s.a2r_p90)}<span class="u">min</span></div></div>
                     </div>
@@ -1985,12 +2184,11 @@ function openHajjSlide() {
 
     wrap.innerHTML = '<div class="hajj-slide">'
         + buildSlidePage1_table(rows)
-        + buildSlidePage2_heatmap(rows, 'o2a')
-        + buildSlidePage3_heatmap(rows, 'a2r')
+        + buildSlidePage2_heatmapCombined(rows)
         + '</div>';
 
     document.getElementById('slideModalTitle').textContent = 'سلايد الاجتماع — مؤشرات أشعة الطوارئ';
-    document.getElementById('btnSlideExport').textContent = 'حفظ ٣ صور PNG';
+    document.getElementById('btnSlideExport').textContent = 'حفظ صورتين PNG';
     document.getElementById('slideModal').classList.add('active');
     document.getElementById('slideModal').scrollTop = 0;
 }
@@ -2102,11 +2300,11 @@ function buildSlidePage1_table(rows) {
                             <div class="th-target">متوسط المرحلتين</div>
                         </th>
                         <th>
-                            <div class="th-main">وسيط زمن التصوير</div>
+                            <div class="th-main">متوسط زمن التصوير</div>
                             <div class="th-target">دقائق · أفضل ≤ ١٥</div>
                         </th>
                         <th>
-                            <div class="th-main">وسيط زمن التقرير</div>
+                            <div class="th-main">متوسط زمن التقرير</div>
                             <div class="th-target">دقائق · أفضل ≤ ٤٥</div>
                         </th>
                     </tr>
@@ -2180,22 +2378,27 @@ function buildHeatmap(rows, key, title, subtitle, target) {
     `;
 }
 
-function buildSlidePage2_heatmap(rows, key) {
-    return `<div class="hajj-slide-page" data-page="2">${buildHeatmap(
+function buildSlidePage2_heatmapCombined(rows) {
+    const top = buildHeatmap(
         rows, 'o2a',
         'الخريطة الحرارية — من الطلب إلى التصوير',
         'الالتزام بمستهدف الـ ١٥ دقيقة لكل ساعة من اليوم',
         '١٥ دقيقة'
-    )}</div>`;
-}
-
-function buildSlidePage3_heatmap(rows, key) {
-    return `<div class="hajj-slide-page" data-page="3">${buildHeatmap(
+    );
+    const bottom = buildHeatmap(
         rows, 'a2r',
         'الخريطة الحرارية — من التصوير إلى التقرير',
         'الالتزام بمستهدف الـ ٤٥ دقيقة لكل ساعة من اليوم',
         '٤٥ دقيقة'
-    )}</div>`;
+    );
+    // Use the .tall variant so both heatmaps fit vertically; gap between them.
+    return `
+    <div class="hajj-slide-page tall" data-page="2">
+        <div style="display:flex; flex-direction:column; gap:24px; width:100%;">
+            ${top}
+            ${bottom}
+        </div>
+    </div>`;
 }
 
 // ====================== DELAYS SLIDE ======================
@@ -2393,6 +2596,318 @@ async function exportSlidePngs() {
     }
     btn.disabled = false;
     btn.textContent = oldText;
+}
+
+// ====================== DETAILED PDF REPORT ======================
+async function generateHospitalReportPDF(hkey, btn) {
+    const info = HOSPITALS[hkey];
+    const result = STATE.results[hkey];
+    if (!result || !result.summary || !result.summary.total_studies) {
+        alert('لا توجد بيانات كافية لإنشاء التقرير.');
+        return;
+    }
+    const s = result.summary;
+
+    // Set up progress overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'r-progress-overlay';
+    overlay.innerHTML = '<div class="ring"></div><div class="msg">جاري إنشاء التقرير التفصيلي...</div>';
+    document.body.appendChild(overlay);
+
+    const oldBtnText = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = '...جاري الإنشاء'; }
+
+    try {
+        // Build offscreen report DOM
+        const host = document.createElement('div');
+        host.className = 'report-host';
+        host.innerHTML = buildReportHTML(info, s);
+        document.body.appendChild(host);
+
+        // Wait a tick for fonts/layout
+        await new Promise(r => setTimeout(r, 250));
+
+        const canvas = await html2canvas(host, {
+            backgroundColor: '#FFFFFF',
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            width: host.offsetWidth,
+            height: host.offsetHeight
+        });
+
+        // Build multi-page PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+        const pageWmm = pdf.internal.pageSize.getWidth();   // 210
+        const pageHmm = pdf.internal.pageSize.getHeight();  // 297
+        const imgWmm = pageWmm;
+        const pxPerMm = canvas.width / imgWmm;
+        const pageHpx = Math.floor(pageHmm * pxPerMm);
+
+        let offsetY = 0;
+        let pageIdx = 0;
+        while (offsetY < canvas.height) {
+            const remain = canvas.height - offsetY;
+            const sliceH = Math.min(pageHpx, remain);
+
+            const slice = document.createElement('canvas');
+            slice.width = canvas.width;
+            slice.height = sliceH;
+            const ctx = slice.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, slice.width, slice.height);
+            ctx.drawImage(canvas, 0, -offsetY);
+
+            if (pageIdx > 0) pdf.addPage();
+            const sliceHmm = sliceH / pxPerMm;
+            const imgData = slice.toDataURL('image/jpeg', 0.92);
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWmm, sliceHmm);
+
+            offsetY += sliceH;
+            pageIdx++;
+        }
+
+        const fileName = `radiology-report-${info.en.replace(/[^a-z0-9]+/gi,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')}-${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(fileName);
+
+        document.body.removeChild(host);
+    } catch (e) {
+        console.error(e);
+        alert('فشل إنشاء التقرير: ' + e.message);
+    } finally {
+        document.body.removeChild(overlay);
+        if (btn) { btn.disabled = false; btn.textContent = oldBtnText; }
+    }
+}
+
+function buildReportHTML(info, s) {
+    const overall = (s.o2a_comp_pct + s.a2r_comp_pct) / 2;
+    const o2aCls = s.o2a_comp_pct >= 80 ? 'emerald' : s.o2a_comp_pct >= 50 ? 'amber' : 'rose';
+    const a2rCls = s.a2r_comp_pct >= 80 ? 'emerald' : s.a2r_comp_pct >= 50 ? 'amber' : 'rose';
+    const overallCls = overall >= 80 ? 'emerald' : overall >= 50 ? 'amber' : 'rose';
+
+    const bucketRow = (label, n, color) => {
+        const p = s.total_studies ? 100 * n / s.total_studies : 0;
+        return `
+            <div class="r-bucket">
+                <div class="sw" style="background:${color};"></div>
+                <div class="lbl">${label}</div>
+                <div class="bar"><span style="width:${Math.max(p,2)}%; background:${color};"></span></div>
+                <div class="n">${n} · ${Math.round(p)}%</div>
+            </div>`;
+    };
+
+    // Delays tables — full lists for each stage
+    const delayRow = (d, target) => {
+        const over = d.mins - target;
+        return `
+            <tr>
+                <td class="pid">${d.pid}</td>
+                <td>${d.procedure || d.modality || '—'}</td>
+                <td class="num">${Math.round(d.mins)} د</td>
+                <td class="num over">+${Math.round(over)} د</td>
+                <td class="right">${fmtDateTimeFull(d.orderDt)}</td>
+            </tr>`;
+    };
+
+    const o2aDelaysTable = s.delayed_o2a.length === 0
+        ? `<div style="background:#ECFDF5;border:1px solid #10B981;color:#047857;padding:14px 18px;border-radius:8px;font-weight:700;">✓ لا توجد ملفات تجاوزت ١٥ دقيقة في هذه المرحلة</div>`
+        : `<table class="r-table">
+            <thead>
+                <tr>
+                    <th style="width:14%">رقم الملف</th>
+                    <th>اسم الفحص</th>
+                    <th style="width:13%">الزمن الفعلي</th>
+                    <th style="width:13%">التجاوز</th>
+                    <th style="width:18%">وقت الطلب</th>
+                </tr>
+            </thead>
+            <tbody>${s.delayed_o2a.map(d => delayRow(d, TARGET_O2A)).join('')}</tbody>
+        </table>`;
+
+    const a2rDelaysTable = s.delayed_a2r.length === 0
+        ? `<div style="background:#ECFDF5;border:1px solid #10B981;color:#047857;padding:14px 18px;border-radius:8px;font-weight:700;">✓ لا توجد ملفات تجاوزت ٤٥ دقيقة في هذه المرحلة</div>`
+        : `<table class="r-table">
+            <thead>
+                <tr>
+                    <th style="width:14%">رقم الملف</th>
+                    <th>اسم الفحص</th>
+                    <th style="width:13%">الزمن الفعلي</th>
+                    <th style="width:13%">التجاوز</th>
+                    <th style="width:18%">وقت الطلب</th>
+                </tr>
+            </thead>
+            <tbody>${s.delayed_a2r.map(d => delayRow(d, TARGET_A2R)).join('')}</tbody>
+        </table>`;
+
+    // Top procedures table
+    const procRows = s.topProcedures.map(p => `
+        <tr>
+            <td>${p.name}</td>
+            <td class="num">${p.n}</td>
+            <td class="num">${Math.round(p.o2a_med)} د</td>
+            <td class="num ${p.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(p.o2a_comp)}%</td>
+            <td class="num">${Math.round(p.a2r_med)} د</td>
+            <td class="num ${p.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(p.a2r_comp)}%</td>
+        </tr>`).join('');
+
+    // Modality table
+    const modRows = s.byModality.map(m => `
+        <tr>
+            <td>${m.modality}</td>
+            <td class="num">${m.n}</td>
+            <td class="num">${Math.round(m.o2a_med)} د</td>
+            <td class="num ${m.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(m.o2a_comp)}%</td>
+            <td class="num">${Math.round(m.a2r_med)} د</td>
+            <td class="num ${m.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(m.a2r_comp)}%</td>
+        </tr>`).join('');
+
+    return `
+        <div class="r-hdr">
+            <div>
+                <div class="ar-name">${info.ar}</div>
+                <div class="en-name">${info.en}</div>
+            </div>
+            <div class="meta">
+                <div>التقرير التفصيلي · مؤشرات أشعة الطوارئ</div>
+                <div><b>${s.date_range}</b></div>
+                <div>تاريخ الإنشاء: ${new Date().toLocaleDateString('ar-SA')}</div>
+            </div>
+        </div>
+
+        <div class="r-section">
+            <h2>الملخص التنفيذي</h2>
+            <div class="r-kpi-grid">
+                <div class="r-kpi">
+                    <div class="l">إجمالي الفحوصات</div>
+                    <div class="v">${s.total_studies}<span class="u">فحص</span></div>
+                    <div class="sub">${s.unique_patients} مريض طوارئ مطابق</div>
+                </div>
+                <div class="r-kpi">
+                    <div class="l">طلب → تصوير (متوسط)</div>
+                    <div class="v">${Math.round(s.o2a_median)}<span class="u">دقيقة</span></div>
+                    <div class="sub">المعيار ≤ ١٥ د</div>
+                </div>
+                <div class="r-kpi">
+                    <div class="l">تصوير → تقرير (متوسط)</div>
+                    <div class="v">${Math.round(s.a2r_median)}<span class="u">دقيقة</span></div>
+                    <div class="sub">المعيار ≤ ٤٥ د · تقرير أولي</div>
+                </div>
+                <div class="r-kpi ${overallCls}">
+                    <div class="l">مؤشر الالتزام الكلي</div>
+                    <div class="v">${Math.round(overall)}<span class="u">%</span></div>
+                    <div class="sub">متوسط المرحلتين</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="r-section">
+            <h2>الالتزام بالمعايير الزمنية</h2>
+            <div class="r-stages">
+                <div class="r-stage">
+                    <div class="hd">
+                        <div class="nm">من إنشاء الطلب إلى إجراء التصوير</div>
+                        <div class="tg">المستهدف ≤ ١٥ دقيقة</div>
+                    </div>
+                    <div class="r-kpi ${o2aCls}" style="margin-bottom:14px;">
+                        <div class="l">نسبة الالتزام</div>
+                        <div class="v">${Math.round(s.o2a_comp_pct)}<span class="u">%</span></div>
+                        <div class="sub">${s.o2a_comp_n} / ${s.total_studies} فحص ضمن المعيار</div>
+                    </div>
+                    <div class="r-stat-row">
+                        <div class="r-stat"><div class="l">المتوسط</div><div class="v">${Math.round(s.o2a_mean)}<span class="u">د</span></div></div>
+                        <div class="r-stat"><div class="l">P75</div><div class="v">${Math.round(s.o2a_p75)}<span class="u">د</span></div></div>
+                        <div class="r-stat"><div class="l">P90</div><div class="v">${Math.round(s.o2a_p90)}<span class="u">د</span></div></div>
+                    </div>
+                    <div class="r-buckets">
+                        ${bucketRow('ضمن المعيار (≤١٥ د)', s.bucket_o2a['≤15'], '#10B981')}
+                        ${bucketRow('١٦ – ٣٠ دقيقة', s.bucket_o2a['16-30'], '#F59E0B')}
+                        ${bucketRow('٣١ – ٦٠ دقيقة', s.bucket_o2a['31-60'], '#FB923C')}
+                        ${bucketRow('أكثر من ٦٠ دقيقة', s.bucket_o2a['>60'], '#EF4444')}
+                    </div>
+                </div>
+                <div class="r-stage">
+                    <div class="hd">
+                        <div class="nm">من التصوير إلى التقرير الأولي</div>
+                        <div class="tg">المستهدف ≤ ٤٥ دقيقة</div>
+                    </div>
+                    <div class="r-kpi ${a2rCls}" style="margin-bottom:14px;">
+                        <div class="l">نسبة الالتزام</div>
+                        <div class="v">${Math.round(s.a2r_comp_pct)}<span class="u">%</span></div>
+                        <div class="sub">${s.a2r_comp_n} / ${s.total_studies} فحص ضمن المعيار</div>
+                    </div>
+                    <div class="r-stat-row">
+                        <div class="r-stat"><div class="l">المتوسط</div><div class="v">${Math.round(s.a2r_mean)}<span class="u">د</span></div></div>
+                        <div class="r-stat"><div class="l">P75</div><div class="v">${Math.round(s.a2r_p75)}<span class="u">د</span></div></div>
+                        <div class="r-stat"><div class="l">P90</div><div class="v">${Math.round(s.a2r_p90)}<span class="u">د</span></div></div>
+                    </div>
+                    <div class="r-buckets">
+                        ${bucketRow('ضمن المعيار (≤٤٥ د)', s.bucket_a2r['≤45'], '#10B981')}
+                        ${bucketRow('٤٦ – ٩٠ دقيقة', s.bucket_a2r['46-90'], '#F59E0B')}
+                        ${bucketRow('٩١ – ١٢٠ دقيقة', s.bucket_a2r['91-120'], '#FB923C')}
+                        ${bucketRow('أكثر من ١٢٠ دقيقة', s.bucket_a2r['>120'], '#EF4444')}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="r-section">
+            <h2>تفصيل الفحوصات حسب النوع (Modality)</h2>
+            <table class="r-table">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th style="width:10%">العدد</th>
+                        <th style="width:13%">متوسط الطلب→التصوير</th>
+                        <th style="width:13%">الالتزام (١٥د)</th>
+                        <th style="width:13%">متوسط التصوير→التقرير</th>
+                        <th style="width:13%">الالتزام (٤٥د)</th>
+                    </tr>
+                </thead>
+                <tbody>${modRows}</tbody>
+            </table>
+        </div>
+
+        <div class="r-section">
+            <h2>أبرز الفحوصات حسب الحجم</h2>
+            <table class="r-table">
+                <thead>
+                    <tr>
+                        <th>اسم الفحص</th>
+                        <th style="width:10%">العدد</th>
+                        <th style="width:13%">متوسط الطلب→التصوير</th>
+                        <th style="width:13%">الالتزام (١٥د)</th>
+                        <th style="width:13%">متوسط التصوير→التقرير</th>
+                        <th style="width:13%">الالتزام (٤٥د)</th>
+                    </tr>
+                </thead>
+                <tbody>${procRows}</tbody>
+            </table>
+        </div>
+
+        <div class="r-section">
+            <h2>الملفات المتأخرة · من الطلب إلى التصوير (تجاوزت ١٥ دقيقة)</h2>
+            <h3>إجمالي التأخرات في هذه المرحلة: ${s.delayed_o2a.length} ملف</h3>
+            ${o2aDelaysTable}
+        </div>
+
+        <div class="r-section">
+            <h2>الملفات المتأخرة · من التصوير إلى التقرير (تجاوزت ٤٥ دقيقة)</h2>
+            <h3>إجمالي التأخرات في هذه المرحلة: ${s.delayed_a2r.length} ملف</h3>
+            ${a2rDelaysTable}
+        </div>
+
+        <div class="r-foot">
+            تقرير مولّد آلياً · المصدر: PACS Last-24h + سجل الطوارئ ED Episodes · المطابقة عبر رقم الملف · المعتمد التقرير الأولي
+        </div>
+    `;
+}
+
+function fmtDateTimeFull(d) {
+    if (!d) return '—';
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 document.addEventListener('DOMContentLoaded', init);
