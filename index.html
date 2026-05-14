@@ -2628,11 +2628,9 @@ function renderStaffSection(s) {
     const isReal = (x) => x && x.name && x.name !== '(غير محدد)' && x.name.trim() !== '';
     const ord = (s.byOrderingPhysician || []).filter(isReal);
     const rad = (s.byRadiologist || []).filter(isReal);
-    const tech = (s.byTechnologist || []).filter(isReal);
     const hasOrd = ord.length > 0;
     const hasRad = rad.length > 0;
-    const hasTech = tech.length > 0;
-    if (!hasOrd && !hasRad && !hasTech) return '';
+    if (!hasOrd && !hasRad) return '';
 
     const compClass = (pct) => pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
 
@@ -2652,14 +2650,6 @@ function renderStaffSection(s) {
             <td class="staff-avg">${Math.round(r.a2r_mean)} د</td>
             <td class="staff-pct ${compClass(r.a2r_comp)}">${Math.round(r.a2r_comp)}%</td>
             <td class="staff-delay">${r.delayed_a2r}</td>
-        </tr>`).join('');
-
-    const techRows = tech.slice(0, 8).map(r => `
-        <tr>
-            <td class="staff-name">${shortName(r.name)}</td>
-            <td class="staff-n">${r.n}</td>
-            <td class="staff-avg">${Math.round(r.o2a_mean)} د</td>
-            <td class="staff-delay">${r.delayed_o2a}</td>
         </tr>`).join('');
 
     return `
@@ -2693,21 +2683,6 @@ function renderStaffSection(s) {
                             <th>اسم الطبيب</th><th>عدد</th><th>متوسط</th><th>الالتزام</th><th>متأخر</th>
                         </tr></thead>
                         <tbody>${radRows}</tbody>
-                    </table>
-                </div>` : ''}
-
-                ${hasTech ? `
-                <div class="staff-box stage-tech">
-                    <div class="staff-box-head">
-                        <span class="badge-stage badge-tech">الفنيون</span>
-                        <span class="staff-box-title">إنتاجية الفنيين</span>
-                        <span class="staff-box-meta">${tech.length} فني · إجراء التصوير</span>
-                    </div>
-                    <table class="staff-tbl">
-                        <thead><tr>
-                            <th>اسم الفني</th><th>عدد</th><th>متوسط</th><th>متأخر</th>
-                        </tr></thead>
-                        <tbody>${techRows}</tbody>
                     </table>
                 </div>` : ''}
             </div>
@@ -3733,7 +3708,6 @@ function buildReportBodyHTML(info, s) {
             <td class="pid">${d.pid}</td>
             <td>${d.procedure || d.modality || '—'}</td>
             <td>${shortName(d.orderingPhysician) || '—'}</td>
-            <td>${shortName(d.technologist) || '—'}</td>
             <td class="num">${Math.round(d.mins)} د</td>
             <td class="num over">+${Math.round(d.mins - TARGET_O2A)} د</td>
             <td class="datetime">${fmtDateTimeFull(d.orderDt)}</td>
@@ -3744,7 +3718,6 @@ function buildReportBodyHTML(info, s) {
             <td class="pid">${d.pid}</td>
             <td>${d.procedure || d.modality || '—'}</td>
             <td>${shortName(d.radiologist) || '—'}</td>
-            <td>${shortName(d.technologist) || '—'}</td>
             <td class="num">${Math.round(d.mins)} د</td>
             <td class="num over">+${Math.round(d.mins - TARGET_A2R)} د</td>
             <td class="datetime">${fmtDateTimeFull(d.orderDt)}</td>
@@ -3754,12 +3727,12 @@ function buildReportBodyHTML(info, s) {
         ? `<div class="r-empty-good" data-atom>✓ لا توجد ملفات تجاوزت ١٥ دقيقة في هذه المرحلة</div>`
         : `<table class="r-tbl">
             <colgroup>
-                <col style="width:11%"><col style="width:21%"><col style="width:17%">
-                <col style="width:13%"><col style="width:8%"><col style="width:8%"><col style="width:14%">
+                <col style="width:12%"><col style="width:26%"><col style="width:22%">
+                <col style="width:10%"><col style="width:10%"><col style="width:20%">
             </colgroup>
             <thead><tr>
                 <th>رقم الملف</th><th>اسم الفحص</th><th>الطبيب الطالب</th>
-                <th>الفني</th><th>الزمن الفعلي</th><th>التجاوز</th><th>وقت الطلب</th>
+                <th>الزمن الفعلي</th><th>التجاوز</th><th>وقت الطلب</th>
             </tr></thead>
             <tbody>${o2aDelayRows(s.delayed_o2a)}</tbody>
         </table>`;
@@ -3768,12 +3741,12 @@ function buildReportBodyHTML(info, s) {
         ? `<div class="r-empty-good" data-atom>✓ لا توجد ملفات تجاوزت ٤٥ دقيقة في هذه المرحلة</div>`
         : `<table class="r-tbl">
             <colgroup>
-                <col style="width:11%"><col style="width:21%"><col style="width:17%">
-                <col style="width:13%"><col style="width:8%"><col style="width:8%"><col style="width:14%">
+                <col style="width:12%"><col style="width:26%"><col style="width:22%">
+                <col style="width:10%"><col style="width:10%"><col style="width:20%">
             </colgroup>
             <thead><tr>
                 <th>رقم الملف</th><th>اسم الفحص</th><th>الطبيب القارئ</th>
-                <th>الفني</th><th>الزمن الفعلي</th><th>التجاوز</th><th>وقت الطلب</th>
+                <th>الزمن الفعلي</th><th>التجاوز</th><th>وقت الطلب</th>
             </tr></thead>
             <tbody>${a2rDelayRows(s.delayed_a2r)}</tbody>
         </table>`;
