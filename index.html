@@ -531,6 +531,141 @@ body {
 .txt-amber { color: var(--accent-amber); }
 .txt-rose { color: var(--accent-rose); }
 
+/* ============ STAFF BREAKDOWN TABLES (in hospital card) ============ */
+.staff-section {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-subtle);
+}
+.staff-section-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.staff-section-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--accent-violet);
+    border-radius: 2px;
+}
+.staff-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+@media (max-width: 1400px) {
+    .staff-grid { grid-template-columns: 1fr; }
+}
+.staff-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    overflow: hidden;
+}
+.staff-box.stage-o2a { border-right: 3px solid var(--accent-emerald); }
+.staff-box.stage-a2r { border-right: 3px solid var(--accent-violet); }
+.staff-box.stage-tech { border-right: 3px solid var(--accent-cyan); }
+.staff-box-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+}
+.badge-stage {
+    font-size: 10px;
+    font-weight: 800;
+    color: white;
+    background: var(--accent-emerald);
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.3px;
+}
+.badge-stage.badge-a2r { background: var(--accent-violet); }
+.badge-stage.badge-tech { background: var(--accent-cyan); }
+.staff-box-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.staff-box-meta {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-right: auto;
+    direction: rtl;
+}
+.staff-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    table-layout: fixed;
+}
+.staff-tbl thead th {
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 4px;
+    text-align: center;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.staff-tbl thead th:first-child { text-align: right; padding-right: 8px; }
+.staff-tbl tbody td {
+    padding: 6px 4px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-primary);
+}
+.staff-tbl tbody tr:last-child td { border-bottom: none; }
+.staff-tbl tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.staff-tbl td.staff-name {
+    text-align: right;
+    padding-right: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.staff-tbl td.staff-n {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    width: 12%;
+}
+.staff-tbl td.staff-avg {
+    font-family: 'Cairo', sans-serif;
+    color: var(--text-secondary);
+    width: 14%;
+    direction: ltr;
+}
+.staff-tbl td.staff-pct {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    width: 14%;
+}
+.staff-tbl td.staff-pct.good { color: var(--accent-emerald); }
+.staff-tbl td.staff-pct.warn { color: var(--accent-amber); }
+.staff-tbl td.staff-pct.bad  { color: var(--accent-rose); }
+.staff-tbl td.staff-delay {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    color: var(--accent-rose);
+    width: 12%;
+}
+
 /* ============================
    SLIDE EXPORT (Hajj-style, 1920x1080)
 ============================ */
@@ -1105,97 +1240,42 @@ body {
     color: #A7F3D0;
 }
 
-/* ============ DETAILED REPORT SHEET (page-aware A4 layout) ============ */
-.r-page {
+/* ============ DETAILED REPORT (continuous flow, sliced into PDF pages) ============ */
+.r-host {
+    position: absolute;
+    top: 0; left: 0;
     width: 1240px;
-    height: 1754px;
     background: #FFFFFF;
     color: #1A2433;
     font-family: 'Cairo','Tajawal',sans-serif;
     direction: rtl;
     box-sizing: border-box;
-    position: relative;
-    padding: 28px 56px 60px 56px;
-    page-break-after: always;
+    padding: 30px 56px 40px 56px;
+    /* Visible to layout but transparent so user doesn't see flash */
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
 }
-.r-page * { box-sizing: border-box; }
+.r-host * { box-sizing: border-box; }
 
-.r-page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-bottom: 16px;
-    border-bottom: 3px solid #063A58;
-    margin-bottom: 22px;
-}
-.r-page-header-left .r-page-hosp-ar {
-    font-family: 'Cairo','Tajawal',sans-serif;
-    font-size: 24px; font-weight: 800;
-    color: #063A58;
-    line-height: 1.15;
-}
-.r-page-header-left .r-page-hosp-en {
-    font-size: 12px;
-    color: #6B7280;
-    margin-top: 4px;
-}
-.r-page-header-right {
-    text-align: left;
-}
-.r-page-header-right .r-page-title {
-    font-family: 'Cairo','Tajawal',sans-serif;
-    font-size: 15px; font-weight: 700;
-    color: #063A58;
-}
-.r-page-header-right .r-page-period {
-    font-size: 12px;
-    color: #4A5A6B;
-    margin-top: 4px;
-}
-
-.r-page-body {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.r-page-footer {
-    position: absolute;
-    bottom: 22px;
-    left: 56px;
-    right: 56px;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 12px;
-    border-top: 1px solid #E5EAF0;
-    font-size: 10.5px;
-    color: #6B7280;
-}
-.r-page-footer b { color: #063A58; font-weight: 800; }
-
-.r-block { display: block; }
+.r-block { display: block; margin-bottom: 22px; }
 .r-block .r-title {
     font-family: 'Cairo','Tajawal',sans-serif;
-    font-size: 17px; font-weight: 800;
+    font-size: 18px; font-weight: 800;
     color: #063A58;
-    margin: 0 0 10px 0;
-    padding-bottom: 6px;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
     border-bottom: 2px solid #063A58;
 }
 .r-block .r-subtitle {
-    font-size: 12px;
+    font-size: 13px;
     color: #4A5A6B;
     font-weight: 600;
-    margin-bottom: 8px;
-}
-.r-block .r-empty {
-    background: #F7FAFC;
-    border: 1px dashed #CBD5E0;
-    padding: 14px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 12px;
-    color: #6B7280;
+    margin-bottom: 10px;
+    background: #F0F4F8;
+    padding: 8px 12px;
+    border-right: 4px solid #063A58;
+    border-radius: 4px;
 }
 .r-block .r-empty-good {
     background: #ECFDF5;
@@ -1210,30 +1290,27 @@ body {
 .r-kpis {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 .r-kpi {
     background: #F7FAFC;
     border: 1px solid #E2E8F0;
     border-right: 4px solid #063A58;
     border-radius: 7px;
-    padding: 11px 14px;
+    padding: 12px 14px;
 }
 .r-kpi.emerald { border-right-color: #10B981; }
 .r-kpi.amber   { border-right-color: #F59E0B; }
 .r-kpi.rose    { border-right-color: #EF4444; }
-.r-kpi .l {
-    font-size: 11px; color: #6B7280;
-    font-weight: 600; margin-bottom: 5px;
-}
+.r-kpi .l { font-size: 11.5px; color: #6B7280; font-weight: 600; margin-bottom: 5px; }
 .r-kpi .v {
     font-family: 'Cairo',sans-serif;
-    font-size: 24px; font-weight: 800;
+    font-size: 26px; font-weight: 800;
     color: #1A2433;
     line-height: 1.05;
 }
 .r-kpi .v .u { font-size: 11px; color: #6B7280; font-weight: 600; margin-right: 4px; }
-.r-kpi .sub { font-size: 10.5px; color: #6B7280; margin-top: 6px; line-height: 1.4; }
+.r-kpi .sub { font-size: 11px; color: #6B7280; margin-top: 6px; line-height: 1.4; }
 .r-kpi.emerald .v { color: #047857; }
 .r-kpi.amber   .v { color: #B45309; }
 .r-kpi.rose    .v { color: #B91C1C; }
@@ -1241,7 +1318,7 @@ body {
 .r-stages2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 14px;
 }
 .r-stage {
     background: #FFFFFF;
@@ -1256,7 +1333,7 @@ body {
     padding-bottom: 7px;
     margin-bottom: 10px;
 }
-.r-stage .hd .nm { font-size: 13px; font-weight: 800; color: #063A58; }
+.r-stage .hd .nm { font-size: 13.5px; font-weight: 800; color: #063A58; }
 .r-stage .hd .tg { font-size: 11px; color: #6B7280; }
 .r-stage .r-st-row {
     display: grid;
@@ -1285,8 +1362,8 @@ body {
     grid-template-columns: 12px 1fr 90px 60px;
     align-items: center;
     gap: 7px;
-    font-size: 11px;
-    margin-top: 4px;
+    font-size: 11.5px;
+    margin-top: 5px;
 }
 .r-bk .sw { width: 11px; height: 11px; border-radius: 3px; }
 .r-bk .lbl { color: #4A5A6B; }
@@ -1824,6 +1901,7 @@ function analyzeHospital(hkey) {
     const RAD_RPH = findColIdx(radPayload.headers, ['Reading physician name', 'Reading physician', 'Radiologist']);
     const RAD_TECH = findColIdx(radPayload.headers, ['Involved technologists', 'Technologists', 'Technologist']);
     const RAD_DEPT = findColIdx(radPayload.headers, ['Ordering department name', 'Ordering department']);
+    const RAD_ORD_PHY = findColIdx(radPayload.headers, ['Ordering physician name', 'Ordering physician', 'Ordering Doctor']);
 
     const diag = {
         ed_rows: ed.length,
@@ -1870,6 +1948,7 @@ function analyzeHospital(hkey) {
             procedure: RAD_PROC >= 0 ? (r[RAD_PROC] || 'Unknown') : 'Unknown',
             radiologist: RAD_RPH >= 0 ? String(r[RAD_RPH] || '').trim() : '',
             technologist: RAD_TECH >= 0 ? String(r[RAD_TECH] || '').trim() : '',
+            orderingPhysician: RAD_ORD_PHY >= 0 ? String(r[RAD_ORD_PHY] || '').trim() : '',
             department: RAD_DEPT >= 0 ? String(r[RAD_DEPT] || '').trim() : '',
             o2a, a2r
         });
@@ -2010,6 +2089,7 @@ function summarize(studies) {
             modality: s.modality,
             radiologist: s.radiologist,
             technologist: s.technologist,
+            orderingPhysician: s.orderingPhysician,
             department: s.department,
             mins: s.o2a,
             orderDt: s.orderDt
@@ -2023,13 +2103,14 @@ function summarize(studies) {
             modality: s.modality,
             radiologist: s.radiologist,
             technologist: s.technologist,
+            orderingPhysician: s.orderingPhysician,
             department: s.department,
             mins: s.a2r,
             orderDt: s.orderDt
         }))
         .sort((a, b) => b.mins - a.mins);
 
-    // Performance breakdown by reading physician
+    // Performance breakdown by reading physician (covers Acquisition→Report stage)
     const byRad = {};
     studies.forEach(s => {
         const name = s.radiologist || '(غير محدد)';
@@ -2047,6 +2128,44 @@ function summarize(studies) {
             a2r_comp: 100 * arr.filter(x => x.a2r <= TARGET_A2R).length / arr.length,
             delayed_o2a: arr.filter(x => x.o2a > TARGET_O2A).length,
             delayed_a2r: arr.filter(x => x.a2r > TARGET_A2R).length
+        };
+    }).sort((a, b) => b.n - a.n);
+
+    // Performance breakdown by ORDERING physician (covers Order→Acquisition stage)
+    const byOrd = {};
+    studies.forEach(s => {
+        const name = s.orderingPhysician || '(غير محدد)';
+        if (!byOrd[name]) byOrd[name] = [];
+        byOrd[name].push(s);
+    });
+    const byOrderingPhysician = Object.keys(byOrd).map(name => {
+        const arr = byOrd[name];
+        return {
+            name,
+            n: arr.length,
+            o2a_mean: mean(arr.map(x => x.o2a)),
+            o2a_comp: 100 * arr.filter(x => x.o2a <= TARGET_O2A).length / arr.length,
+            delayed_o2a: arr.filter(x => x.o2a > TARGET_O2A).length
+        };
+    }).sort((a, b) => b.n - a.n);
+
+    // Performance breakdown by TECHNOLOGIST (productivity + stage coverage)
+    const byTech = {};
+    studies.forEach(s => {
+        const name = s.technologist || '(غير محدد)';
+        if (!byTech[name]) byTech[name] = [];
+        byTech[name].push(s);
+    });
+    const byTechnologist = Object.keys(byTech).map(name => {
+        const arr = byTech[name];
+        return {
+            name,
+            n: arr.length,
+            o2a_mean: mean(arr.map(x => x.o2a)),
+            a2r_mean: mean(arr.map(x => x.a2r)),
+            o2a_comp: 100 * arr.filter(x => x.o2a <= TARGET_O2A).length / arr.length,
+            a2r_comp: 100 * arr.filter(x => x.a2r <= TARGET_A2R).length / arr.length,
+            delayed_o2a: arr.filter(x => x.o2a > TARGET_O2A).length
         };
     }).sort((a, b) => b.n - a.n);
 
@@ -2092,7 +2211,7 @@ function summarize(studies) {
         hourly, hourBins, modalities,
         hm_o2a, hm_a2r, byHour,
         delayed_o2a, delayed_a2r,
-        byRadiologist
+        byRadiologist, byOrderingPhysician, byTechnologist
     };
 }
 
@@ -2265,8 +2384,97 @@ function renderHospitalCard(hkey) {
                     </div>
                 </div>
             </div>
+
+            ${renderStaffSection(s)}
         </div>
     </div>`;
+}
+
+// ----------- Staff breakdown tables (inline on the hospital card) -----------
+function renderStaffSection(s) {
+    const hasOrd = s.byOrderingPhysician && s.byOrderingPhysician.some(x => x.name !== '(غير محدد)');
+    const hasRad = s.byRadiologist && s.byRadiologist.some(x => x.name !== '(غير محدد)');
+    const hasTech = s.byTechnologist && s.byTechnologist.some(x => x.name !== '(غير محدد)');
+    if (!hasOrd && !hasRad && !hasTech) return '';
+
+    const compClass = (pct) => pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
+
+    const ordRows = (s.byOrderingPhysician || []).slice(0, 8).map(r => `
+        <tr>
+            <td class="staff-name">${r.name}</td>
+            <td class="staff-n">${r.n}</td>
+            <td class="staff-avg">${Math.round(r.o2a_mean)} د</td>
+            <td class="staff-pct ${compClass(r.o2a_comp)}">${Math.round(r.o2a_comp)}%</td>
+            <td class="staff-delay">${r.delayed_o2a}</td>
+        </tr>`).join('');
+
+    const radRows = (s.byRadiologist || []).slice(0, 8).map(r => `
+        <tr>
+            <td class="staff-name">${r.name}</td>
+            <td class="staff-n">${r.n}</td>
+            <td class="staff-avg">${Math.round(r.a2r_mean)} د</td>
+            <td class="staff-pct ${compClass(r.a2r_comp)}">${Math.round(r.a2r_comp)}%</td>
+            <td class="staff-delay">${r.delayed_a2r}</td>
+        </tr>`).join('');
+
+    const techRows = (s.byTechnologist || []).slice(0, 8).map(r => `
+        <tr>
+            <td class="staff-name">${r.name}</td>
+            <td class="staff-n">${r.n}</td>
+            <td class="staff-avg">${Math.round(r.o2a_mean)} د</td>
+            <td class="staff-delay">${r.delayed_o2a}</td>
+        </tr>`).join('');
+
+    return `
+        <div class="staff-section">
+            <div class="staff-section-title">أداء الكوادر</div>
+            <div class="staff-grid">
+                ${hasOrd ? `
+                <div class="staff-box stage-o2a">
+                    <div class="staff-box-head">
+                        <span class="badge-stage">المرحلة ١</span>
+                        <span class="staff-box-title">الأطباء الطالبون من الطوارئ</span>
+                        <span class="staff-box-meta">${s.byOrderingPhysician.length} طبيب · ٢-إجراء التصوير ١٥د</span>
+                    </div>
+                    <table class="staff-tbl">
+                        <thead><tr>
+                            <th>اسم الطبيب</th><th>عدد</th><th>متوسط</th><th>الالتزام</th><th>متأخر</th>
+                        </tr></thead>
+                        <tbody>${ordRows}</tbody>
+                    </table>
+                </div>` : ''}
+
+                ${hasRad ? `
+                <div class="staff-box stage-a2r">
+                    <div class="staff-box-head">
+                        <span class="badge-stage badge-a2r">المرحلة ٢</span>
+                        <span class="staff-box-title">الأطباء القارئون (أشعة)</span>
+                        <span class="staff-box-meta">${s.byRadiologist.length} طبيب · صدور التقرير ٤٥د</span>
+                    </div>
+                    <table class="staff-tbl">
+                        <thead><tr>
+                            <th>اسم الطبيب</th><th>عدد</th><th>متوسط</th><th>الالتزام</th><th>متأخر</th>
+                        </tr></thead>
+                        <tbody>${radRows}</tbody>
+                    </table>
+                </div>` : ''}
+
+                ${hasTech ? `
+                <div class="staff-box stage-tech">
+                    <div class="staff-box-head">
+                        <span class="badge-stage badge-tech">الفنيون</span>
+                        <span class="staff-box-title">إنتاجية الفنيين</span>
+                        <span class="staff-box-meta">${s.byTechnologist.length} فني · إجراء التصوير</span>
+                    </div>
+                    <table class="staff-tbl">
+                        <thead><tr>
+                            <th>اسم الفني</th><th>عدد</th><th>متوسط</th><th>متأخر</th>
+                        </tr></thead>
+                        <tbody>${techRows}</tbody>
+                    </table>
+                </div>` : ''}
+            </div>
+        </div>`;
 }
 
 // ====================== HAJJ-STYLE SLIDE BUILDER ======================
@@ -2704,15 +2912,17 @@ async function exportSlidePngs() {
     btn.textContent = oldText;
 }
 
-// ====================== DETAILED PDF REPORT (page-aware) ======================
-// We build the report as a sequence of A4 page DIVs, each rendered with html2canvas
-// then appended to a jsPDF. Tables are split row-by-row so rows never break across pages.
+// ====================== DETAILED PDF REPORT ======================
+// Strategy: render the WHOLE report as one tall on-screen DOM, capture with
+// html2canvas, then slice the resulting canvas into A4 pages WHERE no table
+// row sits across a page boundary. We mark every "atomic" element (table row,
+// kpi card, stage panel) and use their real Y positions to choose safe slice
+// points.
 
-const PDF_PAGE_W = 1240;          // px at 150 dpi rendering width
-const PDF_PAGE_H = 1754;          // px at 150 dpi (A4 portrait)
-const PDF_MARGIN_TOP = 130;        // reserves space for the header strip
-const PDF_MARGIN_BOTTOM = 90;      // reserves space for the footer strip
-const PDF_USABLE_H = PDF_PAGE_H - PDF_MARGIN_TOP - PDF_MARGIN_BOTTOM;
+const PDF_RENDER_WIDTH = 1240;   // px - 150dpi-ish, fits A4 nicely
+const PDF_HEADER_H = 90;          // header strip we draw on every page
+const PDF_FOOTER_H = 60;          // footer strip
+const PDF_A4_RATIO = 1754 / 1240; // A4 portrait at 1240px width
 
 async function generateHospitalReportPDF(hkey, btn) {
     const info = HOSPITALS[hkey];
@@ -2732,31 +2942,131 @@ async function generateHospitalReportPDF(hkey, btn) {
     const oldBtnText = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = '...جاري الإنشاء'; }
 
+    let host = null;
     try {
-        // 1) Build page DOMs offscreen
-        const pages = await buildReportPages(info, s, setMsg);
+        setMsg('جاري إعداد التقرير...');
+        // Build the whole report DOM ON-SCREEN but invisible — needed so fonts
+        // & layout compute correctly. Position absolutely so it doesn't shift
+        // the page; opacity 0 so it doesn't flash.
+        host = document.createElement('div');
+        host.className = 'r-host';
+        host.innerHTML = buildReportBodyHTML(info, s);
+        document.body.appendChild(host);
 
-        // 2) Render each to canvas + assemble PDF
+        // Make sure custom Arabic fonts have loaded
+        if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready;
+        }
+        // Two raf ticks to ensure layout settles
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+        setMsg('جاري التقاط الصور...');
+        // 1) Render the whole report to one tall canvas
+        const fullCanvas = await html2canvas(host, {
+            backgroundColor: '#FFFFFF',
+            scale: 1.5,
+            useCORS: true,
+            logging: false,
+            width: PDF_RENDER_WIDTH,
+            height: host.offsetHeight,
+            windowWidth: PDF_RENDER_WIDTH
+        });
+
+        // 2) Find safe page-break Y positions (px in the unscaled DOM) using
+        //    the data-atom elements' offset rectangles.
+        const atomEls = host.querySelectorAll('[data-atom]');
+        const atoms = [];
+        const hostTop = host.getBoundingClientRect().top;
+        atomEls.forEach(el => {
+            const r = el.getBoundingClientRect();
+            atoms.push({
+                top: r.top - hostTop,
+                bottom: r.bottom - hostTop
+            });
+        });
+
+        const usableH = (PDF_RENDER_WIDTH * PDF_A4_RATIO) - PDF_HEADER_H - PDF_FOOTER_H;
+        const totalH = host.offsetHeight;
+        const cuts = [];   // [{startY, endY}, ...] per page in DOM px
+        let cursor = 0;
+        while (cursor < totalH) {
+            const idealEnd = cursor + usableH;
+            if (idealEnd >= totalH) {
+                cuts.push({ startY: cursor, endY: totalH });
+                break;
+            }
+            // Find an atom whose bottom is <= idealEnd, take the largest such.
+            // Fallback: take any atom whose TOP is past cursor but bottom > idealEnd
+            //   in which case cut just before that atom (atom.top).
+            let safeEnd = -1;
+            for (const a of atoms) {
+                if (a.bottom <= idealEnd && a.bottom > cursor && a.bottom > safeEnd) {
+                    safeEnd = a.bottom;
+                }
+            }
+            if (safeEnd < 0) {
+                // No atom ends in this window — find one that crosses the boundary,
+                // cut at its TOP so it goes to the next page intact.
+                for (const a of atoms) {
+                    if (a.top > cursor && a.top < idealEnd) {
+                        safeEnd = a.top;
+                        break;
+                    }
+                }
+            }
+            if (safeEnd < 0 || safeEnd <= cursor + 20) {
+                // Couldn't find a clean break; force at ideal (rare).
+                safeEnd = idealEnd;
+            }
+            cuts.push({ startY: cursor, endY: safeEnd });
+            cursor = safeEnd;
+        }
+
+        // 3) Build PDF
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
         const pageWmm = pdf.internal.pageSize.getWidth();
         const pageHmm = pdf.internal.pageSize.getHeight();
+        const scale = fullCanvas.width / PDF_RENDER_WIDTH;   // 1.5 from html2canvas
 
-        for (let i = 0; i < pages.length; i++) {
-            setMsg(`جاري إنشاء التقرير... صفحة ${i + 1} / ${pages.length}`);
-            const node = pages[i];
-            const canvas = await html2canvas(node, {
-                backgroundColor: '#FFFFFF',
-                scale: 1.5,           // sharp enough, smaller files
-                useCORS: true,
-                logging: false,
-                width: PDF_PAGE_W,
-                height: PDF_PAGE_H
-            });
-            const imgData = canvas.toDataURL('image/jpeg', 0.93);
+        const totalPages = cuts.length;
+        for (let i = 0; i < cuts.length; i++) {
+            setMsg(`جاري حفظ التقرير... صفحة ${i+1} من ${totalPages}`);
+            const cut = cuts[i];
+            const sliceHDom = cut.endY - cut.startY;
+            const sliceHPx = Math.floor(sliceHDom * scale);
+
+            // Page canvas: 1240*scale wide, A4-ratio tall
+            const pageCanvasW = fullCanvas.width;
+            const pageCanvasH = Math.floor((PDF_RENDER_WIDTH * PDF_A4_RATIO) * scale);
+            const headerPx = Math.floor(PDF_HEADER_H * scale);
+            const footerPx = Math.floor(PDF_FOOTER_H * scale);
+
+            const pageCanvas = document.createElement('canvas');
+            pageCanvas.width = pageCanvasW;
+            pageCanvas.height = pageCanvasH;
+            const ctx = pageCanvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, pageCanvasW, pageCanvasH);
+
+            // Draw page header (hospital + report title + period)
+            drawPdfHeader(ctx, info, s, pageCanvasW, headerPx, scale);
+
+            // Draw slice from full canvas (between cut.startY*scale ... cut.endY*scale)
+            ctx.drawImage(
+                fullCanvas,
+                0, Math.floor(cut.startY * scale),
+                pageCanvasW, sliceHPx,
+                0, headerPx,
+                pageCanvasW, sliceHPx
+            );
+
+            // Draw footer with page number
+            drawPdfFooter(ctx, i + 1, totalPages, pageCanvasW, pageCanvasH, footerPx, scale);
+
+            const imgData = pageCanvas.toDataURL('image/jpeg', 0.93);
             if (i > 0) pdf.addPage();
             pdf.addImage(imgData, 'JPEG', 0, 0, pageWmm, pageHmm);
-            node.remove();
         }
 
         const fileName = `radiology-report-${info.en.replace(/[^a-z0-9]+/gi,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')}-${new Date().toISOString().slice(0,10)}.pdf`;
@@ -2765,275 +3075,207 @@ async function generateHospitalReportPDF(hkey, btn) {
         console.error(e);
         alert('فشل إنشاء التقرير: ' + e.message);
     } finally {
+        if (host && host.parentNode) host.parentNode.removeChild(host);
         document.body.removeChild(overlay);
         if (btn) { btn.disabled = false; btn.textContent = oldBtnText; }
     }
 }
 
-// ---------------------------------------------------------------------------
-// Build pages: array of offscreen DIVs, each one rendered onto a PDF page.
-// We track the running Y position. When a section won't fit, we close the
-// current page and open a new one. Tables that overflow get split row-by-row,
-// with the same header repeated on each page.
-// ---------------------------------------------------------------------------
-async function buildReportPages(info, s, setMsg) {
-    const host = document.createElement('div');
-    host.style.position = 'fixed';
-    host.style.top = '-30000px';
-    host.style.left = '-30000px';
-    document.body.appendChild(host);
+function drawPdfHeader(ctx, info, s, w, hPx, scale) {
+    ctx.save();
+    // Right-aligned (RTL) hospital name on the right side
+    ctx.fillStyle = '#063A58';
+    ctx.fillRect(0, 0, w, hPx);
+    ctx.fillStyle = '#FFFFFF';
 
-    const pages = [];
-    let currentPage = null;
-    let currentBody = null;
-    let currentUsedHeight = 0;
-    let pageNum = 0;
-    const totalPagesPlaceholder = '__TOTAL_PAGES__';
+    // Hospital name (right side, larger)
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.font = `bold ${Math.round(22 * scale)}px Cairo, Tajawal, sans-serif`;
+    ctx.fillText(info.ar, w - 56*scale, hPx / 2 - 10*scale);
 
-    function openPage() {
-        pageNum++;
-        const page = document.createElement('div');
-        page.className = 'r-page';
-        page.innerHTML = `
-            <div class="r-page-header">
-                <div class="r-page-header-left">
-                    <div class="r-page-hosp-ar">${info.ar}</div>
-                    <div class="r-page-hosp-en">${info.en}</div>
-                </div>
-                <div class="r-page-header-right">
-                    <div class="r-page-title">التقرير التفصيلي · مؤشرات أشعة الطوارئ</div>
-                    <div class="r-page-period">${s.date_range}</div>
-                </div>
-            </div>
-            <div class="r-page-body"></div>
-            <div class="r-page-footer">
-                <span>المصدر: PACS · سجل الطوارئ ED · المطابقة عبر رقم الملف · يعتمد التقرير الأولي</span>
-                <span>صفحة <b>${pageNum}</b> من <b>${totalPagesPlaceholder}</b></span>
-            </div>`;
-        host.appendChild(page);
-        currentPage = page;
-        currentBody = page.querySelector('.r-page-body');
-        currentUsedHeight = 0;
-        pages.push(page);
-    }
+    ctx.font = `normal ${Math.round(12 * scale)}px Cairo, sans-serif`;
+    ctx.fillStyle = '#A4ADC2';
+    ctx.fillText(info.en, w - 56*scale, hPx / 2 + 18*scale);
 
-    // Append a fully-rendered HTML block; if it would overflow, start a new page first.
-    function appendBlock(htmlOrNode, opts = {}) {
-        const node = (typeof htmlOrNode === 'string')
-            ? Object.assign(document.createElement('div'), { innerHTML: htmlOrNode }).firstElementChild
-            : htmlOrNode;
-        if (!currentPage) openPage();
-        currentBody.appendChild(node);
-        // Force layout so we can measure
-        const h = node.offsetHeight;
-        if (currentUsedHeight + h > PDF_USABLE_H && currentUsedHeight > 0) {
-            // Doesn't fit. Move to new page.
-            currentBody.removeChild(node);
-            openPage();
-            currentBody.appendChild(node);
-        }
-        currentUsedHeight = currentBody.offsetHeight;
-    }
+    // Report title (left side)
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `bold ${Math.round(14 * scale)}px Cairo, sans-serif`;
+    ctx.fillText('التقرير التفصيلي · مؤشرات أشعة الطوارئ', 56*scale, hPx / 2 - 10*scale);
+    ctx.font = `normal ${Math.round(12 * scale)}px Cairo, sans-serif`;
+    ctx.fillStyle = '#A4ADC2';
+    ctx.fillText(s.date_range, 56*scale, hPx / 2 + 18*scale);
+    ctx.restore();
+}
 
-    openPage();
+function drawPdfFooter(ctx, pageNum, totalPages, w, h, footerPx, scale) {
+    ctx.save();
+    const top = h - footerPx;
+    ctx.strokeStyle = '#E5EAF0';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(56*scale, top + 6*scale);
+    ctx.lineTo(w - 56*scale, top + 6*scale);
+    ctx.stroke();
+    ctx.fillStyle = '#6B7280';
+    ctx.font = `normal ${Math.round(11 * scale)}px Cairo, sans-serif`;
+    ctx.textBaseline = 'middle';
+    // Right (Arabic): source attribution
+    ctx.textAlign = 'right';
+    ctx.fillText('المصدر: PACS + سجل الطوارئ ED · المطابقة عبر رقم الملف · يعتمد التقرير الأولي',
+                 w - 56*scale, top + footerPx/2 + 4*scale);
+    // Left: page number
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#063A58';
+    ctx.font = `bold ${Math.round(11 * scale)}px Cairo, sans-serif`;
+    ctx.fillText(`صفحة ${pageNum} من ${totalPages}`, 56*scale, top + footerPx/2 + 4*scale);
+    ctx.restore();
+}
 
-    // === Section 1: Executive summary KPIs ===
-    appendBlock(renderKpiBlock(s));
+// ---- Build the report body as one tall HTML doc ----
+// Every element that should NOT be cut across pages gets data-atom.
+function buildReportBodyHTML(info, s) {
+    const overall = (s.o2a_comp_pct + s.a2r_comp_pct) / 2;
+    const o2aCls = s.o2a_comp_pct >= 80 ? 'emerald' : s.o2a_comp_pct >= 50 ? 'amber' : 'rose';
+    const a2rCls = s.a2r_comp_pct >= 80 ? 'emerald' : s.a2r_comp_pct >= 50 ? 'amber' : 'rose';
+    const overallCls = overall >= 80 ? 'emerald' : overall >= 50 ? 'amber' : 'rose';
 
-    // === Section 2: Stages (two-column compliance) ===
-    appendBlock(renderStagesBlock(s));
+    const bucketRow = (label, n, color) => {
+        const p = s.total_studies ? 100 * n / s.total_studies : 0;
+        return `<div class="r-bk">
+            <span class="sw" style="background:${color};"></span>
+            <span class="lbl">${label}</span>
+            <span class="bar"><span style="width:${Math.max(p,2)}%; background:${color};"></span></span>
+            <span class="n">${n} · ${Math.round(p)}%</span>
+        </div>`;
+    };
 
-    // === Section 3: Modality breakdown table ===
-    appendTableBlock({
-        title: 'تفصيل الفحوصات حسب النوع (Modality)',
-        headers: ['النوع', 'العدد', 'متوسط الطلب→التصوير', 'الالتزام (١٥د)', 'متوسط التصوير→التقرير', 'الالتزام (٤٥د)'],
-        widths: ['*', '10%', '15%', '13%', '15%', '13%'],
-        rows: s.byModality.map(m => [
-            m.modality,
-            String(m.n),
-            Math.round(m.o2a_med) + ' د',
-            { text: Math.round(m.o2a_comp) + '%', cls: m.o2a_comp >= 80 ? 'num ok' : 'num over' },
-            Math.round(m.a2r_med) + ' د',
-            { text: Math.round(m.a2r_comp) + '%', cls: m.a2r_comp >= 80 ? 'num ok' : 'num over' }
-        ])
-    });
+    const tableRows = (rows, fn) => rows.map(r => `<tr data-atom>${fn(r)}</tr>`).join('');
 
-    // === Section 4: Top procedures ===
-    appendTableBlock({
-        title: 'أبرز الفحوصات حسب الحجم',
-        headers: ['اسم الفحص', 'العدد', 'متوسط الطلب→التصوير', 'الالتزام (١٥د)', 'متوسط التصوير→التقرير', 'الالتزام (٤٥د)'],
-        widths: ['*', '8%', '15%', '13%', '15%', '13%'],
-        rows: s.topProcedures.map(p => [
-            p.name,
-            String(p.n),
-            Math.round(p.o2a_med) + ' د',
-            { text: Math.round(p.o2a_comp) + '%', cls: p.o2a_comp >= 80 ? 'num ok' : 'num over' },
-            Math.round(p.a2r_med) + ' د',
-            { text: Math.round(p.a2r_comp) + '%', cls: p.a2r_comp >= 80 ? 'num ok' : 'num over' }
-        ])
-    });
-
-    // === Section 5: Performance by reading radiologist ===
-    if (s.byRadiologist && s.byRadiologist.length > 0) {
-        appendTableBlock({
-            title: 'أداء الأطباء القارئين (Radiologists)',
-            headers: ['اسم الطبيب', 'عدد التقارير', 'متوسط زمن التقرير', 'الالتزام (٤٥د)', 'متوسط زمن التصوير', 'الالتزام (١٥د)', 'عدد التأخرات'],
-            widths: ['*', '10%', '13%', '12%', '13%', '12%', '11%'],
-            rows: s.byRadiologist.map(r => [
-                r.name,
-                String(r.n),
-                Math.round(r.a2r_mean) + ' د',
-                { text: Math.round(r.a2r_comp) + '%', cls: r.a2r_comp >= 80 ? 'num ok' : 'num over' },
-                Math.round(r.o2a_mean) + ' د',
-                { text: Math.round(r.o2a_comp) + '%', cls: r.o2a_comp >= 80 ? 'num ok' : 'num over' },
-                { text: String(r.delayed_a2r + r.delayed_o2a), cls: 'num over' }
-            ])
-        });
-    }
-
-    // === Section 6: Delays — order → acquisition ===
-    appendDelaysTable({
-        title: 'الملفات المتأخرة · من الطلب إلى التصوير (تجاوزت ١٥ دقيقة)',
-        subtitle: `إجمالي التأخرات: ${s.delayed_o2a.length} ملف`,
-        target: TARGET_O2A,
-        rows: s.delayed_o2a
-    });
-
-    // === Section 7: Delays — acquisition → report ===
-    appendDelaysTable({
-        title: 'الملفات المتأخرة · من التصوير إلى التقرير (تجاوزت ٤٥ دقيقة)',
-        subtitle: `إجمالي التأخرات: ${s.delayed_a2r.length} ملف`,
-        target: TARGET_A2R,
-        rows: s.delayed_a2r
-    });
-
-    // Replace page-number placeholder
-    const total = pages.length;
-    pages.forEach(p => {
-        p.innerHTML = p.innerHTML.replaceAll(totalPagesPlaceholder, String(total));
-    });
-
-    // Wait a frame so layout finalises before we screenshot
-    await new Promise(r => setTimeout(r, 200));
-    return pages;
-
-    // ---- Helpers ----
-
-    function appendTableBlock({ title, headers, widths, rows }) {
-        if (rows.length === 0) {
-            appendBlock(`
-                <div class="r-block">
-                    <h2 class="r-title">${title}</h2>
-                    <div class="r-empty">لا توجد بيانات لهذا الجدول</div>
-                </div>`);
-            return;
-        }
-        // Try to fit the whole table; if it won't fit, split row-by-row.
-        const tbl = makeTable(title, headers, widths, rows);
-        appendBlock(tbl);
-    }
-
-    function appendDelaysTable({ title, subtitle, target, rows }) {
-        if (rows.length === 0) {
-            appendBlock(`
-                <div class="r-block">
-                    <h2 class="r-title">${title}</h2>
-                    <div class="r-subtitle">${subtitle}</div>
-                    <div class="r-empty-good">✓ لا توجد ملفات تجاوزت المستهدف في هذه المرحلة</div>
-                </div>`);
-            return;
-        }
-        // Each entry becomes a fat row with multiple fields.
-        const headers = ['رقم الملف', 'اسم الفحص', 'الطبيب القارئ', 'الفني', 'الزمن الفعلي', 'التجاوز', 'وقت الطلب'];
-        const widths = ['10%', '20%', '17%', '14%', '8%', '8%', '13%'];
-        const dataRows = rows.map(d => [
-            { text: d.pid, cls: 'pid' },
-            d.procedure || d.modality || '—',
-            d.radiologist || '—',
-            d.technologist || '—',
-            { text: Math.round(d.mins) + ' د', cls: 'num' },
-            { text: '+' + Math.round(d.mins - target) + ' د', cls: 'num over' },
-            { text: fmtDateTimeFull(d.orderDt), cls: 'datetime' }
-        ]);
-        const subtitleHtml = `<div class="r-subtitle">${subtitle}</div>`;
-        appendSplittableTable(title, subtitleHtml, headers, widths, dataRows);
-    }
-
-    function appendSplittableTable(title, subtitleHtml, headers, widths, dataRows) {
-        // Strategy: render head + N rows. Measure. If fits, append. If not, pop rows
-        // until it fits. Then start a new page with continuation marker.
-        let cursor = 0;
-        let isContinuation = false;
-        while (cursor < dataRows.length) {
-            const remaining = dataRows.length - cursor;
-            // Initial guess: try all remaining rows
-            let take = remaining;
-            let node = makeTable(
-                isContinuation ? title + ' (تابع)' : title,
-                headers, widths,
-                dataRows.slice(cursor, cursor + take),
-                isContinuation ? '' : subtitleHtml
-            );
-            currentBody.appendChild(node);
-            const remainingHeight = PDF_USABLE_H - currentUsedHeight;
-            // Iteratively shrink until it fits (binary-ish)
-            while (node.offsetHeight > remainingHeight && take > 1) {
-                // Remove last row from the table and remeasure
-                const tbody = node.querySelector('tbody');
-                tbody.removeChild(tbody.lastElementChild);
-                take--;
-            }
-            // If it STILL doesn't fit and we're on a fresh page, force at least 1 row.
-            if (node.offsetHeight > remainingHeight && currentUsedHeight === 0) {
-                // page too small for even 1 row + header; accept overflow as last resort
-            } else if (node.offsetHeight > remainingHeight) {
-                // Doesn't fit here at all, move to new page and retry.
-                currentBody.removeChild(node);
-                openPage();
-                continue;
-            }
-            currentUsedHeight = currentBody.offsetHeight;
-            cursor += take;
-            isContinuation = true;
-            if (cursor < dataRows.length) {
-                openPage();
-            }
-        }
-    }
-
-    function makeTable(title, headers, widths, rows, subtitleHtml = '') {
-        const block = document.createElement('div');
-        block.className = 'r-block';
-        const colGroup = widths.map(w => `<col style="width:${w};">`).join('');
-        const head = headers.map(h => `<th>${h}</th>`).join('');
-        const body = rows.map(row => {
-            const tds = row.map(cell => {
-                if (cell && typeof cell === 'object') {
-                    return `<td class="${cell.cls || ''}">${cell.text}</td>`;
-                }
-                return `<td>${cell ?? ''}</td>`;
-            }).join('');
-            return `<tr>${tds}</tr>`;
-        }).join('');
-        block.innerHTML = `
-            <h2 class="r-title">${title}</h2>
-            ${subtitleHtml}
+    const modalityTable = `
+        <div class="r-block" data-atom>
+            <h2 class="r-title">تفصيل الفحوصات حسب النوع (Modality)</h2>
             <table class="r-tbl">
-                <colgroup>${colGroup}</colgroup>
-                <thead><tr>${head}</tr></thead>
-                <tbody>${body}</tbody>
-            </table>`;
-        return block;
-    }
+                <colgroup>
+                    <col style="width:*"><col style="width:10%"><col style="width:18%">
+                    <col style="width:13%"><col style="width:18%"><col style="width:13%">
+                </colgroup>
+                <thead><tr>
+                    <th>النوع</th><th>العدد</th><th>متوسط الطلب→التصوير</th>
+                    <th>الالتزام (١٥د)</th><th>متوسط التصوير→التقرير</th><th>الالتزام (٤٥د)</th>
+                </tr></thead>
+                <tbody>${tableRows(s.byModality, m => `
+                    <td>${m.modality}</td>
+                    <td class="num">${m.n}</td>
+                    <td class="num">${Math.round(m.o2a_med)} د</td>
+                    <td class="num ${m.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(m.o2a_comp)}%</td>
+                    <td class="num">${Math.round(m.a2r_med)} د</td>
+                    <td class="num ${m.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(m.a2r_comp)}%</td>
+                `)}</tbody>
+            </table>
+        </div>`;
 
-    function renderKpiBlock(s) {
-        const overall = (s.o2a_comp_pct + s.a2r_comp_pct) / 2;
-        const o2aCls = s.o2a_comp_pct >= 80 ? 'emerald' : s.o2a_comp_pct >= 50 ? 'amber' : 'rose';
-        const a2rCls = s.a2r_comp_pct >= 80 ? 'emerald' : s.a2r_comp_pct >= 50 ? 'amber' : 'rose';
-        const overallCls = overall >= 80 ? 'emerald' : overall >= 50 ? 'amber' : 'rose';
-        const block = document.createElement('div');
-        block.className = 'r-block';
-        block.innerHTML = `
+    const procTable = `
+        <div class="r-block">
+            <h2 class="r-title">أبرز الفحوصات حسب الحجم</h2>
+            <table class="r-tbl">
+                <colgroup>
+                    <col style="width:*"><col style="width:9%"><col style="width:17%">
+                    <col style="width:13%"><col style="width:17%"><col style="width:13%">
+                </colgroup>
+                <thead><tr>
+                    <th>اسم الفحص</th><th>العدد</th><th>متوسط الطلب→التصوير</th>
+                    <th>الالتزام (١٥د)</th><th>متوسط التصوير→التقرير</th><th>الالتزام (٤٥د)</th>
+                </tr></thead>
+                <tbody>${tableRows(s.topProcedures, p => `
+                    <td>${p.name}</td>
+                    <td class="num">${p.n}</td>
+                    <td class="num">${Math.round(p.o2a_med)} د</td>
+                    <td class="num ${p.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(p.o2a_comp)}%</td>
+                    <td class="num">${Math.round(p.a2r_med)} د</td>
+                    <td class="num ${p.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(p.a2r_comp)}%</td>
+                `)}</tbody>
+            </table>
+        </div>`;
+
+    const radTable = (s.byRadiologist && s.byRadiologist.length > 0) ? `
+        <div class="r-block">
+            <h2 class="r-title">أداء الأطباء القارئين (Radiologists)</h2>
+            <table class="r-tbl">
+                <colgroup>
+                    <col style="width:*"><col style="width:10%"><col style="width:13%">
+                    <col style="width:12%"><col style="width:13%"><col style="width:12%"><col style="width:11%">
+                </colgroup>
+                <thead><tr>
+                    <th>اسم الطبيب</th><th>عدد التقارير</th><th>متوسط زمن التقرير</th>
+                    <th>الالتزام (٤٥د)</th><th>متوسط زمن التصوير</th>
+                    <th>الالتزام (١٥د)</th><th>عدد التأخرات</th>
+                </tr></thead>
+                <tbody>${tableRows(s.byRadiologist, r => `
+                    <td>${r.name}</td>
+                    <td class="num">${r.n}</td>
+                    <td class="num">${Math.round(r.a2r_mean)} د</td>
+                    <td class="num ${r.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.a2r_comp)}%</td>
+                    <td class="num">${Math.round(r.o2a_mean)} د</td>
+                    <td class="num ${r.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.o2a_comp)}%</td>
+                    <td class="num over">${r.delayed_a2r + r.delayed_o2a}</td>
+                `)}</tbody>
+            </table>
+        </div>` : '';
+
+    const o2aDelayRows = (rows) => rows.map(d => `
+        <tr data-atom>
+            <td class="pid">${d.pid}</td>
+            <td>${d.procedure || d.modality || '—'}</td>
+            <td>${d.orderingPhysician || '—'}</td>
+            <td>${d.technologist || '—'}</td>
+            <td class="num">${Math.round(d.mins)} د</td>
+            <td class="num over">+${Math.round(d.mins - TARGET_O2A)} د</td>
+            <td class="datetime">${fmtDateTimeFull(d.orderDt)}</td>
+        </tr>`).join('');
+
+    const a2rDelayRows = (rows) => rows.map(d => `
+        <tr data-atom>
+            <td class="pid">${d.pid}</td>
+            <td>${d.procedure || d.modality || '—'}</td>
+            <td>${d.radiologist || '—'}</td>
+            <td>${d.technologist || '—'}</td>
+            <td class="num">${Math.round(d.mins)} د</td>
+            <td class="num over">+${Math.round(d.mins - TARGET_A2R)} د</td>
+            <td class="datetime">${fmtDateTimeFull(d.orderDt)}</td>
+        </tr>`).join('');
+
+    const o2aDelays = s.delayed_o2a.length === 0
+        ? `<div class="r-empty-good" data-atom>✓ لا توجد ملفات تجاوزت ١٥ دقيقة في هذه المرحلة</div>`
+        : `<table class="r-tbl">
+            <colgroup>
+                <col style="width:11%"><col style="width:21%"><col style="width:17%">
+                <col style="width:13%"><col style="width:8%"><col style="width:8%"><col style="width:14%">
+            </colgroup>
+            <thead><tr>
+                <th>رقم الملف</th><th>اسم الفحص</th><th>الطبيب الطالب</th>
+                <th>الفني</th><th>الزمن الفعلي</th><th>التجاوز</th><th>وقت الطلب</th>
+            </tr></thead>
+            <tbody>${o2aDelayRows(s.delayed_o2a)}</tbody>
+        </table>`;
+
+    const a2rDelays = s.delayed_a2r.length === 0
+        ? `<div class="r-empty-good" data-atom>✓ لا توجد ملفات تجاوزت ٤٥ دقيقة في هذه المرحلة</div>`
+        : `<table class="r-tbl">
+            <colgroup>
+                <col style="width:11%"><col style="width:21%"><col style="width:17%">
+                <col style="width:13%"><col style="width:8%"><col style="width:8%"><col style="width:14%">
+            </colgroup>
+            <thead><tr>
+                <th>رقم الملف</th><th>اسم الفحص</th><th>الطبيب القارئ</th>
+                <th>الفني</th><th>الزمن الفعلي</th><th>التجاوز</th><th>وقت الطلب</th>
+            </tr></thead>
+            <tbody>${a2rDelayRows(s.delayed_a2r)}</tbody>
+        </table>`;
+
+    return `
+        <div class="r-block" data-atom>
             <h2 class="r-title">الملخص التنفيذي</h2>
             <div class="r-kpis">
                 <div class="r-kpi">
@@ -3056,26 +3298,10 @@ async function buildReportPages(info, s, setMsg) {
                     <div class="v">${Math.round(overall)}<span class="u">%</span></div>
                     <div class="sub">متوسط المرحلتين</div>
                 </div>
-            </div>`;
-        return block;
-    }
+            </div>
+        </div>
 
-    function renderStagesBlock(s) {
-        const o2aCls = s.o2a_comp_pct >= 80 ? 'emerald' : s.o2a_comp_pct >= 50 ? 'amber' : 'rose';
-        const a2rCls = s.a2r_comp_pct >= 80 ? 'emerald' : s.a2r_comp_pct >= 50 ? 'amber' : 'rose';
-        const bucketRow = (label, n, color) => {
-            const p = s.total_studies ? 100 * n / s.total_studies : 0;
-            return `
-                <div class="r-bk">
-                    <span class="sw" style="background:${color};"></span>
-                    <span class="lbl">${label}</span>
-                    <span class="bar"><span style="width:${Math.max(p,2)}%; background:${color};"></span></span>
-                    <span class="n">${n} · ${Math.round(p)}%</span>
-                </div>`;
-        };
-        const block = document.createElement('div');
-        block.className = 'r-block';
-        block.innerHTML = `
+        <div class="r-block" data-atom>
             <h2 class="r-title">الالتزام بالمعايير الزمنية</h2>
             <div class="r-stages2">
                 <div class="r-stage">
@@ -3118,9 +3344,31 @@ async function buildReportPages(info, s, setMsg) {
                     ${bucketRow('٩١ – ١٢٠ دقيقة', s.bucket_a2r['91-120'], '#FB923C')}
                     ${bucketRow('أكثر من ١٢٠ دقيقة', s.bucket_a2r['>120'], '#EF4444')}
                 </div>
-            </div>`;
-        return block;
-    }
+            </div>
+        </div>
+
+        ${modalityTable}
+        ${procTable}
+        ${radTable}
+
+        <div class="r-block">
+            <h2 class="r-title">الملفات المتأخرة · من الطلب إلى التصوير (تجاوزت ١٥ دقيقة)</h2>
+            <div class="r-subtitle" data-atom>إجمالي التأخرات في هذه المرحلة: ${s.delayed_o2a.length} ملف</div>
+            ${o2aDelays}
+        </div>
+
+        <div class="r-block">
+            <h2 class="r-title">الملفات المتأخرة · من التصوير إلى التقرير (تجاوزت ٤٥ دقيقة)</h2>
+            <div class="r-subtitle" data-atom>إجمالي التأخرات في هذه المرحلة: ${s.delayed_a2r.length} ملف</div>
+            ${a2rDelays}
+        </div>
+    `;
+}
+
+function fmtDateTimeFull(d) {
+    if (!d) return '—';
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 document.addEventListener('DOMContentLoaded', init);
