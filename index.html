@@ -531,6 +531,128 @@ body {
 .txt-amber { color: var(--accent-amber); }
 .txt-rose { color: var(--accent-rose); }
 
+/* ============ MODALITY DONUT CHART ============ */
+.mod-chart {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 18px;
+}
+.mod-chart-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mod-chart-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--accent-violet);
+    border-radius: 2px;
+}
+.mod-chart-body {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+.mod-chart-svg-wrap {
+    position: relative;
+    flex: 0 0 180px;
+}
+.mod-chart-svg-wrap svg { display: block; }
+.mod-chart-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    pointer-events: none;
+}
+.mod-chart-center .big {
+    font-family: 'Cairo', sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+}
+.mod-chart-center .sub {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    margin-top: 4px;
+}
+.mod-chart-legend {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 8px;
+}
+.mod-chart-legend-item {
+    display: grid;
+    grid-template-columns: 14px 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 5px;
+    font-size: 12px;
+}
+.mod-chart-legend-item .dot {
+    width: 12px; height: 12px; border-radius: 3px;
+}
+.mod-chart-legend-item .lbl {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.mod-chart-legend-item .pct {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    color: var(--accent-violet);
+    direction: ltr;
+}
+.mod-chart-legend-item .n {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    direction: ltr;
+    padding-right: 4px;
+    border-right: 1px solid var(--border-subtle);
+    padding-right: 8px;
+}
+
+/* Compact variant for PDF — light background, smaller */
+.mod-chart.compact {
+    background: #F7FAFC;
+    border-color: #E2E8F0;
+    padding: 14px 16px;
+    margin-bottom: 0;
+}
+.mod-chart.compact .mod-chart-title {
+    color: #063A58;
+    font-size: 14px;
+}
+.mod-chart.compact .mod-chart-center .big { color: #1A2433; }
+.mod-chart.compact .mod-chart-center .sub { color: #6B7280; }
+.mod-chart.compact .mod-chart-legend-item {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    color: #1A2433;
+}
+.mod-chart.compact .mod-chart-legend-item .lbl { color: #1A2433; }
+.mod-chart.compact .mod-chart-legend-item .pct { color: #8B5CF6; }
+.mod-chart.compact .mod-chart-legend-item .n {
+    color: #6B7280;
+    border-right-color: #E2E8F0;
+}
+
 /* ============ STAFF BREAKDOWN TABLES (in hospital card) ============ */
 .staff-section {
     margin-top: 22px;
@@ -1242,8 +1364,9 @@ body {
 
 /* ============ DETAILED REPORT (continuous flow, sliced into PDF pages) ============ */
 .r-host {
-    position: absolute;
-    top: 0; left: 0;
+    position: fixed;
+    top: 0;
+    left: -2000px;          /* off screen but at natural top */
     width: 1240px;
     background: #FFFFFF;
     color: #1A2433;
@@ -1251,9 +1374,6 @@ body {
     direction: rtl;
     box-sizing: border-box;
     padding: 30px 56px 40px 56px;
-    /* Visible to layout but transparent so user doesn't see flash */
-    opacity: 0;
-    pointer-events: none;
     z-index: -1;
 }
 .r-host * { box-sizing: border-box; }
@@ -2221,6 +2341,19 @@ function fmtDate(d) {
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+// Return a short version of a person's name: first two words only, without titles
+// or anything after a comma/dash. Strips common honorifics (Dr., د.) so the
+// display reads cleanly in tight tables.
+function shortName(name) {
+    if (!name) return '';
+    let s = String(name).trim();
+    if (!s || s === '(غير محدد)') return '';
+    s = s.split(',')[0].split(' - ')[0].trim();
+    s = s.replace(/^(Dr\.?|DR\.?|د\.?|الدكتور|الدكتورة)\s+/i, '');
+    const parts = s.split(/\s+/).filter(Boolean);
+    return parts.slice(0, 2).join(' ');
+}
+
 // ====================== RENDER RESULT CARDS ======================
 function renderResults() {
     const wrap = document.getElementById('hospitalsSection');
@@ -2347,6 +2480,8 @@ function renderHospitalCard(hkey) {
                 </div>
             </div>
 
+            ${renderModalityChart(s)}
+
             <div class="h-section">
                 <div class="h-panel">
                     <div class="h-panel-head">
@@ -2391,35 +2526,133 @@ function renderHospitalCard(hkey) {
 }
 
 // ----------- Staff breakdown tables (inline on the hospital card) -----------
+// ----------- Modality donut chart (CT / US / etc.) -----------
+// Pure SVG so it renders cleanly via html2canvas for the PDF, with no JS chart libs.
+// `compact` makes a smaller version for the PDF embed.
+function renderModalityChart(s, opts = {}) {
+    const compact = !!opts.compact;
+    const mods = (s.byModality || []).filter(m => m.n > 0);
+    if (mods.length === 0) return '';
+
+    const total = mods.reduce((a, b) => a + b.n, 0);
+    if (total === 0) return '';
+
+    // Color map - reuse dashboard palette
+    const COLOR_MAP = {
+        'CT': '#8B5CF6',    // violet
+        'US': '#06B6D4',    // cyan
+        'MR': '#3B82F6',    // blue
+        'MRI': '#3B82F6',
+        'XR': '#F59E0B',    // amber
+        'X-RAY': '#F59E0B',
+        'NM': '#10B981',    // emerald
+        'PT': '#EC4899',    // pink
+        'MG': '#FB923C'     // orange
+    };
+    const FALLBACK_COLORS = ['#94A3B8', '#64748B', '#475569', '#334155'];
+    let fbIdx = 0;
+    const sliceData = mods.map(m => {
+        const key = String(m.modality || '').toUpperCase().trim();
+        return {
+            label: m.modality || '—',
+            value: m.n,
+            pct: 100 * m.n / total,
+            color: COLOR_MAP[key] || FALLBACK_COLORS[fbIdx++ % FALLBACK_COLORS.length]
+        };
+    });
+
+    // Build SVG arc paths
+    const cx = 90, cy = 90, R_OUT = 80, R_IN = 50;
+    let acc = 0;
+    const arcs = sliceData.map(d => {
+        const startAngle = acc / total * 2 * Math.PI - Math.PI / 2;
+        acc += d.value;
+        const endAngle = acc / total * 2 * Math.PI - Math.PI / 2;
+        return { ...d, startAngle, endAngle };
+    });
+
+    const arcPath = (sa, ea) => {
+        const x1 = cx + R_OUT * Math.cos(sa);
+        const y1 = cy + R_OUT * Math.sin(sa);
+        const x2 = cx + R_OUT * Math.cos(ea);
+        const y2 = cy + R_OUT * Math.sin(ea);
+        const x3 = cx + R_IN * Math.cos(ea);
+        const y3 = cy + R_IN * Math.sin(ea);
+        const x4 = cx + R_IN * Math.cos(sa);
+        const y4 = cy + R_IN * Math.sin(sa);
+        const largeArc = (ea - sa) > Math.PI ? 1 : 0;
+        return `M ${x1} ${y1} A ${R_OUT} ${R_OUT} 0 ${largeArc} 1 ${x2} ${y2}
+                L ${x3} ${y3} A ${R_IN} ${R_IN} 0 ${largeArc} 0 ${x4} ${y4} Z`;
+    };
+
+    // For a single-modality dataset, draw a full ring instead of degenerate path
+    const slicesSvg = arcs.length === 1
+        ? `<circle cx="${cx}" cy="${cy}" r="${(R_OUT + R_IN) / 2}"
+                   fill="none" stroke="${arcs[0].color}" stroke-width="${R_OUT - R_IN}"/>`
+        : arcs.map(a => `<path d="${arcPath(a.startAngle, a.endAngle)}" fill="${a.color}" stroke="#FFFFFF" stroke-width="1.5"/>`).join('');
+
+    const legendItems = sliceData.map(d => `
+        <div class="mod-chart-legend-item">
+            <span class="dot" style="background:${d.color};"></span>
+            <span class="lbl">${d.label}</span>
+            <span class="pct">${Math.round(d.pct)}%</span>
+            <span class="n">${d.value}</span>
+        </div>`).join('');
+
+    const cls = compact ? 'mod-chart compact' : 'mod-chart';
+    return `
+        <div class="${cls}">
+            <div class="mod-chart-title">توزيع الفحوصات حسب النوع</div>
+            <div class="mod-chart-body">
+                <div class="mod-chart-svg-wrap">
+                    <svg viewBox="0 0 180 180" width="180" height="180">
+                        ${slicesSvg}
+                    </svg>
+                    <div class="mod-chart-center">
+                        <div class="big">${total}</div>
+                        <div class="sub">فحص</div>
+                    </div>
+                </div>
+                <div class="mod-chart-legend">
+                    ${legendItems}
+                </div>
+            </div>
+        </div>`;
+}
+
 function renderStaffSection(s) {
-    const hasOrd = s.byOrderingPhysician && s.byOrderingPhysician.some(x => x.name !== '(غير محدد)');
-    const hasRad = s.byRadiologist && s.byRadiologist.some(x => x.name !== '(غير محدد)');
-    const hasTech = s.byTechnologist && s.byTechnologist.some(x => x.name !== '(غير محدد)');
+    const isReal = (x) => x && x.name && x.name !== '(غير محدد)' && x.name.trim() !== '';
+    const ord = (s.byOrderingPhysician || []).filter(isReal);
+    const rad = (s.byRadiologist || []).filter(isReal);
+    const tech = (s.byTechnologist || []).filter(isReal);
+    const hasOrd = ord.length > 0;
+    const hasRad = rad.length > 0;
+    const hasTech = tech.length > 0;
     if (!hasOrd && !hasRad && !hasTech) return '';
 
     const compClass = (pct) => pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
 
-    const ordRows = (s.byOrderingPhysician || []).slice(0, 8).map(r => `
+    const ordRows = ord.slice(0, 8).map(r => `
         <tr>
-            <td class="staff-name">${r.name}</td>
+            <td class="staff-name">${shortName(r.name)}</td>
             <td class="staff-n">${r.n}</td>
             <td class="staff-avg">${Math.round(r.o2a_mean)} د</td>
             <td class="staff-pct ${compClass(r.o2a_comp)}">${Math.round(r.o2a_comp)}%</td>
             <td class="staff-delay">${r.delayed_o2a}</td>
         </tr>`).join('');
 
-    const radRows = (s.byRadiologist || []).slice(0, 8).map(r => `
+    const radRows = rad.slice(0, 8).map(r => `
         <tr>
-            <td class="staff-name">${r.name}</td>
+            <td class="staff-name">${shortName(r.name)}</td>
             <td class="staff-n">${r.n}</td>
             <td class="staff-avg">${Math.round(r.a2r_mean)} د</td>
             <td class="staff-pct ${compClass(r.a2r_comp)}">${Math.round(r.a2r_comp)}%</td>
             <td class="staff-delay">${r.delayed_a2r}</td>
         </tr>`).join('');
 
-    const techRows = (s.byTechnologist || []).slice(0, 8).map(r => `
+    const techRows = tech.slice(0, 8).map(r => `
         <tr>
-            <td class="staff-name">${r.name}</td>
+            <td class="staff-name">${shortName(r.name)}</td>
             <td class="staff-n">${r.n}</td>
             <td class="staff-avg">${Math.round(r.o2a_mean)} د</td>
             <td class="staff-delay">${r.delayed_o2a}</td>
@@ -2434,7 +2667,7 @@ function renderStaffSection(s) {
                     <div class="staff-box-head">
                         <span class="badge-stage">المرحلة ١</span>
                         <span class="staff-box-title">الأطباء الطالبون من الطوارئ</span>
-                        <span class="staff-box-meta">${s.byOrderingPhysician.length} طبيب · ٢-إجراء التصوير ١٥د</span>
+                        <span class="staff-box-meta">${ord.length} طبيب · إجراء التصوير ١٥د</span>
                     </div>
                     <table class="staff-tbl">
                         <thead><tr>
@@ -2449,7 +2682,7 @@ function renderStaffSection(s) {
                     <div class="staff-box-head">
                         <span class="badge-stage badge-a2r">المرحلة ٢</span>
                         <span class="staff-box-title">الأطباء القارئون (أشعة)</span>
-                        <span class="staff-box-meta">${s.byRadiologist.length} طبيب · صدور التقرير ٤٥د</span>
+                        <span class="staff-box-meta">${rad.length} طبيب · صدور التقرير ٤٥د</span>
                     </div>
                     <table class="staff-tbl">
                         <thead><tr>
@@ -2464,7 +2697,7 @@ function renderStaffSection(s) {
                     <div class="staff-box-head">
                         <span class="badge-stage badge-tech">الفنيون</span>
                         <span class="staff-box-title">إنتاجية الفنيين</span>
-                        <span class="staff-box-meta">${s.byTechnologist.length} فني · إجراء التصوير</span>
+                        <span class="staff-box-meta">${tech.length} فني · إجراء التصوير</span>
                     </div>
                     <table class="staff-tbl">
                         <thead><tr>
@@ -2933,6 +3166,16 @@ async function generateHospitalReportPDF(hkey, btn) {
     }
     const s = result.summary;
 
+    // Pre-flight: check libraries are loaded
+    if (typeof html2canvas === 'undefined') {
+        alert('مكتبة html2canvas لم يتم تحميلها. تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.');
+        return;
+    }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('مكتبة jsPDF لم يتم تحميلها. تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.');
+        return;
+    }
+
     const overlay = document.createElement('div');
     overlay.className = 'r-progress-overlay';
     overlay.innerHTML = '<div class="ring"></div><div class="msg">جاري إنشاء التقرير التفصيلي...</div>';
@@ -2945,49 +3188,55 @@ async function generateHospitalReportPDF(hkey, btn) {
     let host = null;
     try {
         setMsg('جاري إعداد التقرير...');
-        // Build the whole report DOM ON-SCREEN but invisible — needed so fonts
-        // & layout compute correctly. Position absolutely so it doesn't shift
-        // the page; opacity 0 so it doesn't flash.
         host = document.createElement('div');
         host.className = 'r-host';
         host.innerHTML = buildReportBodyHTML(info, s);
         document.body.appendChild(host);
 
-        // Make sure custom Arabic fonts have loaded
+        // Wait for fonts
         if (document.fonts && document.fonts.ready) {
-            await document.fonts.ready;
+            try { await document.fonts.ready; } catch(e) {}
         }
-        // Two raf ticks to ensure layout settles
+        // Two raf ticks
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-        setMsg('جاري التقاط الصور...');
-        // 1) Render the whole report to one tall canvas
+        // Verify the host actually has dimensions
+        const hostH = host.offsetHeight;
+        const hostW = host.offsetWidth;
+        if (!hostH || !hostW) {
+            throw new Error(`فشل قياس التقرير (width=${hostW}, height=${hostH}). جرب إعادة تحميل الصفحة.`);
+        }
+
+        setMsg('جاري التقاط الصور... قد يستغرق ١٥-٣٠ ثانية');
         const fullCanvas = await html2canvas(host, {
             backgroundColor: '#FFFFFF',
             scale: 1.5,
             useCORS: true,
             logging: false,
             width: PDF_RENDER_WIDTH,
-            height: host.offsetHeight,
+            height: hostH,
             windowWidth: PDF_RENDER_WIDTH
         });
 
-        // 2) Find safe page-break Y positions (px in the unscaled DOM) using
-        //    the data-atom elements' offset rectangles.
+        if (!fullCanvas || !fullCanvas.width || !fullCanvas.height) {
+            throw new Error('فشل إنشاء صورة التقرير (canvas فارغ).');
+        }
+
+        // Find safe page-break Y positions using data-atom elements
         const atomEls = host.querySelectorAll('[data-atom]');
         const atoms = [];
-        const hostTop = host.getBoundingClientRect().top;
+        const hostRect = host.getBoundingClientRect();
         atomEls.forEach(el => {
             const r = el.getBoundingClientRect();
             atoms.push({
-                top: r.top - hostTop,
-                bottom: r.bottom - hostTop
+                top: r.top - hostRect.top,
+                bottom: r.bottom - hostRect.top
             });
         });
 
         const usableH = (PDF_RENDER_WIDTH * PDF_A4_RATIO) - PDF_HEADER_H - PDF_FOOTER_H;
-        const totalH = host.offsetHeight;
-        const cuts = [];   // [{startY, endY}, ...] per page in DOM px
+        const totalH = hostH;
+        const cuts = [];
         let cursor = 0;
         while (cursor < totalH) {
             const idealEnd = cursor + usableH;
@@ -2995,9 +3244,6 @@ async function generateHospitalReportPDF(hkey, btn) {
                 cuts.push({ startY: cursor, endY: totalH });
                 break;
             }
-            // Find an atom whose bottom is <= idealEnd, take the largest such.
-            // Fallback: take any atom whose TOP is past cursor but bottom > idealEnd
-            //   in which case cut just before that atom (atom.top).
             let safeEnd = -1;
             for (const a of atoms) {
                 if (a.bottom <= idealEnd && a.bottom > cursor && a.bottom > safeEnd) {
@@ -3005,8 +3251,6 @@ async function generateHospitalReportPDF(hkey, btn) {
                 }
             }
             if (safeEnd < 0) {
-                // No atom ends in this window — find one that crosses the boundary,
-                // cut at its TOP so it goes to the next page intact.
                 for (const a of atoms) {
                     if (a.top > cursor && a.top < idealEnd) {
                         safeEnd = a.top;
@@ -3015,19 +3259,18 @@ async function generateHospitalReportPDF(hkey, btn) {
                 }
             }
             if (safeEnd < 0 || safeEnd <= cursor + 20) {
-                // Couldn't find a clean break; force at ideal (rare).
                 safeEnd = idealEnd;
             }
             cuts.push({ startY: cursor, endY: safeEnd });
             cursor = safeEnd;
         }
 
-        // 3) Build PDF
+        // Build PDF
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
         const pageWmm = pdf.internal.pageSize.getWidth();
         const pageHmm = pdf.internal.pageSize.getHeight();
-        const scale = fullCanvas.width / PDF_RENDER_WIDTH;   // 1.5 from html2canvas
+        const scale = fullCanvas.width / PDF_RENDER_WIDTH;
 
         const totalPages = cuts.length;
         for (let i = 0; i < cuts.length; i++) {
@@ -3212,8 +3455,8 @@ function buildReportBodyHTML(info, s) {
                     <th>الالتزام (٤٥د)</th><th>متوسط زمن التصوير</th>
                     <th>الالتزام (١٥د)</th><th>عدد التأخرات</th>
                 </tr></thead>
-                <tbody>${tableRows(s.byRadiologist, r => `
-                    <td>${r.name}</td>
+                <tbody>${tableRows(s.byRadiologist.filter(r => r.name !== '(غير محدد)'), r => `
+                    <td>${shortName(r.name) || r.name}</td>
                     <td class="num">${r.n}</td>
                     <td class="num">${Math.round(r.a2r_mean)} د</td>
                     <td class="num ${r.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.a2r_comp)}%</td>
@@ -3228,8 +3471,8 @@ function buildReportBodyHTML(info, s) {
         <tr data-atom>
             <td class="pid">${d.pid}</td>
             <td>${d.procedure || d.modality || '—'}</td>
-            <td>${d.orderingPhysician || '—'}</td>
-            <td>${d.technologist || '—'}</td>
+            <td>${shortName(d.orderingPhysician) || '—'}</td>
+            <td>${shortName(d.technologist) || '—'}</td>
             <td class="num">${Math.round(d.mins)} د</td>
             <td class="num over">+${Math.round(d.mins - TARGET_O2A)} د</td>
             <td class="datetime">${fmtDateTimeFull(d.orderDt)}</td>
@@ -3239,8 +3482,8 @@ function buildReportBodyHTML(info, s) {
         <tr data-atom>
             <td class="pid">${d.pid}</td>
             <td>${d.procedure || d.modality || '—'}</td>
-            <td>${d.radiologist || '—'}</td>
-            <td>${d.technologist || '—'}</td>
+            <td>${shortName(d.radiologist) || '—'}</td>
+            <td>${shortName(d.technologist) || '—'}</td>
             <td class="num">${Math.round(d.mins)} د</td>
             <td class="num over">+${Math.round(d.mins - TARGET_A2R)} د</td>
             <td class="datetime">${fmtDateTimeFull(d.orderDt)}</td>
@@ -3299,6 +3542,11 @@ function buildReportBodyHTML(info, s) {
                     <div class="sub">متوسط المرحلتين</div>
                 </div>
             </div>
+        </div>
+
+        <div class="r-block" data-atom>
+            <h2 class="r-title">توزيع الفحوصات حسب النوع</h2>
+            ${renderModalityChart(s, { compact: true })}
         </div>
 
         <div class="r-block" data-atom>
