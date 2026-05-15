@@ -3504,61 +3504,71 @@ async function generateFinalReportPDF() {
     const A4_LONG = 297;
     const A4_SHORT = 210;
 
-    // Add a slide canvas. Choose orientation based on aspect ratio. For tall
-    // images, PHYSICALLY slice the canvas into page-sized pieces so each PDF
-    // page gets its own clean image (no overlap/duplication from negative-y).
+    // Add a slide canvas. ALL slide pages are forced to landscape A4 for
+    // visual consistency across the whole final report. Tall slides are
+    // physically sliced into landscape-aspect pieces edge-to-edge.
     const addSlideImage = (sourceCanvas) => {
         const imgW = sourceCanvas.width;
         const imgH = sourceCanvas.height;
         const imgRatio = imgW / imgH;
 
-        // Choose orientation by aspect ratio
-        let orient, pageW, pageH;
-        if (imgRatio >= 1.0) {
-            orient = 'l'; pageW = A4_LONG; pageH = A4_SHORT;
-        } else {
-            orient = 'p'; pageW = A4_SHORT; pageH = A4_LONG;
-        }
+        // Always landscape — consistent with the heatmap & meeting slides.
+        const orient = 'l';
+        const pageW = A4_LONG;   // 297mm
+        const pageH = A4_SHORT;  // 210mm
+        const pageAspect = pageW / pageH;  // ≈ 1.414
 
-        const drawW = pageW;
-        const drawHFull = pageW / imgRatio;  // height in mm if rendered at full width
-
-        const pushPage = (canvas) => {
-            const w = canvas.width;
-            const h = canvas.height;
-            const ratio = w / h;
-            const hMm = pageW / ratio;
-            const yCenter = (pageH - Math.min(hMm, pageH)) / 2;
-            const data = canvas.toDataURL('image/jpeg', 0.9);
+        const addPage = () => {
             if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', orient); }
             else { pdf.addPage('a4', orient); }
-            pdf.addImage(data, 'JPEG', 0, yCenter, pageW, hMm);
         };
 
-        if (drawHFull <= pageH + 0.5) {
-            // Fits in one page
-            pushPage(sourceCanvas);
+        // Render one slice (already at landscape aspect) edge-to-edge.
+        const renderEdgeToEdge = (canvas) => {
+            const data = canvas.toDataURL('image/jpeg', 0.9);
+            addPage();
+            pdf.addImage(data, 'JPEG', 0, 0, pageW, pageH);
+        };
+
+        // Case 1: slide is already roughly landscape-shaped (image ratio ≥ pageAspect).
+        // The image is wider than the page → fit by width, pad with white top/bottom.
+        if (imgRatio >= pageAspect - 0.001) {
+            const drawH = pageW / imgRatio;
+            const yCenter = (pageH - drawH) / 2;
+            const data = sourceCanvas.toDataURL('image/jpeg', 0.9);
+            addPage();
+            // Use white background by simply placing on a freshly-added (white) page.
+            pdf.addImage(data, 'JPEG', 0, yCenter, pageW, drawH);
             return;
         }
 
-        // Image is taller than one page — physically cut it into slices.
-        // Number of pages needed and source-pixel height of each slice.
-        const numPages = Math.ceil(drawHFull / pageH);
-        const sliceHPx = Math.floor(imgH / numPages);
+        // Case 2: slide is taller than landscape ratio. Need to slice vertically
+        // such that each slice has exactly the landscape aspect (1.414:1) so
+        // it can fill the page edge-to-edge with no padding.
+        // Each slice height in source-pixels:
+        const sliceHPx = Math.floor(imgW / pageAspect);
+        const numPages = Math.ceil(imgH / sliceHPx);
+
         for (let i = 0; i < numPages; i++) {
             const yStart = i * sliceHPx;
             const remaining = imgH - yStart;
-            const thisSliceH = (i === numPages - 1) ? remaining : sliceHPx;
+            const isLastSlice = (i === numPages - 1);
 
-            // Build a new canvas containing only this slice
+            // Build the slice canvas at the page aspect ratio
             const slice = document.createElement('canvas');
             slice.width = imgW;
-            slice.height = thisSliceH;
+            slice.height = sliceHPx;  // uniform → pads last slice with white below
             const sctx = slice.getContext('2d');
             sctx.fillStyle = '#FFFFFF';
             sctx.fillRect(0, 0, slice.width, slice.height);
-            sctx.drawImage(sourceCanvas, 0, yStart, imgW, thisSliceH, 0, 0, imgW, thisSliceH);
-            pushPage(slice);
+            const drawH = Math.min(sliceHPx, remaining);
+            sctx.drawImage(sourceCanvas, 0, yStart, imgW, drawH, 0, 0, imgW, drawH);
+
+            // For the last (possibly short) slice, instead of stretching the
+            // white padding across the page (which would distort content),
+            // we keep the page filled BUT only at the top — the bottom shows
+            // the natural white that's already in the slice canvas.
+            renderEdgeToEdge(slice);
         }
     };
 
