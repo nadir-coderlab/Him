@@ -3504,15 +3504,15 @@ async function generateFinalReportPDF() {
     const A4_LONG = 297;
     const A4_SHORT = 210;
 
-    // Add a slide image — choose orientation (landscape/portrait) by aspect ratio,
-    // and if the image is taller than what a single page can fit even in portrait,
-    // slice it vertically across multiple pages so no content is wasted.
-    const addSlideImage = (imgData, imgW, imgH) => {
+    // Add a slide canvas. Choose orientation based on aspect ratio. For tall
+    // images, PHYSICALLY slice the canvas into page-sized pieces so each PDF
+    // page gets its own clean image (no overlap/duplication from negative-y).
+    const addSlideImage = (sourceCanvas) => {
+        const imgW = sourceCanvas.width;
+        const imgH = sourceCanvas.height;
         const imgRatio = imgW / imgH;
-        // Landscape page ratio = 297/210 = 1.414, Portrait = 210/297 = 0.707
-        // If image is wider than landscape ratio → landscape, fit to width
-        // If image is between portrait and landscape → landscape, fit to height
-        // If image is narrower (taller) than portrait → portrait, fit to width, slice if needed
+
+        // Choose orientation by aspect ratio
         let orient, pageW, pageH;
         if (imgRatio >= 1.0) {
             orient = 'l'; pageW = A4_LONG; pageH = A4_SHORT;
@@ -3520,30 +3520,45 @@ async function generateFinalReportPDF() {
             orient = 'p'; pageW = A4_SHORT; pageH = A4_LONG;
         }
 
-        // Image scaled to fill page width
         const drawW = pageW;
-        const drawHFull = pageW / imgRatio;   // full image height at this width
+        const drawHFull = pageW / imgRatio;  // height in mm if rendered at full width
 
-        if (drawHFull <= pageH + 0.5) {
-            // Fits in one page, center it
+        const pushPage = (canvas) => {
+            const w = canvas.width;
+            const h = canvas.height;
+            const ratio = w / h;
+            const hMm = pageW / ratio;
+            const yCenter = (pageH - Math.min(hMm, pageH)) / 2;
+            const data = canvas.toDataURL('image/jpeg', 0.9);
             if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', orient); }
             else { pdf.addPage('a4', orient); }
-            const y = (pageH - drawHFull) / 2;
-            pdf.addImage(imgData, 'JPEG', 0, y, drawW, drawHFull);
+            pdf.addImage(data, 'JPEG', 0, yCenter, pageW, hMm);
+        };
+
+        if (drawHFull <= pageH + 0.5) {
+            // Fits in one page
+            pushPage(sourceCanvas);
             return;
         }
 
-        // Image is taller than one page — slice it vertically across pages.
-        // Each page shows a portion of the image using addImage's x/y offsets.
-        const pages = Math.ceil(drawHFull / pageH);
-        const sliceMm = drawHFull / pages;  // each page shows this many mm of image
-        for (let i = 0; i < pages; i++) {
-            if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', orient); }
-            else { pdf.addPage('a4', orient); }
-            // Place the FULL image but offset upward by -i*sliceMm so this slice is visible.
-            // jsPDF clips to page bounds automatically.
-            const yOff = -i * sliceMm;
-            pdf.addImage(imgData, 'JPEG', 0, yOff, drawW, drawHFull);
+        // Image is taller than one page — physically cut it into slices.
+        // Number of pages needed and source-pixel height of each slice.
+        const numPages = Math.ceil(drawHFull / pageH);
+        const sliceHPx = Math.floor(imgH / numPages);
+        for (let i = 0; i < numPages; i++) {
+            const yStart = i * sliceHPx;
+            const remaining = imgH - yStart;
+            const thisSliceH = (i === numPages - 1) ? remaining : sliceHPx;
+
+            // Build a new canvas containing only this slice
+            const slice = document.createElement('canvas');
+            slice.width = imgW;
+            slice.height = thisSliceH;
+            const sctx = slice.getContext('2d');
+            sctx.fillStyle = '#FFFFFF';
+            sctx.fillRect(0, 0, slice.width, slice.height);
+            sctx.drawImage(sourceCanvas, 0, yStart, imgW, thisSliceH, 0, 0, imgW, thisSliceH);
+            pushPage(slice);
         }
     };
 
@@ -3625,8 +3640,7 @@ async function renderSlideGroup(stage, slidesHTML, addImageFn, progressFn) {
             height: h
         });
         if (!canvas || !canvas.width) throw new Error('فشل التقاط السلايد');
-        const imgData = canvas.toDataURL('image/jpeg', 0.9);
-        addImageFn(imgData, canvas.width, canvas.height);
+        addImageFn(canvas);
     }
     stage.innerHTML = '';
 }
