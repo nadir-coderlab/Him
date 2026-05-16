@@ -2404,15 +2404,19 @@ function analyzeHospital(hkey) {
     const ED_DIS = findColIdx(edPayload.headers, ['ER_dis_status', 'dis_status', 'disposition']);
     const ED_DOOR_DISP = findColIdx(edPayload.headers, ['Door_to_Disposition_minutes', 'door_to_disposition']);
 
-    // Classify a raw disposition string into a normalized bucket
+    // Classify a raw disposition string into a normalized bucket.
+    // IMPORTANT: the "discharged" text reads "...departed without being admitted
+    // or referred to another hospital", so it contains BOTH "departed" and
+    // "referred to another". The "departed" check MUST come first.
     function classifyDis(raw) {
         const s = String(raw || '').trim().toLowerCase();
         if (!s) return 'unknown';
-        if (s.includes('admission')) return 'admitted';
-        if (s.includes('referred to another')) return 'referred';
         if (s.includes('departed without') || s.includes('episode completed departed')) return 'discharged';
+        if (s.includes('admission')) return 'admitted';
+        if (s.includes('referred to another') || s.includes('referred to') || s.includes('episode completed referred')) return 'referred';
         if (s.includes('left at own risk') || s.includes('did not wait') || s.includes('left without seen')) return 'left';
         if (s.includes('dead on arrival')) return 'left';
+        if (s.includes('triage out')) return 'left';
         return 'discharged';
     }
 
