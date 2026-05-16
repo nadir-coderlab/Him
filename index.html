@@ -3021,11 +3021,11 @@ function renderUnjustifiedCard(s) {
     return `
         <div class="uj-section">
             <div class="uj-title">
-                مدة البقاء في الطوارئ <span class="uj-sub">— المستهدف ≤ ${u.target_min} دقيقة من الدخول إلى القرار</span>
+                مدة البقاء في الطوارئ <span class="uj-sub">— عدد المرضى · المستهدف ≤ ${u.target_min} دقيقة من الدخول إلى القرار · مرجع: تقرير أدا'ع</span>
             </div>
             <div class="uj-summary">
-                <span class="uj-stat"><span class="lbl">إجمالي CT</span><span class="val violet">${u.CT.total}</span></span>
-                <span class="uj-stat"><span class="lbl">إجمالي US</span><span class="val cyan">${u.US.total}</span></span>
+                <span class="uj-stat"><span class="lbl">مرضى طُلب لهم CT</span><span class="val violet">${u.CT.total}</span></span>
+                <span class="uj-stat"><span class="lbl">مرضى طُلب لهم US</span><span class="val cyan">${u.US.total}</span></span>
             </div>
             <table class="uj-tbl">
                 <thead><tr>
@@ -3291,16 +3291,16 @@ function buildLosSlide(rows) {
         <div class="hajj-card">
             <div class="hajj-card-header">
                 <div class="hajj-card-title">مدة البقاء في الطوارئ — CT و US</div>
-                <div class="hajj-card-sub">المستهدف: خروج المريض من الطوارئ (تنويم/خروج) خلال ١٢٠ دقيقة من الدخول</div>
+                <div class="hajj-card-sub">عدد المرضى · المستهدف: خروج المريض من الطوارئ (تنويم/خروج) خلال ١٢٠ دقيقة من الدخول · مرجع: تقرير أدا'ع</div>
             </div>
 
             <div class="los-summary">
                 <div class="los-stat">
-                    <div class="lbl">إجمالي CT</div>
+                    <div class="lbl">مرضى طُلب لهم CT</div>
                     <div class="val violet">${totalCT}</div>
                 </div>
                 <div class="los-stat">
-                    <div class="lbl">إجمالي US</div>
+                    <div class="lbl">مرضى طُلب لهم US</div>
                     <div class="val cyan">${totalUS}</div>
                 </div>
                 <div class="los-stat">
