@@ -2407,6 +2407,8 @@ function analyzeHospital(hkey) {
     // Find ED columns
     const ED_DIS = findColIdx(edPayload.headers, ['ER_dis_status', 'dis_status', 'disposition']);
     const ED_DOOR_DISP = findColIdx(edPayload.headers, ['Door_to_Disposition_minutes', 'door_to_disposition']);
+    const ED_BUILDING = findColIdx(edPayload.headers, ['BUILDING_LATIN_DESC', 'BUILDING', 'building_desc']);
+    const ED_CLINIC = findColIdx(edPayload.headers, ['clinic_name']);
 
     // Classify a raw disposition string into a normalized bucket.
     // IMPORTANT: the "discharged" text reads "...departed without being admitted
@@ -2424,11 +2426,27 @@ function analyzeHospital(hkey) {
         return 'discharged';
     }
 
+    // Exclude rows from non-main buildings (e.g. NOJOUD at King Fahad — separate
+    // facility tracked in its own KPI sheet, should NOT be aggregated with main ED).
+    function isExcludedBuilding(row) {
+        if (ED_BUILDING >= 0) {
+            const b = String(row[ED_BUILDING] || '').toUpperCase().trim();
+            if (b.includes('NOJOUD') || b.includes('NUJOOD')) return true;
+        }
+        if (ED_CLINIC >= 0) {
+            const c = String(row[ED_CLINIC] || '').toUpperCase();
+            if (c.includes('NOJOUD') || c.includes('NUJOOD')) return true;
+        }
+        return false;
+    }
+
     // Build set of ED patient IDs from column A + maps for disposition and total ED time
     const edIdSet = new Set();
     const edDisMap = new Map();
     const edDoorMin = new Map();
+    let ed_excluded = 0;
     ed.forEach(r => {
+        if (isExcludedBuilding(r)) { ed_excluded++; return; }
         const id = cleanId(r[ED_PID]);
         if (!id) return;
         edIdSet.add(id);
@@ -2439,6 +2457,7 @@ function analyzeHospital(hkey) {
         }
     });
     diag.ed_unique_ids = edIdSet.size;
+    diag.ed_excluded_nojoud = ed_excluded;
 
     // Counters for filter pipeline
     let rad_in_ed = 0, rad_dates_ok = 0, rad_kept = 0;
