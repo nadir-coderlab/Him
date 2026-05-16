@@ -660,8 +660,8 @@ body {
     height: 100%;
     background: #FFFFFF;
     color: #1A2433;
-    padding: 40px 70px 32px 70px;
-    font-family: 'Cairo','Tajawal',sans-serif;
+    padding: 32px 60px 24px 60px;
+    font-family: 'Tajawal','Cairo',sans-serif;
     direction: rtl;
     box-sizing: border-box;
     display: flex;
@@ -671,10 +671,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 .cover-logo img {
-    height: 180px;
+    height: 160px;
     width: auto;
     display: block;
 }
@@ -692,18 +692,18 @@ body {
 }
 .cover-title-block {
     text-align: center;
-    margin: 4px 0 10px;
+    margin: 0 0 6px;
 }
 .cover-title {
     font-family: 'Cairo','Tajawal',sans-serif;
-    font-size: 42px;
+    font-size: 38px;
     font-weight: 900;
     color: #063A58;
     line-height: 1.15;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 .cover-date {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: #4A5A6B;
 }
@@ -711,38 +711,38 @@ body {
     height: 3px;
     background: linear-gradient(90deg, #063A58 0%, #1E88B5 50%, #063A58 100%);
     border-radius: 2px;
-    margin: 8px 0 18px;
+    margin: 6px 0 12px;
 }
 .cover-section-title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     color: #063A58;
-    margin-bottom: 12px;
-    padding-bottom: 6px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
     border-bottom: 2px solid #E2E8F0;
 }
 .cover-section-title.small {
-    font-size: 20px;
-    margin-bottom: 8px;
+    font-size: 18px;
+    margin-bottom: 6px;
 }
 .cover-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 .cover-item {
     display: flex;
-    gap: 18px;
+    gap: 14px;
     background: #F7FAFC;
     border-right: 5px solid #063A58;
-    border-radius: 10px;
-    padding: 12px 18px;
+    border-radius: 8px;
+    padding: 10px 16px;
 }
 .cover-item-num {
     flex-shrink: 0;
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: #063A58;
     color: #FFFFFF;
@@ -750,7 +750,7 @@ body {
     align-items: center;
     justify-content: center;
     font-family: 'Cairo',sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
 }
 .cover-item-body {
@@ -759,36 +759,32 @@ body {
 }
 .cover-item-title {
     font-family: 'Cairo',sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     color: #063A58;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 .cover-item-text {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.5;
     color: #2D3748;
 }
-.cover-item-bullets {
-    margin: 4px 24px 0 0;
-    padding: 0;
-    list-style: disc inside;
-    font-size: 16px;
-    line-height: 1.7;
-    color: #2D3748;
+.cover-bullet {
+    color: #063A58;
+    font-weight: 900;
+    margin-left: 4px;
 }
-.cover-item-bullets li { margin-bottom: 0; }
-.cover-item-bullets li b { color: #063A58; }
+.cover-item-text b { color: #063A58; }
 .cover-legend-block {
     margin-top: auto;
-    padding-top: 12px;
+    padding-top: 10px;
     border-top: 1px solid #E2E8F0;
 }
 .cover-legend {
     display: flex;
-    gap: 28px;
+    gap: 24px;
     flex-wrap: wrap;
-    font-size: 16px;
+    font-size: 15px;
     color: #2D3748;
 }
 .cover-legend .cover-leg {
@@ -797,8 +793,8 @@ body {
     gap: 8px;
 }
 .cover-legend .dot {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
     display: inline-block;
 }
@@ -3458,12 +3454,10 @@ function buildCoverSlide(rows) {
                     <div class="cover-item-body">
                         <div class="cover-item-title">الالتزام بالمعايير الزمنية</div>
                         <div class="cover-item-text">
-                            قياس زمن تقديم خدمة الأشعة في الطوارئ على مرحلتين، لكل مستشفى:
+                            قياس زمن تقديم خدمة الأشعة في الطوارئ على مرحلتين، لكل مستشفى:<br>
+                            <span class="cover-bullet">•</span> <b>من الطلب إلى التصوير</b> — المستهدف ١٥ دقيقة<br>
+                            <span class="cover-bullet">•</span> <b>من التصوير إلى صدور التقرير الأولي</b> — المستهدف ٤٥ دقيقة
                         </div>
-                        <ul class="cover-item-bullets">
-                            <li><b>من الطلب إلى التصوير</b> — المستهدف ١٥ دقيقة</li>
-                            <li><b>من التصوير إلى صدور التقرير الأولي</b> — المستهدف ٤٥ دقيقة</li>
-                        </ul>
                     </div>
                 </div>
 
