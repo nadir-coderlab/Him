@@ -674,16 +674,21 @@ body {
     margin-bottom: 16px;
 }
 .cover-logo img {
-    height: 110px;
+    height: 180px;
     width: auto;
     display: block;
 }
 .cover-dept {
-    font-family: 'Cairo','Tajawal',sans-serif;
-    font-size: 26px;
-    font-weight: 800;
+    font-family: 'Tajawal','Cairo',sans-serif;
+    font-size: 30px;
+    font-weight: 500;
     color: #063A58;
-    letter-spacing: 0.2px;
+    letter-spacing: 0;
+    line-height: 1.4;
+    direction: rtl;
+    text-align: right;
+    white-space: nowrap;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 .cover-title-block {
     text-align: center;
@@ -3401,10 +3406,29 @@ function openLosSlide() {
 }
 
 function buildCoverSlide(rows) {
+    // Convert English month names to Arabic ones for display.
+    const monthMap = {
+        Jan:'يناير', Feb:'فبراير', Mar:'مارس', Apr:'أبريل',
+        May:'مايو', Jun:'يونيو', Jul:'يوليو', Aug:'أغسطس',
+        Sep:'سبتمبر', Oct:'أكتوبر', Nov:'نوفمبر', Dec:'ديسمبر'
+    };
+    const toArabicDate = (s) => {
+        if (!s) return '';
+        // Replace English month names with Arabic
+        let out = String(s);
+        for (const [en, ar] of Object.entries(monthMap)) {
+            out = out.replace(new RegExp(en, 'g'), ar);
+        }
+        // Replace ASCII digits with Arabic-Indic digits
+        out = out.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[+d]);
+        // Replace " – " separator with " إلى "
+        out = out.replace(/\s*[–-]\s*/g, ' إلى ');
+        return out;
+    };
     // Build a date label from the data (first row's date range, if any).
     let dateLabel = '';
     if (rows && rows.length > 0 && rows[0].s && rows[0].s.date_range) {
-        dateLabel = rows[0].s.date_range;
+        dateLabel = toArabicDate(rows[0].s.date_range);
     }
     return `
     <div class="hajj-slide-page" data-page="cover">
