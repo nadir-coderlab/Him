@@ -657,7 +657,7 @@ body {
 /* ============ LOS SLIDE PAGE ============ */
 .los-summary {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     padding: 28px 32px;
     background: #F7FAFC;
@@ -681,6 +681,8 @@ body {
 .los-summary .los-stat .val.rose    { color: #DC2626; }
 .los-summary .los-stat .val.amber   { color: #D97706; }
 .los-summary .los-stat .val.emerald { color: #059669; }
+.los-summary .los-stat .val.violet  { color: #6D28D9; }
+.los-summary .los-stat .val.cyan    { color: #0891B2; }
 
 .los-tbl {
     width: 100%;
@@ -947,6 +949,8 @@ body {
 }
 .uj-stat .val.rose { color: var(--accent-rose); }
 .uj-stat .val.emerald { color: var(--accent-emerald); }
+.uj-stat .val.violet { color: var(--accent-violet); }
+.uj-stat .val.cyan { color: var(--accent-cyan); }
 
 .uj-tbl {
     width: 100%;
@@ -3001,9 +3005,8 @@ function renderUnjustifiedCard(s) {
                 مدة البقاء في الطوارئ <span class="uj-sub">— المستهدف ≤ ${u.target_min} دقيقة من الدخول إلى القرار</span>
             </div>
             <div class="uj-summary">
-                <span class="uj-stat"><span class="lbl">إجمالي مرضى الطوارئ</span><span class="val">${u.ed_total}</span></span>
-                <span class="uj-stat"><span class="lbl">تجاوزوا ساعتين</span><span class="val rose">${u.breach_total}</span></span>
-                <span class="uj-stat"><span class="lbl">نسبة الالتزام</span><span class="val ${u.breach_total/u.ed_total > 0.15 ? 'rose' : 'emerald'}">${u.ed_total > 0 ? Math.round(100*(u.ed_total-u.breach_total)/u.ed_total) : 0}%</span></span>
+                <span class="uj-stat"><span class="lbl">إجمالي CT</span><span class="val violet">${u.CT.total}</span></span>
+                <span class="uj-stat"><span class="lbl">إجمالي US</span><span class="val cyan">${u.US.total}</span></span>
             </div>
             <table class="uj-tbl">
                 <thead><tr>
@@ -3231,9 +3234,8 @@ function openLosSlide() {
 }
 
 function buildLosSlide(rows) {
-    const totalEd = rows.reduce((s, r) => s + (r.s.unjustified ? r.s.unjustified.ed_total : 0), 0);
-    const totalBreach = rows.reduce((s, r) => s + (r.s.unjustified ? r.s.unjustified.breach_total : 0), 0);
-    const complPct = totalEd > 0 ? Math.round(100 * (totalEd - totalBreach) / totalEd) : 0;
+    const totalCT = rows.reduce((s, r) => s + (r.s.unjustified ? r.s.unjustified.CT.total : 0), 0);
+    const totalUS = rows.reduce((s, r) => s + (r.s.unjustified ? r.s.unjustified.US.total : 0), 0);
 
     const rowFor = (mod, d) => {
         const breach = d.admitted + d.discharged + d.referred + d.left;
@@ -3257,7 +3259,6 @@ function buildLosSlide(rows) {
                 <td rowspan="2" class="los-hosp">
                     <div class="los-hosp-ar">${r.info.ar}</div>
                     <div class="los-hosp-en">${r.info.en}</div>
-                    <div class="los-hosp-meta">${u.ed_total} مريض · تجاوز ${u.breach_total}</div>
                 </td>
                 ${rowFor('CT', u.CT)}
             </tr>
@@ -3276,16 +3277,12 @@ function buildLosSlide(rows) {
 
             <div class="los-summary">
                 <div class="los-stat">
-                    <div class="lbl">إجمالي مرضى الطوارئ</div>
-                    <div class="val">${totalEd}</div>
+                    <div class="lbl">إجمالي CT</div>
+                    <div class="val violet">${totalCT}</div>
                 </div>
                 <div class="los-stat">
-                    <div class="lbl">تجاوزوا الساعتين</div>
-                    <div class="val rose">${totalBreach}</div>
-                </div>
-                <div class="los-stat">
-                    <div class="lbl">نسبة الالتزام بالمستهدف</div>
-                    <div class="val ${complPct >= 85 ? 'emerald' : complPct >= 70 ? 'amber' : 'rose'}">${complPct}%</div>
+                    <div class="lbl">إجمالي US</div>
+                    <div class="val cyan">${totalUS}</div>
                 </div>
                 <div class="los-stat">
                     <div class="lbl">عدد المستشفيات</div>
