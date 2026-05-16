@@ -654,6 +654,127 @@ body {
 .txt-amber { color: var(--accent-amber); }
 .txt-rose { color: var(--accent-rose); }
 
+/* ============ LOS SLIDE PAGE ============ */
+.los-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding: 28px 32px;
+    background: #F7FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    margin-bottom: 36px;
+}
+.los-summary .los-stat .lbl {
+    font-size: 18px;
+    color: #4A5A6B;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.los-summary .los-stat .val {
+    font-family: 'Cairo', sans-serif;
+    font-size: 56px;
+    font-weight: 900;
+    color: #1A2433;
+    line-height: 1;
+}
+.los-summary .los-stat .val.rose    { color: #DC2626; }
+.los-summary .los-stat .val.amber   { color: #D97706; }
+.los-summary .los-stat .val.emerald { color: #059669; }
+
+.los-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 22px;
+    margin-bottom: 28px;
+}
+.los-tbl thead th {
+    background: #063A58;
+    color: #FFFFFF;
+    padding: 18px 12px;
+    font-weight: 700;
+    text-align: center;
+    border: 1px solid #052D44;
+    font-size: 20px;
+}
+.los-tbl tbody td.los-cell {
+    padding: 16px 10px;
+    border: 1px solid #E5EAF0;
+    text-align: center;
+    vertical-align: middle;
+    color: #1A2433;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+}
+.los-tbl tbody td.los-cell.n { font-size: 24px; }
+.los-tbl tbody td.los-cell.n.breach { color: #B45309; }
+.los-tbl tbody td.los-cell.n.adm    { color: #6D28D9; }
+.los-tbl tbody td.los-cell.n.dis    { color: #0891B2; }
+.los-tbl tbody td.los-cell.pct {
+    font-size: 26px;
+    font-weight: 800;
+}
+.los-tbl td.los-cell.pct.sev-good { color: #059669; background: rgba(16, 185, 129, 0.08); }
+.los-tbl td.los-cell.pct.sev-warn { color: #D97706; background: rgba(245, 158, 11, 0.10); }
+.los-tbl td.los-cell.pct.sev-bad  { color: #DC2626; background: rgba(239, 68, 68, 0.10); }
+
+.los-tbl tbody td.los-hosp {
+    background: #F7FAFC;
+    border-right: 4px solid #063A58;
+    text-align: right;
+    padding: 16px 20px;
+    vertical-align: middle;
+}
+.los-tbl tbody tr.odd td.los-hosp { background: #EEF4F8; }
+.los-tbl .los-hosp-ar {
+    font-size: 22px;
+    font-weight: 800;
+    color: #063A58;
+    margin-bottom: 4px;
+}
+.los-tbl .los-hosp-en {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 6px;
+}
+.los-tbl .los-hosp-meta {
+    font-size: 14px;
+    color: #4A5A6B;
+    font-weight: 600;
+}
+
+.mod-pill {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: #FFFFFF;
+}
+.pill-ct { background: #8B5CF6; }
+.pill-us { background: #06B6D4; }
+
+.los-legend {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px;
+    background: #F7FAFC;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #4A5A6B;
+    font-weight: 600;
+}
+.los-legend .leg-dot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
 /* ============ MODALITY DONUT CHART ============ */
 .mod-chart {
     background: var(--bg-input);
@@ -775,6 +896,95 @@ body {
     color: #6B7280;
     border-right-color: #E2E8F0;
 }
+
+/* ============ ED LENGTH-OF-STAY INDICATOR ============ */
+.uj-section {
+    margin-top: 22px;
+    padding: 18px 20px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-right: 4px solid #F59E0B;
+    border-radius: var(--radius-md);
+}
+.uj-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+.uj-title .uj-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+}
+.uj-summary {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border-radius: 6px;
+    flex-wrap: wrap;
+}
+.uj-stat {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 90px;
+}
+.uj-stat .lbl {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+}
+.uj-stat .val {
+    font-family: 'Cairo', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+}
+.uj-stat .val.rose { color: var(--accent-rose); }
+.uj-stat .val.emerald { color: var(--accent-emerald); }
+
+.uj-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.uj-tbl thead th {
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 6px;
+    text-align: center;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.uj-tbl thead th:first-child { text-align: right; padding-right: 12px; }
+.uj-tbl tbody td {
+    padding: 10px 6px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-primary);
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+}
+.uj-tbl tbody tr:last-child td { border-bottom: none; }
+.uj-tbl td.uj-mod {
+    text-align: right;
+    padding-right: 12px;
+    font-size: 14px;
+    color: var(--accent-violet);
+}
+.uj-tbl td.uj-n.long { color: var(--accent-amber); }
+.uj-tbl td.uj-n.admitted { color: var(--accent-violet); }
+.uj-tbl td.uj-n.discharged { color: var(--accent-cyan); }
+.uj-tbl td.uj-pct.good { color: var(--accent-emerald); }
+.uj-tbl td.uj-pct.warn { color: var(--accent-amber); }
+.uj-tbl td.uj-pct.bad { color: var(--accent-rose); }
 
 /* ============ STAFF BREAKDOWN TABLES (in hospital card) ============ */
 .staff-section {
@@ -1791,6 +2001,7 @@ body {
             <button class="btn" id="btnReset">إعادة تعيين</button>
             <button class="btn" id="btnHajjSlide" disabled style="background: linear-gradient(135deg, #126280, #063A58); color: white; border-color: #1E88B5;">سلايد الاجتماع</button>
             <button class="btn" id="btnDelaysSlide" disabled style="background: linear-gradient(135deg, #B45309, #92400E); color: white; border-color: #D97706;">سلايد التأخرات</button>
+            <button class="btn" id="btnLosSlide" disabled style="background: linear-gradient(135deg, #047857, #065F46); color: white; border-color: #10B981;">سلايد مدة البقاء</button>
             <button class="btn" id="btnFinalReport" disabled style="background: linear-gradient(135deg, #7C2D12, #4C1D95); color: white; border-color: #8B5CF6;">📑 التقرير النهائي</button>
             <button class="btn btn-primary" id="btnAnalyze" disabled>تحليل البيانات</button>
         </div>
@@ -1866,6 +2077,7 @@ function init() {
     document.getElementById('btnReset').addEventListener('click', resetAll);
     document.getElementById('btnHajjSlide').addEventListener('click', openHajjSlide);
     document.getElementById('btnDelaysSlide').addEventListener('click', openDelaysSlide);
+    document.getElementById('btnLosSlide').addEventListener('click', openLosSlide);
     document.getElementById('btnFinalReport').addEventListener('click', generateFinalReportPDF);
     document.getElementById('btnSlideClose').addEventListener('click', () => {
         document.getElementById('slideModal').classList.remove('active');
@@ -2055,6 +2267,7 @@ function resetAll() {
     document.getElementById('emptyState').style.display = 'block';
     document.getElementById('btnHajjSlide').disabled = true;
     document.getElementById('btnDelaysSlide').disabled = true;
+    document.getElementById('btnLosSlide').disabled = true;
     document.getElementById('btnFinalReport').disabled = true;
 }
 
@@ -2134,6 +2347,7 @@ function analyzeAll() {
     const hasAny = ready.some(k => (STATE.results[k]?.summary.total_studies || 0) > 0);
     document.getElementById('btnHajjSlide').disabled = !hasAny;
     document.getElementById('btnDelaysSlide').disabled = !hasAny;
+    document.getElementById('btnLosSlide').disabled = !hasAny;
     document.getElementById('btnFinalReport').disabled = !hasAny;
 }
 
@@ -2186,11 +2400,35 @@ function analyzeHospital(hkey) {
         warnings: []
     };
 
-    // Build set of ED patient IDs from column A
+    // Find ED columns
+    const ED_DIS = findColIdx(edPayload.headers, ['ER_dis_status', 'dis_status', 'disposition']);
+    const ED_DOOR_DISP = findColIdx(edPayload.headers, ['Door_to_Disposition_minutes', 'door_to_disposition']);
+
+    // Classify a raw disposition string into a normalized bucket
+    function classifyDis(raw) {
+        const s = String(raw || '').trim().toLowerCase();
+        if (!s) return 'unknown';
+        if (s.includes('admission')) return 'admitted';
+        if (s.includes('referred to another')) return 'referred';
+        if (s.includes('departed without') || s.includes('episode completed departed')) return 'discharged';
+        if (s.includes('left at own risk') || s.includes('did not wait') || s.includes('left without seen')) return 'left';
+        if (s.includes('dead on arrival')) return 'left';
+        return 'discharged';
+    }
+
+    // Build set of ED patient IDs from column A + maps for disposition and total ED time
     const edIdSet = new Set();
+    const edDisMap = new Map();
+    const edDoorMin = new Map();
     ed.forEach(r => {
         const id = cleanId(r[ED_PID]);
-        if (id) edIdSet.add(id);
+        if (!id) return;
+        edIdSet.add(id);
+        if (ED_DIS >= 0) edDisMap.set(id, classifyDis(r[ED_DIS]));
+        if (ED_DOOR_DISP >= 0) {
+            const v = parseFloat(r[ED_DOOR_DISP]);
+            if (!isNaN(v) && v >= 0) edDoorMin.set(id, v);
+        }
     });
     diag.ed_unique_ids = edIdSet.size;
 
@@ -2223,6 +2461,7 @@ function analyzeHospital(hkey) {
             technologist: RAD_TECH >= 0 ? String(r[RAD_TECH] || '').trim() : '',
             orderingPhysician: RAD_ORD_PHY >= 0 ? String(r[RAD_ORD_PHY] || '').trim() : '',
             department: RAD_DEPT >= 0 ? String(r[RAD_DEPT] || '').trim() : '',
+            disposition: edDisMap.get(pid) || 'unknown',
             o2a, a2r
         });
     });
@@ -2442,6 +2681,64 @@ function summarize(studies) {
         };
     }).sort((a, b) => b.n - a.n);
 
+    // ===== ED Length-of-Stay Indicator =====
+    // Target: every ED patient should exit (admit or discharge) within 120 min of arrival.
+    // Question: for ED patients who BREACHED 120 min, how many had a CT vs US ordered,
+    // and what was their disposition (admitted vs discharged)?
+    const LOS_TARGET_MIN = 120;
+    const modOf = (m) => {
+        const u = String(m || '').toUpperCase().trim();
+        if (u.startsWith('CT')) return 'CT';
+        if (u.startsWith('US')) return 'US';
+        return null;
+    };
+    // Group ALL studies by PID → what modalities were ordered for each patient
+    const pidMods = new Map();
+    studies.forEach(s => {
+        const m = modOf(s.modality);
+        if (!m) return;
+        if (!pidMods.has(s.pid)) pidMods.set(s.pid, new Set());
+        pidMods.get(s.pid).add(m);
+    });
+
+    // Iterate ED patients and bucket by (modality ordered) × (disposition)
+    const u = {
+        CT: { admitted: 0, discharged: 0, referred: 0, left: 0, total: 0, breach_admitted: [], breach_discharged: [] },
+        US: { admitted: 0, discharged: 0, referred: 0, left: 0, total: 0, breach_admitted: [], breach_discharged: [] },
+        breach_total: 0,
+        ed_total: 0
+    };
+    edIdSet.forEach(pid => {
+        const dis = edDisMap.get(pid) || 'unknown';
+        const door = edDoorMin.get(pid);
+        u.ed_total++;
+        const breached = door !== undefined && door > LOS_TARGET_MIN;
+        if (breached) u.breach_total++;
+        const mods = pidMods.get(pid);
+        if (!mods) return;
+        for (const m of mods) {
+            u[m].total++;
+            if (!breached) continue;
+            // Count by disposition bucket
+            if (dis === 'admitted' || dis === 'discharged' || dis === 'referred' || dis === 'left') {
+                u[m][dis]++;
+            }
+            // Keep PID lists for admitted / discharged breach cases
+            if (dis === 'admitted') {
+                u[m].breach_admitted.push({ pid, mins: Math.round(door) });
+            } else if (dis === 'discharged') {
+                u[m].breach_discharged.push({ pid, mins: Math.round(door) });
+            }
+        }
+    });
+    const unjustified = {
+        target_min: LOS_TARGET_MIN,
+        ed_total: u.ed_total,
+        breach_total: u.breach_total,
+        CT: u.CT,
+        US: u.US
+    };
+
     // Heatmap: 2h bin x modality, median o2a and a2r
     const hourBins = [0,2,4,6,8,10,12,14,16,18,20,22];
     const modalities = byModality.map(x => x.modality);
@@ -2484,7 +2781,8 @@ function summarize(studies) {
         hourly, hourBins, modalities,
         hm_o2a, hm_a2r, byHour,
         delayed_o2a, delayed_a2r,
-        byRadiologist, byOrderingPhysician, byTechnologist
+        byRadiologist, byOrderingPhysician, byTechnologist,
+        unjustified
     };
 }
 
@@ -2674,8 +2972,58 @@ function renderHospitalCard(hkey) {
             </div>
 
             ${renderStaffSection(s)}
+            ${renderUnjustifiedCard(s)}
         </div>
     </div>`;
+}
+
+// ----------- ED Length-of-Stay indicator (inline card) -----------
+function renderUnjustifiedCard(s) {
+    const u = s.unjustified;
+    if (!u || (u.CT.total === 0 && u.US.total === 0)) return '';
+
+    const row = (label, d) => {
+        const breach = d.admitted + d.discharged + d.referred + d.left;
+        const breachPct = d.total > 0 ? Math.round(100 * breach / d.total) : 0;
+        const cls = breachPct >= 30 ? 'bad' : breachPct >= 15 ? 'warn' : 'good';
+        return `
+            <tr>
+                <td class="uj-mod">${label}</td>
+                <td class="uj-n">${d.total}</td>
+                <td class="uj-n long">${breach}</td>
+                <td class="uj-n admitted">${d.admitted}</td>
+                <td class="uj-n discharged">${d.discharged}</td>
+                <td class="uj-n">${d.referred}</td>
+                <td class="uj-pct ${cls}">${breachPct}%</td>
+            </tr>`;
+    };
+
+    return `
+        <div class="uj-section">
+            <div class="uj-title">
+                مدة البقاء في الطوارئ <span class="uj-sub">— المستهدف ≤ ${u.target_min} دقيقة من الدخول إلى القرار</span>
+            </div>
+            <div class="uj-summary">
+                <span class="uj-stat"><span class="lbl">إجمالي مرضى الطوارئ</span><span class="val">${u.ed_total}</span></span>
+                <span class="uj-stat"><span class="lbl">تجاوزوا ساعتين</span><span class="val rose">${u.breach_total}</span></span>
+                <span class="uj-stat"><span class="lbl">نسبة الالتزام</span><span class="val ${u.breach_total/u.ed_total > 0.15 ? 'rose' : 'emerald'}">${u.ed_total > 0 ? Math.round(100*(u.ed_total-u.breach_total)/u.ed_total) : 0}%</span></span>
+            </div>
+            <table class="uj-tbl">
+                <thead><tr>
+                    <th>نوع الفحص</th>
+                    <th>إجمالي المرضى</th>
+                    <th>تجاوزوا ساعتين</th>
+                    <th>تنويم</th>
+                    <th>خروج</th>
+                    <th>تحويل</th>
+                    <th>نسبة التجاوز</th>
+                </tr></thead>
+                <tbody>
+                    ${row('CT', u.CT)}
+                    ${row('US', u.US)}
+                </tbody>
+            </table>
+        </div>`;
 }
 
 // ----------- Staff breakdown tables (inline on the hospital card) -----------
@@ -2867,6 +3215,114 @@ function openHajjSlide() {
     document.getElementById('slideModal').classList.add('active');
     document.getElementById('slideModal').scrollTop = 0;
 }
+
+function openLosSlide() {
+    const wrap = document.getElementById('slidePagesWrap');
+    const rows = Object.keys(HOSPITALS)
+        .filter(k => STATE.results[k] && STATE.results[k].summary.total_studies > 0)
+        .map(k => ({ key: k, info: HOSPITALS[k], s: STATE.results[k].summary }))
+        .sort((a, b) => a.info.ar.localeCompare(b.info.ar, 'ar'));
+    if (rows.length === 0) {
+        alert('لا يوجد مستشفيات بنتائج بعد.');
+        return;
+    }
+    wrap.innerHTML = '<div class="hajj-slide">' + buildLosSlide(rows) + '</div>';
+    document.getElementById('slideModalTitle').textContent = 'مدة البقاء في الطوارئ · CT و US';
+    document.getElementById('btnSlideExport').textContent = 'حفظ صورة PNG';
+    document.getElementById('slideModal').classList.add('active');
+    document.getElementById('slideModal').scrollTop = 0;
+}
+
+function buildLosSlide(rows) {
+    const totalEd = rows.reduce((s, r) => s + (r.s.unjustified ? r.s.unjustified.ed_total : 0), 0);
+    const totalBreach = rows.reduce((s, r) => s + (r.s.unjustified ? r.s.unjustified.breach_total : 0), 0);
+    const complPct = totalEd > 0 ? Math.round(100 * (totalEd - totalBreach) / totalEd) : 0;
+
+    const rowFor = (mod, d) => {
+        const breach = d.admitted + d.discharged + d.referred + d.left;
+        const pct = d.total > 0 ? Math.round(100 * breach / d.total) : 0;
+        const cls = pct >= 30 ? 'sev-bad' : pct >= 15 ? 'sev-warn' : 'sev-good';
+        return `
+            <td class="los-cell"><span class="mod-pill ${mod==='CT'?'pill-ct':'pill-us'}">${mod}</span></td>
+            <td class="los-cell n">${d.total}</td>
+            <td class="los-cell n breach">${breach}</td>
+            <td class="los-cell n adm">${d.admitted}</td>
+            <td class="los-cell n dis">${d.discharged}</td>
+            <td class="los-cell n">${d.referred}</td>
+            <td class="los-cell pct ${cls}">${pct}%</td>`;
+    };
+
+    const hospRows = rows.map((r, i) => {
+        const u = r.s.unjustified;
+        if (!u) return '';
+        return `
+            <tr class="hosp-row ${i % 2 === 0 ? 'even' : 'odd'}">
+                <td rowspan="2" class="los-hosp">
+                    <div class="los-hosp-ar">${r.info.ar}</div>
+                    <div class="los-hosp-en">${r.info.en}</div>
+                    <div class="los-hosp-meta">${u.ed_total} مريض · تجاوز ${u.breach_total}</div>
+                </td>
+                ${rowFor('CT', u.CT)}
+            </tr>
+            <tr class="hosp-row ${i % 2 === 0 ? 'even' : 'odd'}">
+                ${rowFor('US', u.US)}
+            </tr>`;
+    }).join('');
+
+    return `
+    <div class="hajj-slide-page" data-page="los">
+        <div class="hajj-card">
+            <div class="hajj-card-header">
+                <div class="hajj-card-title">مدة البقاء في الطوارئ — CT و US</div>
+                <div class="hajj-card-sub">المستهدف: خروج المريض من الطوارئ (تنويم/خروج) خلال ١٢٠ دقيقة من الدخول</div>
+            </div>
+
+            <div class="los-summary">
+                <div class="los-stat">
+                    <div class="lbl">إجمالي مرضى الطوارئ</div>
+                    <div class="val">${totalEd}</div>
+                </div>
+                <div class="los-stat">
+                    <div class="lbl">تجاوزوا الساعتين</div>
+                    <div class="val rose">${totalBreach}</div>
+                </div>
+                <div class="los-stat">
+                    <div class="lbl">نسبة الالتزام بالمستهدف</div>
+                    <div class="val ${complPct >= 85 ? 'emerald' : complPct >= 70 ? 'amber' : 'rose'}">${complPct}%</div>
+                </div>
+                <div class="los-stat">
+                    <div class="lbl">عدد المستشفيات</div>
+                    <div class="val">${rows.length}</div>
+                </div>
+            </div>
+
+            <table class="los-tbl">
+                <thead>
+                    <tr>
+                        <th rowspan="1">المستشفى</th>
+                        <th>الفحص</th>
+                        <th>إجمالي المرضى</th>
+                        <th>تجاوزوا ساعتين</th>
+                        <th>تنويم</th>
+                        <th>خروج</th>
+                        <th>تحويل</th>
+                        <th>نسبة التجاوز</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${hospRows}
+                </tbody>
+            </table>
+
+            <div class="los-legend">
+                <span><span class="leg-dot" style="background:#10B981;"></span>نسبة التجاوز أقل من ١٥٪</span>
+                <span><span class="leg-dot" style="background:#F59E0B;"></span>١٥–٢٩٪</span>
+                <span><span class="leg-dot" style="background:#EF4444;"></span>أكثر من ٣٠٪</span>
+            </div>
+        </div>
+    </div>`;
+}
+
 
 // Color helpers shared by all pages
 function pctColor(v) {
@@ -3603,7 +4059,16 @@ async function generateFinalReportPDF() {
         await renderSlideGroup(stage, meetingSlidesHTML, addSlideImage, (i, n) =>
             setMsg(`سلايد الاجتماع... ${i}/${n}`));
 
-        // -------- SECTION 2: Delays — one slide PER HOSPITAL per stage --------
+        // -------- SECTION 2: ED Length-of-Stay slide --------
+        setMsg('جاري إنشاء سلايد مدة البقاء...');
+        const losSlideHTML =
+            '<div class="hajj-slide" style="transform:none; margin-bottom:0;">'
+            + buildLosSlide(rows)
+            + '</div>';
+        await renderSlideGroup(stage, losSlideHTML, addSlideImage, () =>
+            setMsg('سلايد مدة البقاء...'));
+
+        // -------- SECTION 3: Delays — one slide PER HOSPITAL per stage --------
         // Splitting per hospital ensures each slide is short enough to fit one
         // landscape A4 page cleanly without ugly slicing mid-content.
         setMsg('جاري إنشاء سلايد التأخرات...');
