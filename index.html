@@ -2481,7 +2481,59 @@ function analyzeHospital(hkey) {
     diag.rad_cols = diag.rad_headers;
 
     console.log('[analyzeHospital]', hkey, diag);
-    return { studies, summary: summarize(studies), diag };
+
+    const summary = summarize(studies);
+
+    // ===== ED Length-of-Stay indicator =====
+    // For every ED patient: did they exit (admit/discharge) within 120 min?
+    // Group by which modality (CT/US) was ordered for that patient.
+    if (summary.total_studies > 0) {
+        const LOS_TARGET_MIN = 120;
+        const modOf = (m) => {
+            const x = String(m || '').toUpperCase().trim();
+            if (x.startsWith('CT')) return 'CT';
+            if (x.startsWith('US')) return 'US';
+            return null;
+        };
+        const pidMods = new Map();
+        studies.forEach(s => {
+            const m = modOf(s.modality);
+            if (!m) return;
+            if (!pidMods.has(s.pid)) pidMods.set(s.pid, new Set());
+            pidMods.get(s.pid).add(m);
+        });
+        const u = {
+            CT: { admitted: 0, discharged: 0, referred: 0, left: 0, total: 0 },
+            US: { admitted: 0, discharged: 0, referred: 0, left: 0, total: 0 },
+            breach_total: 0,
+            ed_total: 0
+        };
+        edIdSet.forEach(pid => {
+            const dis = edDisMap.get(pid) || 'unknown';
+            const door = edDoorMin.get(pid);
+            u.ed_total++;
+            const breached = door !== undefined && door > LOS_TARGET_MIN;
+            if (breached) u.breach_total++;
+            const mods = pidMods.get(pid);
+            if (!mods) return;
+            for (const m of mods) {
+                u[m].total++;
+                if (!breached) continue;
+                if (dis === 'admitted' || dis === 'discharged' || dis === 'referred' || dis === 'left') {
+                    u[m][dis]++;
+                }
+            }
+        });
+        summary.unjustified = {
+            target_min: LOS_TARGET_MIN,
+            ed_total: u.ed_total,
+            breach_total: u.breach_total,
+            CT: u.CT,
+            US: u.US
+        };
+    }
+
+    return { studies, summary, diag };
 }
 
 function findColumn(sample, candidates) {
@@ -2681,64 +2733,6 @@ function summarize(studies) {
         };
     }).sort((a, b) => b.n - a.n);
 
-    // ===== ED Length-of-Stay Indicator =====
-    // Target: every ED patient should exit (admit or discharge) within 120 min of arrival.
-    // Question: for ED patients who BREACHED 120 min, how many had a CT vs US ordered,
-    // and what was their disposition (admitted vs discharged)?
-    const LOS_TARGET_MIN = 120;
-    const modOf = (m) => {
-        const u = String(m || '').toUpperCase().trim();
-        if (u.startsWith('CT')) return 'CT';
-        if (u.startsWith('US')) return 'US';
-        return null;
-    };
-    // Group ALL studies by PID → what modalities were ordered for each patient
-    const pidMods = new Map();
-    studies.forEach(s => {
-        const m = modOf(s.modality);
-        if (!m) return;
-        if (!pidMods.has(s.pid)) pidMods.set(s.pid, new Set());
-        pidMods.get(s.pid).add(m);
-    });
-
-    // Iterate ED patients and bucket by (modality ordered) × (disposition)
-    const u = {
-        CT: { admitted: 0, discharged: 0, referred: 0, left: 0, total: 0, breach_admitted: [], breach_discharged: [] },
-        US: { admitted: 0, discharged: 0, referred: 0, left: 0, total: 0, breach_admitted: [], breach_discharged: [] },
-        breach_total: 0,
-        ed_total: 0
-    };
-    edIdSet.forEach(pid => {
-        const dis = edDisMap.get(pid) || 'unknown';
-        const door = edDoorMin.get(pid);
-        u.ed_total++;
-        const breached = door !== undefined && door > LOS_TARGET_MIN;
-        if (breached) u.breach_total++;
-        const mods = pidMods.get(pid);
-        if (!mods) return;
-        for (const m of mods) {
-            u[m].total++;
-            if (!breached) continue;
-            // Count by disposition bucket
-            if (dis === 'admitted' || dis === 'discharged' || dis === 'referred' || dis === 'left') {
-                u[m][dis]++;
-            }
-            // Keep PID lists for admitted / discharged breach cases
-            if (dis === 'admitted') {
-                u[m].breach_admitted.push({ pid, mins: Math.round(door) });
-            } else if (dis === 'discharged') {
-                u[m].breach_discharged.push({ pid, mins: Math.round(door) });
-            }
-        }
-    });
-    const unjustified = {
-        target_min: LOS_TARGET_MIN,
-        ed_total: u.ed_total,
-        breach_total: u.breach_total,
-        CT: u.CT,
-        US: u.US
-    };
-
     // Heatmap: 2h bin x modality, median o2a and a2r
     const hourBins = [0,2,4,6,8,10,12,14,16,18,20,22];
     const modalities = byModality.map(x => x.modality);
@@ -2781,8 +2775,7 @@ function summarize(studies) {
         hourly, hourBins, modalities,
         hm_o2a, hm_a2r, byHour,
         delayed_o2a, delayed_a2r,
-        byRadiologist, byOrderingPhysician, byTechnologist,
-        unjustified
+        byRadiologist, byOrderingPhysician, byTechnologist
     };
 }
 
