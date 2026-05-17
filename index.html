@@ -2093,6 +2093,89 @@ body {
     font-family: 'Cairo','Tajawal',sans-serif;
     font-size: 16px; font-weight: 700;
 }
+
+/* Heatmap inside a per-hospital report (single hospital, 24 hours, 2 rows) */
+.r-hm-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    table-layout: fixed;
+}
+.r-hm-tbl th {
+    background: #063A58;
+    color: #FFFFFF;
+    padding: 8px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    border: 1px solid #052D44;
+}
+.r-hm-tbl th.r-hm-lbl, .r-hm-tbl td.r-hm-lbl {
+    width: 13%;
+    text-align: right;
+    padding: 10px 12px;
+    font-family: 'Cairo','Tajawal',sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #063A58;
+    background: #F7FAFC;
+    border: 1px solid #E5EAF0;
+}
+.r-hm-tbl .r-hm-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6B7280;
+}
+.r-hm-tbl td.hm-c {
+    padding: 8px 2px;
+    text-align: center;
+    border: 1px solid #E5EAF0;
+    vertical-align: middle;
+    color: #FFFFFF;
+    font-family: 'Cairo',sans-serif;
+}
+.r-hm-tbl td.hm-c .hm-pct {
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+}
+.r-hm-tbl td.hm-c .hm-n {
+    font-size: 10px;
+    margin-top: 3px;
+    opacity: 0.85;
+}
+.r-hm-tbl td.hm-green { background: #10B981; }
+.r-hm-tbl td.hm-amber { background: #F59E0B; }
+.r-hm-tbl td.hm-red   { background: #EF4444; }
+.r-hm-tbl td.hm-empty {
+    background: #E5E7EB;
+    color: #9CA3AF;
+    font-size: 14px;
+    font-weight: 700;
+}
+.r-hm-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #F7FAFC;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #4A5A6B;
+    font-weight: 600;
+}
+.r-hm-legend .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* LOS severity classes used in r-tbl cells */
+.r-tbl td.warn { color: #D97706; font-weight: 800; }
 </style>
 </head>
 
@@ -2899,9 +2982,11 @@ function summarize(studies) {
         .sort((a, b) => b.mins - a.mins);
 
     // Performance breakdown by reading physician (covers Acquisition→Report stage)
+    // Group by cleaned/normalized name; drop entries where the name is invalid.
     const byRad = {};
     studies.forEach(s => {
-        const name = s.radiologist || '(غير محدد)';
+        const name = shortName(s.radiologist);
+        if (!name) return;
         if (!byRad[name]) byRad[name] = [];
         byRad[name].push(s);
     });
@@ -2922,7 +3007,8 @@ function summarize(studies) {
     // Performance breakdown by ORDERING physician (covers Order→Acquisition stage)
     const byOrd = {};
     studies.forEach(s => {
-        const name = s.orderingPhysician || '(غير محدد)';
+        const name = shortName(s.orderingPhysician);
+        if (!name) return;
         if (!byOrd[name]) byOrd[name] = [];
         byOrd[name].push(s);
     });
@@ -2940,7 +3026,8 @@ function summarize(studies) {
     // Performance breakdown by TECHNOLOGIST (productivity + stage coverage)
     const byTech = {};
     studies.forEach(s => {
-        const name = s.technologist || '(غير محدد)';
+        const name = shortName(s.technologist);
+        if (!name) return;
         if (!byTech[name]) byTech[name] = [];
         byTech[name].push(s);
     });
@@ -3015,10 +3102,39 @@ function fmtDate(d) {
 function shortName(name) {
     if (!name) return '';
     let s = String(name).trim();
-    if (!s || s === '(غير محدد)') return '';
+    if (!s) return '';
+
+    // Remove Excel-formula wrapping: ="..."
+    if (s.startsWith('=')) s = s.slice(1);
+    s = s.replace(/^["']|["']$/g, '').trim();
+
+    // Reject placeholder values
+    const lower = s.toLowerCase();
+    if (s === '(غير محدد)' || s === '-' || s === '--' || s === '---' || s === '_') return '';
+    if (/^[\s\-_\.,;:]+$/.test(s)) return '';   // pure punctuation/whitespace
+    if (lower === 'unknown' || lower === 'n/a' || lower === 'na' || lower === 'none' || lower === 'null') return '';
+
+    // Drop trailing or leading dashes & commas
+    s = s.replace(/^[\-,_\s]+|[\-,_\s]+$/g, '').trim();
+    if (!s) return '';
+
+    // Trim trailing descriptors after comma or " - "
     s = s.split(',')[0].split(' - ')[0].trim();
-    s = s.replace(/^(Dr\.?|DR\.?|د\.?|الدكتور|الدكتورة)\s+/i, '');
-    const parts = s.split(/\s+/).filter(Boolean);
+
+    // Strip leading titles
+    s = s.replace(/^(Dr\.?|DR\.?|د\.?|الدكتور|الدكتورة|Mr\.?|Mrs\.?|Ms\.?)\s+/i, '').trim();
+
+    // Strip standalone single dashes that remain inside the cleaned string
+    s = s.replace(/\s+-+\s+/g, ' ').replace(/^-+|-+$/g, '').trim();
+    if (!s) return '';
+
+    // Reject if remaining looks like a patient record (contains digits or gender markers)
+    if (/\d/.test(s)) return '';
+    if (/^(male|female|m|f)\s/i.test(s)) return '';
+
+    // Take first two words; reject if either token is non-alphabetic (e.g. just a dash leftover)
+    const parts = s.split(/\s+/).filter(Boolean).filter(w => /[A-Za-z\u0600-\u06FF]/.test(w));
+    if (parts.length === 0) return '';
     return parts.slice(0, 2).join(' ');
 }
 
@@ -3467,9 +3583,16 @@ function buildHospitalCoverSlide(info, summary) {
     const dateLabel = summary && summary.date_range ? toArabicDate(summary.date_range) : '';
     const total = summary ? summary.total_studies : 0;
     const uniq = summary ? summary.unique_patients : 0;
-    const complPct = summary && summary.total_studies > 0
-        ? Math.round((summary.o2a_compliance + summary.a2r_compliance) / 2)
-        : 0;
+    const o2aPct = summary && typeof summary.o2a_comp_pct === 'number' ? summary.o2a_comp_pct : null;
+    const a2rPct = summary && typeof summary.a2r_comp_pct === 'number' ? summary.a2r_comp_pct : null;
+    let complPct = 0;
+    if (o2aPct !== null && a2rPct !== null) {
+        complPct = Math.round((o2aPct + a2rPct) / 2);
+    } else if (o2aPct !== null) {
+        complPct = Math.round(o2aPct);
+    } else if (a2rPct !== null) {
+        complPct = Math.round(a2rPct);
+    }
 
     return `
     <div class="hajj-slide-page" data-page="hcover">
@@ -4950,14 +5073,135 @@ function buildReportBodyHTML(info, s) {
                 <thead><tr>
                     <th>اسم الطبيب</th><th>عدد التقارير</th><th>متوسط زمن التقرير</th><th>الالتزام (٤٥د)</th>
                 </tr></thead>
-                <tbody>${tableRows(s.byRadiologist.filter(r => r.name !== '(غير محدد)'), r => `
-                    <td>${shortName(r.name) || r.name}</td>
+                <tbody>${tableRows(s.byRadiologist, r => `
+                    <td>${r.name}</td>
                     <td class="num">${r.n}</td>
                     <td class="num">${Math.round(r.a2r_mean)} د</td>
                     <td class="num ${r.a2r_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.a2r_comp)}%</td>
                 `)}</tbody>
             </table>
         </div>` : '';
+
+    // Ordering physicians table — covers the Order→Acquisition stage
+    const ordTable = (s.byOrderingPhysician && s.byOrderingPhysician.length > 0) ? `
+        <div class="r-block">
+            <h2 class="r-title">أداء الأطباء الطالبين (Ordering Physicians)</h2>
+            <table class="r-tbl">
+                <colgroup>
+                    <col style="width:*"><col style="width:15%"><col style="width:18%"><col style="width:15%">
+                </colgroup>
+                <thead><tr>
+                    <th>اسم الطبيب</th><th>عدد الطلبات</th><th>متوسط زمن الإجراء</th><th>الالتزام (١٥د)</th>
+                </tr></thead>
+                <tbody>${tableRows(s.byOrderingPhysician, r => `
+                    <td>${r.name}</td>
+                    <td class="num">${r.n}</td>
+                    <td class="num">${Math.round(r.o2a_mean)} د</td>
+                    <td class="num ${r.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.o2a_comp)}%</td>
+                `)}</tbody>
+            </table>
+        </div>` : '';
+
+    // Technologists table
+    const techTable = (s.byTechnologist && s.byTechnologist.length > 0) ? `
+        <div class="r-block">
+            <h2 class="r-title">أداء الفنيين (Technologists)</h2>
+            <table class="r-tbl">
+                <colgroup>
+                    <col style="width:*"><col style="width:15%"><col style="width:18%"><col style="width:15%">
+                </colgroup>
+                <thead><tr>
+                    <th>اسم الفني</th><th>عدد الفحوصات</th><th>متوسط زمن التصوير</th><th>الالتزام (١٥د)</th>
+                </tr></thead>
+                <tbody>${tableRows(s.byTechnologist, r => `
+                    <td>${r.name}</td>
+                    <td class="num">${r.n}</td>
+                    <td class="num">${Math.round(r.o2a_mean)} د</td>
+                    <td class="num ${r.o2a_comp >= 80 ? 'ok' : 'over'}">${Math.round(r.o2a_comp)}%</td>
+                `)}</tbody>
+            </table>
+        </div>` : '';
+
+    // ED Length-of-Stay block (per hospital)
+    let losBlock = '';
+    if (s.unjustified && (s.unjustified.CT.total > 0 || s.unjustified.US.total > 0)) {
+        const u = s.unjustified;
+        const losRow = (label, d) => {
+            const breach = d.admitted + d.discharged + d.referred + d.left;
+            const pct = d.total > 0 ? Math.round(100 * breach / d.total) : 0;
+            const sev = pct >= 30 ? 'over' : pct >= 15 ? 'warn' : 'ok';
+            return `<tr data-atom>
+                <td><b>${label}</b></td>
+                <td class="num">${d.total}</td>
+                <td class="num">${breach}</td>
+                <td class="num">${d.admitted}</td>
+                <td class="num">${d.discharged}</td>
+                <td class="num">${d.referred}</td>
+                <td class="num ${sev}">${pct}%</td>
+            </tr>`;
+        };
+        losBlock = `
+        <div class="r-block" data-atom>
+            <h2 class="r-title">مدة البقاء في الطوارئ</h2>
+            <table class="r-tbl">
+                <colgroup>
+                    <col style="width:14%"><col style="width:14%"><col style="width:14%">
+                    <col style="width:14%"><col style="width:14%"><col style="width:14%"><col style="width:16%">
+                </colgroup>
+                <thead><tr>
+                    <th>نوع الفحص</th>
+                    <th>إجمالي المرضى</th>
+                    <th>تجاوزوا ساعتين</th>
+                    <th>تنويم</th>
+                    <th>خروج</th>
+                    <th>تحويل</th>
+                    <th>نسبة التجاوز</th>
+                </tr></thead>
+                <tbody>
+                    ${losRow('CT', u.CT)}
+                    ${losRow('US', u.US)}
+                </tbody>
+            </table>
+        </div>`;
+    }
+
+    // Per-hospital heatmap (single row, full day)
+    let heatmapBlock = '';
+    if (s.hm_o2a && s.hm_a2r) {
+        const makeHourCells = (hmData) => {
+            let cells = '';
+            for (let h = 0; h < 24; h++) {
+                const cell = hmData[h];
+                if (!cell || cell.n === 0) {
+                    cells += `<td class="hm-c hm-empty">—</td>`;
+                } else {
+                    const p = cell.pct;
+                    const cls = p >= 95 ? 'hm-green' : p >= 85 ? 'hm-amber' : 'hm-red';
+                    cells += `<td class="hm-c ${cls}"><div class="hm-pct">${Math.round(p)}%</div><div class="hm-n">${cell.n}</div></td>`;
+                }
+            }
+            return cells;
+        };
+        const hourHdr = Array.from({length: 24}, (_, h) => `<th>${String(h).padStart(2,'0')}</th>`).join('');
+        heatmapBlock = `
+        <div class="r-block" data-atom>
+            <h2 class="r-title">الخريطة الحرارية على مدار اليوم</h2>
+            <div class="r-subtitle">نسبة الالتزام في كل ساعة · الرقم العلوي: النسبة · الرقم السفلي: عدد الفحوصات</div>
+            <table class="r-hm-tbl">
+                <thead><tr><th class="r-hm-lbl">المرحلة</th>${hourHdr}</tr></thead>
+                <tbody>
+                    <tr data-atom><td class="r-hm-lbl">الطلب → التصوير<br><span class="r-hm-sub">(١٥د)</span></td>${makeHourCells(s.hm_o2a)}</tr>
+                    <tr data-atom><td class="r-hm-lbl">التصوير → التقرير<br><span class="r-hm-sub">(٤٥د)</span></td>${makeHourCells(s.hm_a2r)}</tr>
+                </tbody>
+            </table>
+            <div class="r-hm-legend">
+                <span><span class="dot" style="background:#10B981;"></span>الالتزام ٩٥٪ فأكثر</span>
+                <span><span class="dot" style="background:#F59E0B;"></span>٨٥–٩٤٪</span>
+                <span><span class="dot" style="background:#EF4444;"></span>أقل من ٨٥٪</span>
+                <span><span class="dot" style="background:#E5E7EB;"></span>لا توجد فحوصات</span>
+            </div>
+        </div>`;
+    }
 
     const o2aDelayRows = (rows) => rows.map(d => `
         <tr data-atom>
@@ -5087,7 +5331,11 @@ function buildReportBodyHTML(info, s) {
 
         ${modalityTable}
         ${procTable}
+        ${heatmapBlock}
+        ${losBlock}
         ${radTable}
+        ${ordTable}
+        ${techTable}
 
         <div class="r-block">
             <h2 class="r-title">الملفات المتأخرة · من الطلب إلى التصوير (تجاوزت ١٥ دقيقة)</h2>
