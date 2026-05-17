@@ -800,6 +800,50 @@ body {
 }
 .cover-legend b { color: #063A58; font-weight: 800; }
 
+/* Hospital-specific cover */
+.hosp-cover-label {
+    font-size: 18px;
+    color: #4A5A6B;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.cover-title.hosp-cover-name {
+    font-size: 46px;
+    margin-bottom: 2px;
+}
+.hosp-cover-name-en {
+    font-size: 18px;
+    color: #6B7280;
+    margin-bottom: 8px;
+    font-family: 'Tajawal',sans-serif;
+}
+.hosp-cover-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 18px 22px;
+    background: #F7FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+.hosp-cover-stat .lbl {
+    font-size: 15px;
+    color: #4A5A6B;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.hosp-cover-stat .val {
+    font-family: 'Cairo','Tajawal',sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: #1A2433;
+    line-height: 1;
+}
+.hosp-cover-stat .val.emerald { color: #059669; }
+.hosp-cover-stat .val.amber   { color: #D97706; }
+.hosp-cover-stat .val.rose    { color: #DC2626; }
+
 /* ============ LOS SLIDE PAGE ============ */
 .los-summary {
     display: grid;
@@ -2153,6 +2197,7 @@ body {
             <button class="btn" id="btnDelaysSlide" disabled style="background: linear-gradient(135deg, #B45309, #92400E); color: white; border-color: #D97706;">سلايد التأخرات</button>
             <button class="btn" id="btnLosSlide" disabled style="background: linear-gradient(135deg, #047857, #065F46); color: white; border-color: #10B981;">سلايد مدة البقاء</button>
             <button class="btn" id="btnFinalReport" disabled style="background: linear-gradient(135deg, #7C2D12, #4C1D95); color: white; border-color: #8B5CF6;">📑 التقرير النهائي</button>
+            <button class="btn" id="btnPerHospitalReports" disabled style="background: linear-gradient(135deg, #1E40AF, #3730A3); color: white; border-color: #4F46E5;">📊 تقارير المستشفيات التفصيلية</button>
             <button class="btn btn-primary" id="btnAnalyze" disabled>تحليل البيانات</button>
         </div>
     </div>
@@ -2232,6 +2277,7 @@ function init() {
     document.getElementById('btnDelaysSlide').addEventListener('click', openDelaysSlide);
     document.getElementById('btnLosSlide').addEventListener('click', openLosSlide);
     document.getElementById('btnFinalReport').addEventListener('click', generateFinalReportPDF);
+    document.getElementById('btnPerHospitalReports').addEventListener('click', generatePerHospitalReports);
     document.getElementById('btnSlideClose').addEventListener('click', () => {
         document.getElementById('slideModal').classList.remove('active');
     });
@@ -2422,6 +2468,7 @@ function resetAll() {
     document.getElementById('btnDelaysSlide').disabled = true;
     document.getElementById('btnLosSlide').disabled = true;
     document.getElementById('btnFinalReport').disabled = true;
+    document.getElementById('btnPerHospitalReports').disabled = true;
 }
 
 // ====================== DATE PARSING ======================
@@ -2502,6 +2549,7 @@ function analyzeAll() {
     document.getElementById('btnDelaysSlide').disabled = !hasAny;
     document.getElementById('btnLosSlide').disabled = !hasAny;
     document.getElementById('btnFinalReport').disabled = !hasAny;
+    document.getElementById('btnPerHospitalReports').disabled = !hasAny;
 }
 
 function analyzeHospital(hkey) {
@@ -3399,6 +3447,116 @@ function openLosSlide() {
     document.getElementById('btnSlideExport').textContent = 'حفظ صورة PNG';
     document.getElementById('slideModal').classList.add('active');
     document.getElementById('slideModal').scrollTop = 0;
+}
+
+function buildHospitalCoverSlide(info, summary) {
+    // Convert English month names to Arabic ones for display.
+    const monthMap = {
+        Jan:'يناير', Feb:'فبراير', Mar:'مارس', Apr:'أبريل',
+        May:'مايو', Jun:'يونيو', Jul:'يوليو', Aug:'أغسطس',
+        Sep:'سبتمبر', Oct:'أكتوبر', Nov:'نوفمبر', Dec:'ديسمبر'
+    };
+    const toArabicDate = (s) => {
+        if (!s) return '';
+        let out = String(s);
+        for (const [en, ar] of Object.entries(monthMap)) out = out.replace(new RegExp(en, 'g'), ar);
+        out = out.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[+d]);
+        out = out.replace(/\s*[–-]\s*/g, ' إلى ');
+        return out;
+    };
+    const dateLabel = summary && summary.date_range ? toArabicDate(summary.date_range) : '';
+    const total = summary ? summary.total_studies : 0;
+    const uniq = summary ? summary.unique_patients : 0;
+    const complPct = summary && summary.total_studies > 0
+        ? Math.round((summary.o2a_compliance + summary.a2r_compliance) / 2)
+        : 0;
+
+    return `
+    <div class="hajj-slide-page" data-page="hcover">
+        <div class="cover-page">
+            <!-- Top strip: logo on the left, department name on the right -->
+            <div class="cover-top">
+                <div class="cover-dept">إدارة الخدمات الصحية المساندة</div>
+                <div class="cover-logo">
+                    <img src="${CLUSTER_LOGO}" alt="شعار التجمع" />
+                </div>
+            </div>
+
+            <!-- Title block: hospital name -->
+            <div class="cover-title-block">
+                <div class="hosp-cover-label">التقرير التفصيلي اليومي لمؤشرات أشعة الطوارئ</div>
+                <div class="cover-title hosp-cover-name">${info.ar}</div>
+                <div class="hosp-cover-name-en">${info.en || ''}</div>
+                ${dateLabel ? `<div class="cover-date">${dateLabel}</div>` : ''}
+            </div>
+
+            <div class="cover-divider"></div>
+
+            <!-- Quick stats -->
+            <div class="hosp-cover-stats">
+                <div class="hosp-cover-stat">
+                    <div class="lbl">إجمالي الفحوصات</div>
+                    <div class="val">${total}</div>
+                </div>
+                <div class="hosp-cover-stat">
+                    <div class="lbl">عدد المرضى</div>
+                    <div class="val">${uniq}</div>
+                </div>
+                <div class="hosp-cover-stat">
+                    <div class="lbl">مؤشر الالتزام الكلي</div>
+                    <div class="val ${complPct >= 85 ? 'emerald' : complPct >= 70 ? 'amber' : 'rose'}">${complPct}%</div>
+                </div>
+            </div>
+
+            <!-- Indicators list (same structure as main cover) -->
+            <div class="cover-section-title">محتويات التقرير</div>
+
+            <div class="cover-list">
+                <div class="cover-item">
+                    <div class="cover-item-num">١</div>
+                    <div class="cover-item-body">
+                        <div class="cover-item-title">الملخص التنفيذي والالتزام بالمعايير</div>
+                        <div class="cover-item-text">إجمالي الفحوصات · متوسط الأزمنة · نسب الالتزام بـ ١٥د و ٤٥د</div>
+                    </div>
+                </div>
+                <div class="cover-item">
+                    <div class="cover-item-num">٢</div>
+                    <div class="cover-item-body">
+                        <div class="cover-item-title">تفصيل الفحوصات</div>
+                        <div class="cover-item-text">توزيع حسب النوع · أبرز الفحوصات · أبطأ وأسرع الفحوصات</div>
+                    </div>
+                </div>
+                <div class="cover-item">
+                    <div class="cover-item-num">٣</div>
+                    <div class="cover-item-body">
+                        <div class="cover-item-title">أداء الكوادر</div>
+                        <div class="cover-item-text">الأطباء القارئون · الأطباء الطالبون · الفنيون</div>
+                    </div>
+                </div>
+                <div class="cover-item">
+                    <div class="cover-item-num">٤</div>
+                    <div class="cover-item-body">
+                        <div class="cover-item-title">التحليل الزمني</div>
+                        <div class="cover-item-text">توزيع الفحوصات على ساعات اليوم · تحليل الذروة · ورديات اليوم · CTAS</div>
+                    </div>
+                </div>
+                <div class="cover-item">
+                    <div class="cover-item-num">٥</div>
+                    <div class="cover-item-body">
+                        <div class="cover-item-title">مدة البقاء في الطوارئ</div>
+                        <div class="cover-item-text">تنويم · خروج · تحويل · نسبة التجاوز للساعتين</div>
+                    </div>
+                </div>
+                <div class="cover-item">
+                    <div class="cover-item-num">٦</div>
+                    <div class="cover-item-body">
+                        <div class="cover-item-title">الملفات المتأخرة</div>
+                        <div class="cover-item-text">قائمة كاملة بالملفات التي تجاوزت المستهدف في كل مرحلة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
 }
 
 function buildCoverSlide(rows) {
@@ -4385,6 +4543,150 @@ async function generateFinalReportPDF() {
     } catch (e) {
         console.error(e);
         alert('فشل إنشاء التقرير النهائي: ' + (e.message || e));
+    } finally {
+        if (stage.parentNode) stage.parentNode.removeChild(stage);
+        document.body.removeChild(overlay);
+        btn.disabled = false;
+        btn.textContent = oldBtnText;
+    }
+}
+
+// Generate ONE PDF per hospital, downloaded separately.
+async function generatePerHospitalReports() {
+    if (typeof html2canvas === 'undefined') {
+        alert('مكتبة html2canvas لم يتم تحميلها. تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.');
+        return;
+    }
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('مكتبة jsPDF لم يتم تحميلها. تأكد من الاتصال بالإنترنت ثم أعد تحميل الصفحة.');
+        return;
+    }
+
+    const rows = Object.keys(HOSPITALS)
+        .filter(k => STATE.results[k] && STATE.results[k].summary.total_studies > 0)
+        .map(k => ({ key: k, info: HOSPITALS[k], s: STATE.results[k].summary }))
+        .sort((a, b) => a.info.ar.localeCompare(b.info.ar, 'ar'));
+
+    if (rows.length === 0) {
+        alert('لا توجد مستشفيات بنتائج. ارفع الملفات واضغط "تحليل البيانات" أولاً.');
+        return;
+    }
+
+    const btn = document.getElementById('btnPerHospitalReports');
+    const oldBtnText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '...جاري الإنشاء';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'r-progress-overlay';
+    overlay.innerHTML = '<div class="ring"></div><div class="msg">جاري إنشاء التقارير...</div>';
+    document.body.appendChild(overlay);
+    const setMsg = (m) => overlay.querySelector('.msg').textContent = m;
+
+    if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch(e) {}
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    // Offscreen host
+    const stage = document.createElement('div');
+    stage.style.cssText = 'position:fixed; top:0; left:-3000px; z-index:-1; pointer-events:none;';
+    document.body.appendChild(stage);
+
+    const A4_LONG = 297;
+    const A4_SHORT = 210;
+    const dateStr = new Date().toISOString().slice(0, 10);
+
+    // Helper: safe filename (English letters or hospital key)
+    const safeName = (key, ar) => {
+        return key.replace(/[^a-z0-9_-]/gi, '_');
+    };
+
+    try {
+        for (let hi = 0; hi < rows.length; hi++) {
+            const r = rows[hi];
+            setMsg(`(${hi+1}/${rows.length}) ${r.info.ar} — جاري الإنشاء...`);
+
+            // Create a fresh PDF for this hospital
+            const pdf = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+            let firstPage = true;
+
+            const addSlideImage = (sourceCanvas) => {
+                const imgW = sourceCanvas.width;
+                const imgH = sourceCanvas.height;
+                const imgRatio = imgW / imgH;
+                const pageW = A4_LONG;
+                const pageH = A4_SHORT;
+                const pageAspect = pageW / pageH;
+
+                const addPage = () => {
+                    if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', 'l'); }
+                    else { pdf.addPage('a4', 'l'); }
+                };
+
+                if (imgRatio >= pageAspect - 0.001) {
+                    const drawH = pageW / imgRatio;
+                    const yCenter = (pageH - drawH) / 2;
+                    const data = sourceCanvas.toDataURL('image/jpeg', 0.9);
+                    addPage();
+                    pdf.addImage(data, 'JPEG', 0, yCenter, pageW, drawH);
+                    return;
+                }
+
+                const sliceHPx = Math.floor(imgW / pageAspect);
+                const numPages = Math.ceil(imgH / sliceHPx);
+                for (let i = 0; i < numPages; i++) {
+                    const yStart = i * sliceHPx;
+                    const remaining = imgH - yStart;
+                    const slice = document.createElement('canvas');
+                    slice.width = imgW;
+                    slice.height = sliceHPx;
+                    const sctx = slice.getContext('2d');
+                    sctx.fillStyle = '#FFFFFF';
+                    sctx.fillRect(0, 0, slice.width, slice.height);
+                    const drawH = Math.min(sliceHPx, remaining);
+                    sctx.drawImage(sourceCanvas, 0, yStart, imgW, drawH, 0, 0, imgW, drawH);
+                    const data = slice.toDataURL('image/jpeg', 0.9);
+                    addPage();
+                    pdf.addImage(data, 'JPEG', 0, 0, pageW, pageH);
+                }
+            };
+
+            const addReportImage = (imgData) => {
+                if (firstPage) { firstPage = false; pdf.deletePage(1); pdf.addPage('a4', 'l'); }
+                else { pdf.addPage('a4', 'l'); }
+                const w = pdf.internal.pageSize.getWidth();
+                const h = pdf.internal.pageSize.getHeight();
+                pdf.addImage(imgData, 'JPEG', 0, 0, w, h);
+            };
+
+            // ---- Cover slide for THIS hospital ----
+            setMsg(`(${hi+1}/${rows.length}) ${r.info.ar} — صفحة الغلاف`);
+            const coverHTML =
+                '<div class="hajj-slide" style="transform:none; margin-bottom:0;">'
+                + buildHospitalCoverSlide(r.info, r.s)
+                + '</div>';
+            await renderSlideGroup(stage, coverHTML, addSlideImage, () => {});
+
+            // ---- The detailed report body (existing renderer) ----
+            setMsg(`(${hi+1}/${rows.length}) ${r.info.ar} — التقرير التفصيلي`);
+            await renderHospitalReportIntoPDF(stage, r.info, r.s, addReportImage,
+                (i, n) => setMsg(`(${hi+1}/${rows.length}) ${r.info.ar} — صفحة ${i}/${n}`));
+
+            // ---- Save the PDF ----
+            const fileName = `radiology-report-${safeName(r.key, r.info.ar)}-${dateStr}.pdf`;
+            pdf.save(fileName);
+
+            // Small pause between downloads to avoid browser throttling
+            await new Promise(r => setTimeout(r, 300));
+        }
+
+        setMsg('تم إنشاء جميع التقارير ✓');
+        await new Promise(r => setTimeout(r, 800));
+    } catch (e) {
+        console.error(e);
+        alert('فشل إنشاء التقارير: ' + (e.message || e));
     } finally {
         if (stage.parentNode) stage.parentNode.removeChild(stage);
         document.body.removeChild(overlay);
